@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0f0f0f">
+<meta name="description" content="Statistiche partita di Giorgio in tempo reale">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Giorgio">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css">
+<title>Giorgio Stats</title>
+</head>
+<body>
+
+<!-- ============ SCHEDA LIVE ============ -->
+<main id="panel-live" class="panel active" aria-label="Statistiche live">
+
+  <div class="sb">
+    <div class="sb-block">
+      <div class="sb-num pt" id="sb-pt">0</div>
+      <div class="sb-lab">PUNTI</div>
+    </div>
+    <div class="sb-div"></div>
+    <div class="sb-block">
+      <div class="sb-num val" id="sb-val">0</div>
+      <div class="sb-lab">VALUTAZIONE</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Tiri</div>
+    <div class="shots-grid" id="shots-grid"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Statistiche</div>
+    <div class="counter-grid" id="counters-grid"></div>
+  </div>
+
+</main>
+
+<!-- ============ SCHEDA PARTITA ============ -->
+<section id="panel-partita" class="panel" aria-label="Dati partita e risultato">
+
+  <div class="section">
+    <div class="section-label">Partita</div>
+    <div class="meta-grid">
+      <div class="meta-field wide">
+        <label for="f-data">DATA</label>
+        <input type="date" id="f-data" data-field="data">
+      </div>
+      <div class="meta-field wide">
+        <label for="f-avv">AVVERSARIO</label>
+        <input type="text" id="f-avv" data-field="avversario" placeholder="nome squadra" autocomplete="off">
+      </div>
+      <div class="meta-field">
+        <label for="f-cat">CATEGORIA</label>
+        <input type="text" id="f-cat" data-field="categoria" placeholder="es. U13 Silver" autocomplete="off">
+      </div>
+      <div class="meta-field">
+        <label for="f-maglia">N. MAGLIA</label>
+        <input type="text" id="f-maglia" data-field="maglia" placeholder="es. 43" inputmode="numeric" autocomplete="off">
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Risultato — parziali per tempo</div>
+    <div class="q-card">
+      <div class="q-grid">
+        <div class="q-head"></div>
+        <div class="q-head">T1</div>
+        <div class="q-head">T2</div>
+        <div class="q-head">T3</div>
+        <div class="q-head">T4</div>
+        <div class="q-head">TOT</div>
+
+        <div class="q-lab">NOI</div>
+        <input class="q-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" id="q-noi-0" data-team="noi" data-i="0" aria-label="Parziale noi, primo tempo">
+        <input class="q-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" id="q-noi-1" data-team="noi" data-i="1" aria-label="Parziale noi, secondo tempo">
+        <input class="q-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" id="q-noi-2" data-team="noi" data-i="2" aria-label="Parziale noi, terzo tempo">
+        <input class="q-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" id="q-noi-3" data-team="noi" data-i="3" aria-label="Parziale noi, quarto tempo">
+        <div class="q-tot" id="tot-noi">0</div>
+
+        <div class="q-lab">AVV</div>
+        <input class="q-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" id="q-avv-0" data-team="avv" data-i="0" aria-label="Parziale avversari, primo tempo">
+        <input class="q-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" id="q-avv-1" data-team="avv" data-i="1" aria-label="Parziale avversari, secondo tempo">
+        <input class="q-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" id="q-avv-2" data-team="avv" data-i="2" aria-label="Parziale avversari, terzo tempo">
+        <input class="q-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="3" id="q-avv-3" data-team="avv" data-i="3" aria-label="Parziale avversari, quarto tempo">
+        <div class="q-tot" id="tot-avv">0</div>
+
+        <div class="q-lab">PROG</div>
+        <div class="q-prog" id="prog-0">0-0</div>
+        <div class="q-prog" id="prog-1">0-0</div>
+        <div class="q-prog" id="prog-2">0-0</div>
+        <div class="q-prog" id="prog-3">0-0</div>
+        <div></div>
+      </div>
+      <div class="final-line">
+        <span id="final-score">0 — 0</span>
+        <span class="final-badge" id="final-esito"></span>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ============ SCHEDA NOTE / AZIONI ============ -->
+<section id="panel-note" class="panel" aria-label="Note e azioni">
+
+  <div class="section">
+    <div class="section-label">Note partita</div>
+    <textarea class="note-area" id="f-note" data-field="note" placeholder="doppi, situazioni tattiche, impressioni difesa avversaria..."></textarea>
+  </div>
+
+  <div class="section">
+    <button type="button" class="action-btn primary" data-action="riepilogo">Vedi riepilogo</button>
+    <button type="button" class="action-btn save" data-action="salva">Salva partita in archivio</button>
+    <button type="button" class="action-btn share" data-action="backup">Backup (condividi su OneDrive)</button>
+    <button type="button" class="action-btn ghost" data-action="import">Importa backup</button>
+    <button type="button" class="action-btn danger" data-action="reset">Reset partita</button>
+  </div>
+
+  <input type="file" id="file-import" accept="application/json,.json" hidden>
+
+</section>
+
+<!-- ============ SCHEDA ARCHIVIO ============ -->
+<section id="panel-archivio" class="panel" aria-label="Archivio partite">
+
+  <div class="section">
+    <div class="section-label">Medie stagionali</div>
+    <div class="medie-card" id="arch-medie"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Partite salvate</div>
+    <div id="arch-list"></div>
+  </div>
+
+</section>
+
+<!-- ============ NAVIGAZIONE ============ -->
+<nav class="tabbar" aria-label="Sezioni dell'app">
+  <button type="button" class="active" data-action="tab" data-tab="live"><span class="ico">🏀</span>Live</button>
+  <button type="button" data-action="tab" data-tab="partita"><span class="ico">🆚</span>Partita</button>
+  <button type="button" data-action="tab" data-tab="note"><span class="ico">📝</span>Note</button>
+  <button type="button" data-action="tab" data-tab="archivio"><span class="ico">📚</span>Archivio</button>
+</nav>
+
+<!-- ============ MODALE RIEPILOGO ============ -->
+<div class="modal-overlay" id="modal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-title" id="modal-title">Riepilogo</div>
+    <div id="modal-content"></div>
+    <div class="copy-feedback" id="copy-feedback"></div>
+    <div id="modal-actions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
