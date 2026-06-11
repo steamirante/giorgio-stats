@@ -19,9 +19,9 @@
     { key: 'min', label: 'Minuti giocati',  cls: ''      }
   ];
   const SHOT_DEFS = [
-    { key: 't2', label: '2 punti' },
-    { key: 't3', label: '3 punti' },
-    { key: 'tl', label: 'Tiri liberi' }
+    { key: 't2', short: '2P', label: '2 punti' },
+    { key: 't3', short: '3P', label: '3 punti' },
+    { key: 'tl', short: 'TL', label: 'Tiri liberi' }
   ];
 
   let state = GS.blankState(todayISO());
@@ -137,20 +137,20 @@
     const grid = $('shots-grid');
     grid.innerHTML = SHOT_DEFS.map(d => (
       '<div class="shot-card">' +
-        '<div class="shot-title">' + d.label + '</div>' +
-        '<div class="shot-stat" id="disp-' + d.key + '">0/0 · —</div>' +
-        '<div class="shot-row">' +
+        '<div class="shot-info">' +
+          '<span class="shot-title">' + d.short + '</span>' +
+          '<span class="shot-stat" id="disp-' + d.key + '">0/0 · —</span>' +
+        '</div>' +
+        '<div class="shot-cluster">' +
           '<button type="button" class="btn-mini minus" data-action="sdec" data-key="' + d.key + '" data-kind="s" aria-label="Togli segnato ' + d.label + '">−</button>' +
           '<div class="shot-val seg" id="val-' + d.key + '-s">0</div>' +
           '<button type="button" class="btn-mini plus-seg" data-action="sinc" data-key="' + d.key + '" data-kind="s" aria-label="Segnato ' + d.label + '">+</button>' +
         '</div>' +
-        '<div class="shot-cap">segnati</div>' +
-        '<div class="shot-row">' +
+        '<div class="shot-cluster">' +
           '<button type="button" class="btn-mini minus" data-action="sdec" data-key="' + d.key + '" data-kind="m" aria-label="Togli sbagliato ' + d.label + '">−</button>' +
           '<div class="shot-val sba" id="val-' + d.key + '-m">0</div>' +
           '<button type="button" class="btn-mini plus-sba" data-action="sinc" data-key="' + d.key + '" data-kind="m" aria-label="Sbagliato ' + d.label + '">+</button>' +
         '</div>' +
-        '<div class="shot-cap">sbagliati</div>' +
       '</div>'
     )).join('');
   }

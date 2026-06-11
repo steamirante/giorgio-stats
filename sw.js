@@ -1,7 +1,7 @@
 'use strict';
 /* sw.js — funzionamento offline.
    Per pubblicare un aggiornamento dell'app: cambia il numero di VERSION. */
-const VERSION = 'giorgio-stats-v1.0.0';
+const VERSION = 'giorgio-stats-v1.1.0';
 const FONT_CACHE = VERSION + '-fonts';
 
 const CORE = [
