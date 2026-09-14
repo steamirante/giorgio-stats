@@ -1,71 +1,47 @@
-'use strict';
-/* sw.js — funzionamento offline.
-   Per pubblicare un aggiornamento dell'app: cambia il numero di VERSION. */
-const VERSION = 'giorgio-stats-v1.1.0';
-const FONT_CACHE = VERSION + '-fonts';
-
-const CORE = [
+/* Giorgio Stats — service worker v2.0.0 (14/09/2026) */
+var CACHE = 'giorgio-stats-v2.0.0';
+var ASSETS = [
   './',
   './index.html',
-  './styles.css',
-  './core.js',
-  './app.js',
-  './manifest.webmanifest',
+  './manifest.json',
   './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/maskable-512.png',
-  './icons/apple-touch-icon.png'
+  './icons/icon-512.png'
 ];
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(VERSION).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting())
+self.addEventListener('install', function (e) {
+  self.skipWaiting();
+  e.waitUntil(
+    caches.open(CACHE).then(function (c) {
+      return Promise.all(ASSETS.map(function (u) {
+        return c.add(u).catch(function () { return null; });
+      }));
+    })
   );
 });
 
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== VERSION && k !== FONT_CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+self.addEventListener('activate', function (e) {
+  e.waitUntil(
+    caches.keys().then(function (keys) {
+      return Promise.all(keys.map(function (k) {
+        return k === CACHE ? null : caches.delete(k);
+      }));
+    }).then(function () { return self.clients.claim(); })
   );
 });
 
-self.addEventListener('fetch', event => {
-  const req = event.request;
-  if (req.method !== 'GET') return;
-  const url = new URL(req.url);
-
-  /* Google Fonts: cache-first runtime (disponibili offline dopo il primo avvio) */
-  if (url.hostname === 'fonts.googleapis.com' || url.hostname === 'fonts.gstatic.com') {
-    event.respondWith(
-      caches.open(FONT_CACHE).then(cache =>
-        cache.match(req).then(hit =>
-          hit || fetch(req).then(res => {
-            if (res && res.ok) cache.put(req, res.clone());
-            return res;
-          }).catch(() => hit)
-        )
-      )
-    );
-    return;
-  }
-
-  /* App shell (stessa origine): cache-first, con fallback rete e fallback navigazione */
-  if (url.origin === self.location.origin) {
-    event.respondWith(
-      caches.match(req).then(hit =>
-        hit || fetch(req).then(res => {
-          if (res && res.ok) {
-            const copy = res.clone();
-            caches.open(VERSION).then(cache => cache.put(req, copy));
-          }
-          return res;
-        }).catch(() => {
-          if (req.mode === 'navigate') return caches.match('./index.html');
-          return Response.error();
-        })
-      )
-    );
-  }
+self.addEventListener('fetch', function (e) {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    fetch(e.request).then(function (r) {
+      if (r && r.status === 200 && r.type === 'basic') {
+        var copy = r.clone();
+        caches.open(CACHE).then(function (c) { c.put(e.request, copy); });
+      }
+      return r;
+    }).catch(function () {
+      return caches.match(e.request).then(function (m) {
+        return m || caches.match('./index.html');
+      });
+    })
+  );
 });
