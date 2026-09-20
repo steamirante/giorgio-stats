@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#0d0d0f">
+<title>Giorgio Stats</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<style>
+:root{
+  --bg:#0d0d0f; --card:#17171b; --card2:#1e1e23; --line:#2a2a31;
+  --ink:#f2f2f4; --mute:#83838d; --acc:#ff7a18;
+  --ok:#34c759; --no:#ff3b30; --blu:#4a9eff;
+  --r:12px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%;overscroll-behavior:none}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,sans-serif;
+  display:flex; flex-direction:column; height:100dvh;
+  padding-top:env(safe-area-inset-top);
+}
+button{font-family:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);
+  background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
+input[type=number]{-moz-appearance:textfield}
+input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+
+/* ---------- layout ---------- */
+main{flex:1;min-height:0;position:relative}
+.panel{position:absolute;inset:0;display:none;flex-direction:column}
+.panel.on{display:flex}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 10px 18px;flex:1;min-height:0}
+
+/* ---------- nav ---------- */
+nav{display:flex;background:#000;border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);flex:0 0 auto}
+nav button{flex:1;padding:9px 0 7px;font-size:10px;letter-spacing:.5px;color:var(--mute);
+  display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button i{font-style:normal;font-size:17px;line-height:1}
+nav button.on{color:var(--acc)}
+
+/* ---------- scoreboard ---------- */
+.board{flex:0 0 auto;display:flex;align-items:center;gap:8px;
+  padding:7px 10px;background:#000;border-bottom:1px solid var(--line)}
+.bcell{flex:1;text-align:center;min-width:0}
+.bcell b{display:block;font-size:clamp(20px,5.6dvh,30px);font-weight:800;line-height:1.05}
+.bcell span{display:block;font-size:9px;letter-spacing:1px;color:var(--mute);margin-top:1px}
+.bpt b{color:var(--acc)} .bval b{color:var(--ok)}
+.bdd{flex:0 0 auto;font-size:9px;font-weight:700;color:#000;background:var(--acc);
+  border-radius:5px;padding:3px 5px;letter-spacing:.5px;visibility:hidden}
+.bdd.on{visibility:visible}
+
+/* ---------- live ---------- */
+#live .body{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;padding:6px 8px 8px;overflow:hidden}
+.shots{flex:0 0 auto;display:flex;flex-direction:column;gap:5px}
+.srow{display:flex;align-items:center;gap:6px;background:var(--card);border-radius:var(--r);
+  padding:5px 7px;min-height:clamp(42px,7.2dvh,58px)}
+.sname{flex:1 1 0;min-width:0}
+.sname b{display:block;font-size:clamp(11px,1.7dvh,13px);font-weight:700;line-height:1.15}
+.sname span{display:block;font-size:clamp(9px,1.4dvh,11px);color:var(--acc);font-weight:600;margin-top:1px}
+.sbtns{flex:0 0 auto;display:flex;align-items:center;gap:5px}
+.pill{display:flex;align-items:center;background:var(--card2);border-radius:9px;overflow:hidden}
+.pill button{width:clamp(32px,8.4vw,40px);height:clamp(34px,5.6dvh,44px);font-size:19px;font-weight:700;line-height:1}
+.pill .v{min-width:22px;text-align:center;font-size:clamp(14px,2.3dvh,17px);font-weight:800}
+.pill.ok .v{color:var(--ok)} .pill.no .v{color:var(--no)}
+.pill.ok button.p{color:var(--ok)} .pill.no button.p{color:var(--no)}
+.pill button.m{color:var(--mute);font-size:17px}
+
+.grid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);gap:5px;overflow:hidden}
+.cnt{background:var(--card);border-radius:var(--r);display:flex;align-items:center;
+  gap:4px;padding:3px 5px;min-height:0}
+.cnt .lab{flex:1;min-width:0;font-size:clamp(9px,1.45dvh,11px);font-weight:600;
+  color:var(--mute);line-height:1.15}
+.cnt .v{font-size:clamp(15px,2.5dvh,20px);font-weight:800;min-width:20px;text-align:center}
+.cnt button{flex:0 0 auto;width:clamp(28px,7.4vw,36px);height:min(clamp(30px,4.8dvh,48px),100%);
+  font-size:18px;font-weight:700;background:var(--card2);border-radius:8px}
+.cnt button.p{color:var(--acc)} .cnt button.m{color:var(--mute)}
+.cnt.dim .lab{color:#5e5e66}
+
+/* ---------- generic ---------- */
+h2{font-size:12px;letter-spacing:.6px;color:var(--mute);margin:14px 0 7px;font-weight:700}
+h2:first-child{margin-top:2px}
+.box{background:var(--card);border-radius:var(--r);padding:11px}
+.box+.box{margin-top:8px}
+.fld{margin-bottom:9px}
+.fld:last-child{margin-bottom:0}
+.fld label{display:block;font-size:11px;color:var(--mute);margin-bottom:4px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:8px 11px;border-radius:9px;background:var(--card2);border:1px solid var(--line);
+  font-size:13px;font-weight:600}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#000}
+.chip.sm{padding:7px 9px;font-size:12px}
+.btn{display:block;width:100%;padding:13px;border-radius:10px;background:var(--card2);
+  border:1px solid var(--line);font-size:14px;font-weight:700;margin-top:8px;text-align:center}
+.btn.acc{background:var(--acc);border-color:var(--acc);color:#000}
+.btn.dgr{color:var(--no);border-color:#4a2020}
+.two{display:flex;gap:8px}
+.two .btn{margin-top:8px}
+.qrow{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.qrow .qn{flex:0 0 40px;font-size:12px;font-weight:700;color:var(--mute)}
+.qrow input{text-align:center;padding:9px 4px}
+.qrow .sep{color:var(--mute);font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{padding:6px 4px;text-align:right;border-bottom:1px solid var(--line)}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--mute);font-size:10px;font-weight:700;letter-spacing:.3px}
+td.k{color:var(--mute)}
+.gm{display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid var(--line)}
+.gm .d{flex:0 0 44px;font-size:10px;color:var(--mute);line-height:1.25}
+.gm .o{flex:1;min-width:0}
+.gm .o b{display:block;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gm .o span{font-size:10px;color:var(--mute)}
+.gm .s{flex:0 0 auto;text-align:right;font-size:11px;color:var(--mute)}
+.gm .s b{display:block;font-size:15px;color:var(--acc);font-weight:800}
+.tag{display:inline-block;font-size:9px;padding:1px 5px;border-radius:4px;background:var(--card2);
+  color:var(--mute);margin-left:4px}
+.toast{position:fixed;left:50%;bottom:72px;transform:translateX(-50%);background:#000;
+  border:1px solid var(--acc);color:var(--ink);padding:10px 16px;border-radius:9px;
+  font-size:13px;z-index:99;opacity:0;transition:opacity .22s;pointer-events:none;
+  max-width:88vw;text-align:center}
+.toast.on{opacity:1}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:100;display:none;
+  align-items:flex-end;justify-content:center}
+.modal.on{display:flex}
+.sheet{background:var(--card);width:100%;max-height:86dvh;overflow-y:auto;
+  border-radius:16px 16px 0 0;padding:16px 14px calc(16px + env(safe-area-inset-bottom))}
+.hint{font-size:11px;color:var(--mute);line-height:1.45;margin-top:6px}
+.warn{font-size:11px;color:#d8a23a;line-height:1.45;margin-top:6px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<main>
+  <!-- ============ LIVE ============ -->
+  <section class="panel on" id="live">
+    <div class="board">
+      <div class="bcell bpt"><b id="bPt">0</b><span>PUNTI</span></div>
+      <div class="bcell bval"><b id="bVal">0</b><span>VALUTAZIONE</span></div>
+      <div class="bcell"><b id="bMin">0</b><span>MINUTI</span></div>
+      <div class="bdd" id="bDD">DD</div>
+    </div>
+    <div class="body">
+      <div class="shots" id="shots"></div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <!-- ============ PARTITA ============ -->
+  <section class="panel" id="partita">
+    <div class="scroll">
+      <h2>GARA</h2>
+      <div class="box">
+        <div class="fld"><label>Data</label><input type="date" id="fData"></div>
+        <div class="fld"><label>Avversario</label><input type="text" id="fAvv" placeholder="Nome squadra"></div>
+        <div class="fld"><label>Squadra e categoria</label><div class="chips" id="fCat"></div></div>
+        <div class="fld"><label>Tipo gara</label><div class="chips" id="fTipo"></div></div>
+        <div class="fld"><label>Numero di maglia</label><input type="number" id="fMaglia" inputmode="numeric" placeholder="—"></div>
+      </div>
+
+      <h2>MINUTI GIOCATI</h2>
+      <div class="box">
+        <div id="fMinQ"></div>
+        <div class="hint">Totale calcolato: <b id="fMinTot">0</b> minuti.</div>
+      </div>
+
+      <h2>PARZIALI</h2>
+      <div class="box">
+        <div id="fParz"></div>
+        <button class="btn" id="bAddOT">Aggiungi tempo supplementare</button>
+        <div class="hint">Punteggio reale di ogni periodo. Progressivo ed esito calcolati.</div>
+        <div class="hint" id="fProg"></div>
+      </div>
+
+      <h2>DIFFICOLTÀ DELL'AVVERSARIO</h2>
+      <div class="box">
+        <div class="chips" id="fDiff"></div>
+        <div class="hint" id="fDiffTxt">Da assegnare a fine partita, rispetto al livello attuale di Giorgio.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NOTE ============ -->
+  <section class="panel" id="note">
+    <div class="scroll">
+      <h2>NOTA DELLA PARTITA</h2>
+      <div class="box">
+        <textarea id="fNota" rows="7" placeholder="Contesto, avversario, episodi, osservazioni tecniche."></textarea>
+      </div>
+
+      <h2>ARCHIVIAZIONE</h2>
+      <div class="box">
+        <button class="btn acc" id="bSave">Salva partita in archivio</button>
+        <div class="hint">Risalvare la stessa partita la aggiorna, non la duplica.</div>
+        <button class="btn dgr" id="bReset">Azzera partita in corso</button>
+        <div class="hint">Non tocca l'archivio.</div>
+      </div>
+
+      <h2>DATI</h2>
+      <div class="box">
+        <button class="btn" id="bBackup">Backup (condividi o scarica)</button>
+        <button class="btn" id="bImport">Importa backup</button>
+        <button class="btn" id="bCsv">Esporta CSV per Excel</button>
+        <input type="file" id="fFile" accept="application/json,.json" style="display:none">
+        <div class="hint">Il CSV si apre in Excel con doppio clic: punto e virgola, UTF-8.</div>
+      </div>
+
+      <h2>STAGIONE</h2>
+      <div class="box">
+        <div class="fld"><label>Stagione attribuita alle nuove partite</label>
+          <input type="text" id="fStag" placeholder="2026-27"></div>
+        <div class="hint">Assegnata in automatico con taglio al 1° agosto. Modificala solo se serve.</div>
+      </div>
+
+      <div class="box" style="margin-top:14px">
+        <div class="hint">Giorgio Stats v2.1.0 — settembre 2026<br>Creata da Stefano Amirante con Claude</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ARCHIVIO ============ -->
+  <section class="panel" id="archivio">
+    <div class="scroll" id="arcBody"></div>
+  </section>
+</main>
+
+<nav>
+  <button class="on" data-go="live"><i>●</i>LIVE</button>
+  <button data-go="partita"><i>▣</i>PARTITA</button>
+  <button data-go="note"><i>✎</i>NOTE</button>
+  <button data-go="archivio"><i>▤</i>ARCHIVIO</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
+<script>
+/* =========================================================
+   GIORGIO STATS v2.1.0 — settembre 2026
+   ========================================================= */
+(function(){
+'use strict';
+
+/* ---------- dataset storico 2025-26 ---------- */
+var SEED = [{"data":"2026-02-18","avversario":"Comense","categoria":"GSV U13S","minuti":21,"rimO":7,"rimD":3,"ast":1,"pp":2,"pr":0,"stopDate":0,"fs":0,"fc":4,"p2s":2,"p2t":6,"p3s":0,"p3t":2,"tls":0,"tlt":0,"risultatoTesto":"","nota":"Arbitraggio condizionante, reazione negativa. Avversario fisicamente superiore. #13 Comense: 1 anno piu grande.","quartiGiocati":"tutti","tipoGara":"Campionato","stagione":"2025-26","pt":4,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-02-18|Comense|GSV U13S","ndStop":true},{"data":"2026-02-22","avversario":"Cucciago","categoria":"GSV U13S","minuti":19,"rimO":4,"rimD":2,"ast":0,"pp":1,"pr":0,"stopDate":0,"fs":1,"fc":1,"p2s":1,"p2t":4,"p3s":1,"p3t":2,"tls":0,"tlt":2,"risultatoTesto":"","nota":"Squadra da Gold in Silver (polemiche). Pressing asfissiante, zona 2-3. GS Villaguardia non preparata tatticamente.","quartiGiocati":"tutti","tipoGara":"Campionato","stagione":"2025-26","pt":5,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-02-22|Cucciago|GSV U13S","ndStop":true},{"data":"2026-02-28","avversario":"Cantu","categoria":"GSV U13S","minuti":21,"rimO":4,"rimD":6,"ast":0,"pp":1,"pr":0,"stopDate":0,"fs":4,"fc":0,"p2s":4,"p2t":9,"p3s":0,"p3t":1,"tls":4,"tlt":7,"risultatoTesto":"","nota":"Cantu squadra B (rosa 2014, pari eta). Prima esposizione a settore strutturato. Doppia doppia (12/10). 4 fs.","quartiGiocati":"tutti","tipoGara":"Campionato","stagione":"2025-26","pt":12,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-02-28|Cantu|GSV U13S","ndStop":true},{"data":"2026-03-01","avversario":"Albavilla","categoria":"GSV U12","minuti":16,"rimO":9,"rimD":4,"ast":0,"pp":1,"pr":3,"stopDate":2,"fs":2,"fc":0,"p2s":6,"p2t":11,"p3s":0,"p3t":1,"tls":0,"tlt":2,"risultatoTesto":"","nota":"Vittoria squadra. Giorgio Q pareggiato si e preso la squadra sulle spalle. Doppia doppia (12/13). Arbitraggio inesistente.","quartiGiocati":"Q:2°-3°-4°","tipoGara":"Campionato","stagione":"2025-26","pt":12,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-03-01|Albavilla|GSV U12","ndStop":true},{"data":"2026-03-07","avversario":"Turate","categoria":"GSV U13S","minuti":31,"rimO":4,"rimD":3,"ast":0,"pp":0,"pr":4,"stopDate":0,"fs":3,"fc":3,"p2s":6,"p2t":11,"p3s":0,"p3t":5,"tls":3,"tlt":6,"risultatoTesto":"V+3","nota":"Vittoria Villaguardia di 3 punti. Gestione solida sotto eta. 5 tiri da tre (0/5): responsabilita presa ma volume eccessivo. Chiusura con palla in mano.","quartiGiocati":"tutti","tipoGara":"Campionato","stagione":"2025-26","pt":15,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-03-07|Turate|GSV U13S","ndStop":true},{"data":"2026-03-08","avversario":"Lecco","categoria":"GSV U12","minuti":16,"rimO":4,"rimD":9,"ast":0,"pp":0,"pr":1,"stopDate":0,"fs":3,"fc":0,"p2s":4,"p2t":8,"p3s":0,"p3t":0,"tls":0,"tlt":4,"risultatoTesto":"P Q4","nota":"Arbitraggio scandaloso. Ultimo quarto degenerato in mischia rugby — due compagni infortunati. 13 rimbalzi. TL 0/4 nel caos.","quartiGiocati":"Q:2°-3°","tipoGara":"Campionato","stagione":"2025-26","pt":8,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-03-08|Lecco|GSV U12","ndStop":true},{"data":"2026-03-14","avversario":"Lurate Caccivio","categoria":"GSV U12","minuti":16,"rimO":3,"rimD":3,"ast":1,"pp":2,"pr":1,"stopDate":0,"fs":2,"fc":0,"p2s":5,"p2t":9,"p3s":0,"p3t":0,"tls":2,"tlt":2,"risultatoTesto":"P diff.can.","nota":"Q1 perso 18-2 (senza Giorgio). Q2 vinto 16-5. Q3 vinto +2 (vs loro quintetto forte). Q4 perso -4. Prima volta orientato al risultato. Tende a coinvolgere troppo compagni. Ottimo arbitraggio.","quartiGiocati":"Q:2°-3°","tipoGara":"Campionato","stagione":"2025-26","pt":12,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-03-14|Lurate Caccivio|GSV U12","ndStop":true},{"data":"2026-03-21","avversario":"Cucciago","categoria":"GSV U12","minuti":16,"rimO":3,"rimD":4,"ast":0,"pp":0,"pr":1,"stopDate":0,"fs":4,"fc":1,"p2s":0,"p2t":9,"p3s":0,"p3t":0,"tls":1,"tlt":1,"risultatoTesto":"P Q2+Q4","nota":"Partita pessima senza riserve. Atteggiamento mentale sbagliato: incaponito su soluzioni che non arrivavano. Lento. Posizionamento quasi sempre sbagliato. Troppo gioco fuori dai tre punti. Quando ha attaccato il ferro lo ha fatto al rallentatore con palla bassa. 0/9 al tiro da due. Da rivalutare settimana prossima per capire se trend o episodio.","quartiGiocati":"Q:2°-4°","tipoGara":"Campionato","stagione":"2025-26","pt":1,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-03-21|Cucciago|GSV U12","ndStop":true},{"data":"2026-03-28","avversario":"Pescate","categoria":"GSV U12","minuti":16,"rimO":3,"rimD":8,"ast":1,"pp":3,"pr":3,"stopDate":0,"fs":2,"fc":0,"p2s":4,"p2t":7,"p3s":0,"p3t":0,"tls":2,"tlt":2,"risultatoTesto":"P","nota":"Partita persa (tutti e 4 i quarti). Squadra avversaria tecnicamente e tatticamente superiore — differenza impostazione diventata elemento persistente. Formula campionato porta Giorgio a giocare sempre con i 4 compagni meno pronti. Raddoppio sistematico subito. Pochi palloni giocabili dai compagni (lo cercano poco). Quanto c'e lo ha creato da solo. Atteggiamento ancora troppo passivo a rimbalzo. Sbagliati i primi 2 tiri (eco 0/9 settimana precedente) ma si e ripreso. Non dominante ma senza passaggio totalmente a vuoto.","quartiGiocati":"Q:2°-4°","tipoGara":"Campionato","stagione":"2025-26","pt":10,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-03-28|Pescate|GSV U12","ndStop":true},{"data":"2026-04-04","avversario":"Cus Parma","categoria":"GSV U12","minuti":12,"rimO":3,"rimD":4,"ast":1,"pp":0,"pr":2,"stopDate":0,"fs":4,"fc":4,"p2s":8,"p2t":8,"p3s":0,"p3t":0,"tls":5,"tlt":6,"risultatoTesto":"","nota":"Torneo Pesaro — partita 1. Ha giocato Q2 e Q4. 8/8 al tiro da due — prestazione eccezionale. Ha recepito l'indicazione sull'uso del fisico in attacco: ha provocato falli (4 fs, 4 fc). Quintetto con i compagni meno pronti ma ha fatto da valore aggiunto netto. Avversari dignitosi senza picchi clamorosi.","quartiGiocati":"Q:2°-4°","tipoGara":"Torneo","stagione":"2025-26","pt":21,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-04|Cus Parma|GSV U12","ndStop":true},{"data":"2026-04-04","avversario":"Fiumicino","categoria":"GSV U12","minuti":9,"rimO":1,"rimD":1,"ast":0,"pp":0,"pr":5,"stopDate":0,"fs":3,"fc":1,"p2s":3,"p2t":4,"p3s":0,"p3t":0,"tls":5,"tlt":5,"risultatoTesto":"","nota":"Torneo Pesaro — partita 2. Ha giocato Q2 e Q4. Solo 9 minuti (coach lo ha tenuto meno del solito, soprattutto Q4 della prima partita ~3 min). 5 palle recuperate — difesa attiva. Rimbalzi bassi (2) per il minutaggio ridotto. TL 5/5 (100%). Stesso pattern provocazione falli confermato.","quartiGiocati":"Q:2°-4°","tipoGara":"Torneo","stagione":"2025-26","pt":11,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-04|Fiumicino|GSV U12","ndStop":true},{"data":"2026-04-05","avversario":"Cornaredo","categoria":"GSV U12","minuti":13,"rimO":2,"rimD":3,"ast":0,"pp":0,"pr":3,"stopDate":0,"fs":0,"fc":0,"p2s":4,"p2t":13,"p3s":0,"p3t":0,"tls":0,"tlt":0,"risultatoTesto":"V","nota":"Torneo Pesaro — SEMIFINALE. Vittoria (Q1+Q2+Q3 vinti, Q4 perso ininfluente). Avversari hanno schierato migliori vs Giorgio in Q2 e Q4: raddoppio sistematico, tripla marcatura sotto canestro, metro arbitrale permissivo (0 fs nonostante botte). % al tiro bassa per condizioni non per tecnica. MIGLIORE PARTITA DIFENSIVA IN CARRIERA: ha annullato il loro top player (stesso fisico) per i due tempi giocati (Q2 intero + Q4 parziale — tolto dal coach). 3 palle recuperate, 0 palle perse, 0 falli commessi. Ha scelto il piano difensivo anziche aspettare fischi. Maturita competitiva evidente.","quartiGiocati":"Q:2°-4°(parz.)","tipoGara":"Torneo","stagione":"2025-26","pt":8,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-05|Cornaredo|GSV U12","ndStop":true},{"data":"2026-04-05","avversario":"Pesaro","categoria":"GSV U12","minuti":13,"rimO":4,"rimD":7,"ast":3,"pp":0,"pr":1,"stopDate":0,"fs":0,"fc":2,"p2s":5,"p2t":9,"p3s":0,"p3t":0,"tls":0,"tlt":0,"risultatoTesto":"V","nota":"Torneo Pesaro — partita 3 girone. Vittoria squadra. Ha giocato Q2 e Q4 con quintetto piu debole. Partita relativamente facile. Linea statistica completa: 10pt/11rim/3ast/0pp in 13 min. Migliore gestione complessiva — assist record. Nel Q4 a vittoria certa coach lo ha fatto giocare poco e gli altri hanno perso il quarto.","quartiGiocati":"Q:2°-4°","tipoGara":"Torneo","stagione":"2025-26","pt":10,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-05|Pesaro|GSV U12","ndStop":true},{"data":"2026-04-06","avversario":"Mirano","categoria":"GSV U12","minuti":16,"rimO":1,"rimD":8,"ast":0,"pp":0,"pr":2,"stopDate":1,"fs":0,"fc":1,"p2s":1,"p2t":4,"p3s":0,"p3t":0,"tls":0,"tlt":0,"risultatoTesto":"P (finale)","nota":"Torneo Pesaro — FINALE (2° posto). Persa (tutti e 4 i tempi). Contesto extrabasket gravissimo: morte improvvisa nella notte del padre di un compagno. Squadra spaccata in due gruppi — Giorgio rimasto nel gruppo piu isolato. Partita oggettivamente giocata male da tutta la squadra. 9 rimbalzi (1O/8D) in 16 min — ha continuato a lottare fisicamente. Tiro completamente bloccato (1/4). Pattern regressione al tiro sotto forte pressione emotiva da tenere in osservazione.","quartiGiocati":"Q:2°-4°","tipoGara":"Torneo","stagione":"2025-26","pt":2,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-06|Mirano|GSV U12","ndStop":true},{"data":"2026-04-09","avversario":"Caratese","categoria":"GSV U13S","minuti":28,"rimO":2,"rimD":5,"ast":2,"pp":2,"pr":4,"stopDate":0,"fs":0,"fc":0,"p2s":8,"p2t":11,"p3s":1,"p3t":4,"tls":0,"tlt":0,"risultatoTesto":"P-27","nota":"Capolista imbattuta U13, miglior prospetto del girone (MVP campus Olimpia dic 2024 — stessa squadra di Giorgio). All'andata persa di 60, stasera di 27. A meta gara -6. Spostato direttamente su Giorgio nella seconda meta partita. 8/11 da due (73%) marcato dal loro top player piu grande: conferma che sale di livello con avversari forti in contesto di squadra coeso. Contrasto netto con finale Pesaro (1/4 con avversario piu debole ma squadra spaccata). Pattern relazionale confermato: non gioca da solo, si esalta con compagni in cui crede.","quartiGiocati":"tutti","tipoGara":"Campionato","stagione":"2025-26","pt":19,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-09|Caratese|GSV U13S","ndStop":true},{"data":"2026-04-11","avversario":"Appiano Gentile","categoria":"GSV U13S","minuti":24,"rimO":4,"rimD":7,"ast":0,"pp":3,"pr":1,"stopDate":0,"fs":2,"fc":3,"p2s":7,"p2t":13,"p3s":1,"p3t":1,"tls":0,"tlt":3,"risultatoTesto":"P-24","nota":"Seconda della classe U13 (due giocatori fisicamente dominanti). All'andata persa di ~60, stasera di 24. Migliore marcatore di squadra. Tiri presi sotto canestro vs avversari piu alti — non si e tirato fuori dal contatto. TL 0/3: ferro dietro/doppio ferro, non meccanica — episodio isolato. 3 PP leggermente alte, probabilmente da pressione fisica avversari. In classifica marcatori FIP U13: 10° con 15 gare (meno gare di tutti per impegni U12).","quartiGiocati":"tutti","tipoGara":"Campionato","stagione":"2025-26","pt":17,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-11|Appiano Gentile|GSV U13S","ndStop":true},{"data":"2026-04-12","avversario":"Sondrio","categoria":"GSV U12","minuti":16,"rimO":2,"rimD":5,"ast":0,"pp":1,"pr":3,"stopDate":0,"fs":2,"fc":1,"p2s":4,"p2t":11,"p3s":0,"p3t":0,"tls":1,"tlt":1,"risultatoTesto":"V Q1+Q3","nota":"Trasferta Sondrio (2h a/r). Q1 vinto, Q3 pareggiato (ha giocato Q1 e Q3). Raddoppi/tripli sistematici sul ferro, arbitraggio permissivo. Squadra poco coesa — pattern relazionale confermato (meno sul pezzo). 4/11 da due contestualizato. Risultato mai in bilico — vinti 3 tempi su 4.","quartiGiocati":"Q:1°-3°","tipoGara":"Campionato","stagione":"2025-26","pt":9,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-12|Sondrio|GSV U12","ndStop":true},{"data":"2026-04-18","avversario":"Tavernerio","categoria":"GSV U12","minuti":16,"rimO":1,"rimD":1,"ast":0,"pp":0,"pr":6,"stopDate":2,"fs":3,"fc":0,"p2s":9,"p2t":15,"p3s":0,"p3t":0,"tls":2,"tlt":4,"risultatoTesto":"V diff.can.","nota":"Tavernerio girone Gold. Q1 e Q3 vinti +8 e +6; Q2 e Q4 persi -2 e -3. PR=6, Stop=2. 0 PP. 18pt in 16 min su 32 totali squadra vs girone Gold.","quartiGiocati":"Q:1°-3°","tipoGara":"Campionato","stagione":"2025-26","pt":20,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-18|Tavernerio|GSV U12","ndStop":true},{"data":"2026-04-19","avversario":"Saronno","categoria":"GSV U13S","minuti":27,"rimO":4,"rimD":6,"ast":0,"pp":2,"pr":3,"stopDate":0,"fs":2,"fc":2,"p2s":5,"p2t":14,"p3s":0,"p3t":4,"tls":1,"tlt":3,"risultatoTesto":"P-24","nota":"Saronno forte, sotto eta. Tutti gli 11pt nei Q1-Q2. Q3-Q4 crollo dopo cambio difensivo e spostamento su play. 0/4 da tre: volume eccessivo. Risultato 68-44.","quartiGiocati":"tutti","tipoGara":"Campionato","stagione":"2025-26","pt":11,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-19|Saronno|GSV U13S","ndStop":true},{"data":"2026-04-25","avversario":"Alebbio","categoria":"GSV U13S","minuti":25,"rimO":1,"rimD":5,"ast":0,"pp":1,"pr":7,"stopDate":0,"fs":5,"fc":0,"p2s":6,"p2t":11,"p3s":0,"p3t":2,"tls":6,"tlt":6,"risultatoTesto":"P 49-28","nota":"Double-header gara 1. 18pt = 57% punti squadra. PR=7 massimo stagionale assoluto. TL 6/6 prima perfezione U13. FC=0.","quartiGiocati":"tutti","tipoGara":"Campionato","stagione":"2025-26","pt":18,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-25|Alebbio|GSV U13S","ndStop":true},{"data":"2026-04-25","avversario":"Cermenate","categoria":"GSV U12","minuti":16,"rimO":3,"rimD":7,"ast":0,"pp":1,"pr":2,"stopDate":1,"fs":3,"fc":1,"p2s":6,"p2t":12,"p3s":0,"p3t":0,"tls":2,"tlt":4,"risultatoTesto":"P","nota":"Capolista girone Gold. Double-header gara 2. Q1 perso 6-10: tutti i 6pt suoi. Q3 pareggiato: 8pt + 4pt compagno. Doppia doppia 14/10. 0 tiri da tre.","quartiGiocati":"Q:1°-3°","tipoGara":"Campionato","stagione":"2025-26","pt":14,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-04-25|Cermenate|GSV U12","ndStop":true},{"data":"2026-05-02","avversario":"Abbiategrasso","categoria":"GSV U13S","minuti":22,"rimO":4,"rimD":9,"ast":2,"pp":1,"pr":2,"stopDate":1,"fs":1,"fc":2,"p2s":6,"p2t":12,"p3s":1,"p3t":3,"tls":0,"tlt":0,"risultatoTesto":"V 56-53","nota":"Playoff U13 Silver, ultima testa di serie vs prima. 15pt (FIP riporta 17, probabile errore attribuzione), 13 rimbalzi massimo U13, 2 assist prima multi-assist stagionale.","quartiGiocati":"tutti","tipoGara":"Playoff","stagione":"2025-26","pt":15,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-02|Abbiategrasso|GSV U13S","ndStop":true},{"data":"2026-05-03","avversario":"Costamasnaga","categoria":"GSV U12","minuti":16,"rimO":2,"rimD":1,"ast":0,"pp":1,"pr":0,"stopDate":0,"fs":4,"fc":0,"p2s":5,"p2t":18,"p3s":0,"p3t":0,"tls":3,"tlt":5,"risultatoTesto":"P","nota":"Trasferta mattutina dopo rientro tardo. 5/18 (28%) peggior dato stagionale. Avversario +6-7cm e +15kg. Persi tutti e 4 i quarti.","quartiGiocati":"Q:1°-3°","tipoGara":"Campionato","stagione":"2025-26","pt":13,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-03|Costamasnaga|GSV U12","ndStop":true},{"data":"2026-05-08","avversario":"Gorle","categoria":"GSV U13S","minuti":27,"rimO":1,"rimD":5,"ast":0,"pp":1,"pr":2,"stopDate":3,"fs":3,"fc":2,"p2s":4,"p2t":13,"p3s":0,"p3t":0,"tls":3,"tlt":6,"risultatoTesto":"P ~-6/-8","nota":"Playoff U13 sedicesimi, eliminazione. Partita alla portata persa su indicazioni tattiche cambiate il giorno prima. Stop=3 massimo U13. Mancata lettura situazionale autonoma.","quartiGiocati":"tutti","tipoGara":"Playoff","stagione":"2025-26","pt":11,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-08|Gorle|GSV U13S","ndStop":true},{"data":"2026-05-08","avversario":"Gorle","categoria":"GSV U12","minuti":13,"rimO":0,"rimD":3,"ast":0,"pp":0,"pr":1,"stopDate":1,"fs":2,"fc":2,"p2s":2,"p2t":8,"p3s":0,"p3t":0,"tls":2,"tlt":4,"risultatoTesto":"V","nota":"Vinta 3 quarti su 4. Prima sostituzione stagionale per rendimento: contesto poco stimolante, adeguamento al ribasso.","quartiGiocati":"Q:1°-3°","tipoGara":"Campionato","stagione":"2025-26","pt":6,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-08|Gorle|GSV U12","ndStop":true},{"data":"2026-05-16","avversario":"BAT Ticino","categoria":"Lecco U12","minuti":16,"rimO":3,"rimD":4,"ast":0,"pp":0,"pr":0,"stopDate":0,"fs":0,"fc":1,"p2s":3,"p2t":8,"p3s":0,"p3t":1,"tls":0,"tlt":2,"risultatoTesto":"P -7","nota":"Torneo AVIS Cernusco, Memorial Mitola (regole U14). Girone H gara 1 in prestito al Lecco, zero allenamenti insieme. Timidezza in attacco, buona difesa.","quartiGiocati":"tutti","tipoGara":"Torneo","stagione":"2025-26","pt":6,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-16|BAT Ticino|Lecco U12","ndStop":true},{"data":"2026-05-16","avversario":"Liberi e Forti Monza","categoria":"Lecco U12","minuti":16,"rimO":3,"rimD":2,"ast":0,"pp":1,"pr":0,"stopDate":1,"fs":2,"fc":0,"p2s":3,"p2t":6,"p3s":0,"p3t":0,"tls":0,"tlt":4,"risultatoTesto":"P","nota":"Torneo AVIS Cernusco, girone H gara 2. Campo pessimo: Monza 4/21 ai liberi. 6pt = 40% dei punti squadra nei suoi quarti.","quartiGiocati":"tutti","tipoGara":"Torneo","stagione":"2025-26","pt":6,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-16|Liberi e Forti Monza|Lecco U12","ndStop":true},{"data":"2026-05-17","avversario":"Brescia","categoria":"Lecco U12","minuti":16,"rimO":4,"rimD":3,"ast":0,"pp":0,"pr":2,"stopDate":0,"fs":3,"fc":0,"p2s":5,"p2t":13,"p3s":0,"p3t":0,"tls":2,"tlt":6,"risultatoTesto":"V +12","nota":"Torneo AVIS Cernusco, semifinale 21-24. Brescia con i 2015. Prima vittoria del Lecco. Integrazione in costruzione.","quartiGiocati":"tutti","tipoGara":"Torneo","stagione":"2025-26","pt":12,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-17|Brescia|Lecco U12","ndStop":true},{"data":"2026-05-17","avversario":"Calusco","categoria":"Lecco U12","minuti":16,"rimO":3,"rimD":7,"ast":0,"pp":0,"pr":3,"stopDate":0,"fs":2,"fc":0,"p2s":7,"p2t":14,"p3s":0,"p3t":0,"tls":3,"tlt":4,"risultatoTesto":"V","nota":"Torneo AVIS Cernusco, finale 21-22. Quinta partita in due giorni. Piena integrazione: 17pt/10rim, 0 palle perse, 0 falli. Terza doppia doppia stagionale. Applauso di compagni, genitori e staff. Lecco esprime interesse formale.","quartiGiocati":"tutti","tipoGara":"Torneo","stagione":"2025-26","pt":17,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-17|Calusco|Lecco U12","ndStop":true},{"data":"2026-05-17","avversario":"Collegno","categoria":"Lecco U12","minuti":16,"rimO":2,"rimD":5,"ast":0,"pp":2,"pr":1,"stopDate":1,"fs":1,"fc":1,"p2s":1,"p2t":3,"p3s":0,"p3t":0,"tls":1,"tlt":4,"risultatoTesto":"P -2","nota":"Torneo AVIS Cernusco, quarti bronze. Persa di 2. Ultimo secondo: rimbalzo offensivo e canestro annullato. Primo segnale di integrazione nel sistema Lecco.","quartiGiocati":"tutti","tipoGara":"Torneo","stagione":"2025-26","pt":3,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-17|Collegno|Lecco U12","ndStop":true},{"data":"2026-05-20","avversario":"Rovagnate","categoria":"GSV U12","minuti":14,"rimO":5,"rimD":2,"ast":0,"pp":2,"pr":1,"stopDate":0,"fs":0,"fc":1,"p2s":6,"p2t":16,"p3s":0,"p3t":0,"tls":0,"tlt":0,"risultatoTesto":"V","nota":"Torneo Tavernerio, campo esterno (mattonelle plastica, tabellone vibrante). 6/16 per 5 rimbalzi offensivi: ha insistito attaccando il ferro difficile. Vinti tutti e 4 i quarti.","quartiGiocati":"Q:1°-3°","tipoGara":"Torneo","stagione":"2025-26","pt":12,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-20|Rovagnate|GSV U12","ndStop":true},{"data":"2026-05-21","avversario":"Carate Brianza","categoria":"GSV U13S","minuti":25,"rimO":1,"rimD":7,"ast":0,"pp":0,"pr":2,"stopDate":0,"fs":1,"fc":1,"p2s":7,"p2t":13,"p3s":0,"p3t":0,"tls":0,"tlt":2,"risultatoTesto":"V 49-47","nota":"Torneo Tavernerio, campo interno. Carate Brianza campione Silver della stagione regolare, imbattuta. Miglior prospetto Silver in campo (2013, 185cm+). 7/13 (54%) seconda miglior percentuale U13. 0 palle perse. Sotto -2 nel finale: rimbalzo offensivo e canestro da sotto per pareggiare, poi il compagno ruba palla e chiude.","quartiGiocati":"tutti","tipoGara":"Torneo","stagione":"2025-26","pt":14,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-21|Carate Brianza|GSV U13S","ndStop":true},{"data":"2026-05-27","avversario":"Tavernerio","categoria":"GSV U12","minuti":16,"rimO":5,"rimD":6,"ast":2,"pp":1,"pr":1,"stopDate":0,"fs":4,"fc":0,"p2s":6,"p2t":9,"p3s":1,"p3t":1,"tls":3,"tlt":5,"risultatoTesto":"V","nota":"Torneo Tavernerio, campo interno. Finale: sotto -1 a 17 secondi, raddoppio e fallo a fine bonus, pareggio dalla lunetta, poi step-back da tre segnato a 8 secondi. Primo canestro da tre in U12. 6/9 (67%) massimo stagionale assoluto. Quarta doppia doppia. Prestazione piu completa della stagione U12.","quartiGiocati":"Q:1°-3°","tipoGara":"Torneo","stagione":"2025-26","pt":18,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-05-27|Tavernerio|GSV U12","ndStop":true},{"data":"2026-06-01","avversario":"Figino","categoria":"GSV U12","minuti":14,"rimO":7,"rimD":5,"ast":0,"pp":1,"pr":3,"stopDate":1,"fs":0,"fc":1,"p2s":6,"p2t":12,"p3s":0,"p3t":0,"tls":0,"tlt":0,"risultatoTesto":"V 3Q/4","nota":"Torneo Tavernerio, campo esterno con sole diretto alle 17. 7 rimbalzi offensivi massimo stagionale assoluto. 12 rimbalzi in 14 minuti, quinta doppia doppia. Auto-correzione applicata dopo la prima gara del torneo: zero tiri da fuori, solo sotto e media distanza.","quartiGiocati":"Q:2°-4°","tipoGara":"Torneo","stagione":"2025-26","pt":12,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-06-01|Figino|GSV U12","ndStop":true},{"data":"2026-06-06","avversario":"Cermenate","categoria":"GSV U12","minuti":16,"rimO":0,"rimD":2,"ast":1,"pp":1,"pr":3,"stopDate":1,"fs":7,"fc":1,"p2s":5,"p2t":8,"p3s":0,"p3t":0,"tls":5,"tlt":8,"risultatoTesto":"P 1-3","nota":"Torneo Tavernerio, semifinale Gold. Cermenate al completo, inclusi i 3 titolari che in campionato giocavano U13 Gold. Q1 vinto: 7pt e 1 assist su 10 totali squadra. FS=7 massimo stagionale assoluto, marcatura fisica sistematica. 63% da due e 63% ai liberi sotto pressione massima. Cermenate vince 3-1 e poi il torneo (finale 4-0 su Lecco).","quartiGiocati":"Q:1°-3°","tipoGara":"Torneo","stagione":"2025-26","pt":15,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-06-06|Cermenate|GSV U12","ndStop":true},{"data":"2026-06-07","avversario":"Pescate","categoria":"GSV U12","minuti":16,"rimO":3,"rimD":6,"ast":0,"pp":0,"pr":4,"stopDate":3,"fs":4,"fc":0,"p2s":5,"p2t":11,"p3s":0,"p3t":0,"tls":2,"tlt":7,"risultatoTesto":"V 3-1 (3° posto)","nota":"Torneo Tavernerio, finale 3-4 posto. In campionato aveva perso 4 quarti su 4 contro Pescate. Q1 vinto 17-9, parziale piu netto documentato. Stop=3 massimo stagionale U12. 0 falli commessi con 4 subiti. 0 palle perse.","quartiGiocati":"Q:1°-3°","tipoGara":"Torneo","stagione":"2025-26","pt":12,"stopSubite":0,"parziali":[],"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-06-07|Pescate|GSV U12","ndStop":true},{"data":"2026-06-13","avversario":"CBO Blu","categoria":"GSV U13S","minuti":26,"rimO":3,"rimD":5,"ast":0,"pp":4,"pr":1,"stopDate":0,"stopSubite":1,"fs":5,"fc":1,"p2s":9,"p2t":21,"p3s":0,"p3t":0,"tls":6,"tlt":10,"parziali":[[10,30],[12,65],[27,93],[39,117]],"risultatoTesto":"P 39-117","quartiGiocati":"tutti","nota":"Torneo Tavernerio, semifinale Gold U13 sotto eta. CBO = selezione di societa area Lecco, ultima gara del girone vinta con 116 punti di scarto (circa 140pt in 40 minuti). Q1: i 10 punti di Villa Guardia tutti realizzati da Giorgio (100%). Totale 24/39 = 61.5% dei punti squadra. 24pt nuovo massimo stagionale. Raddoppi e triplici sistematici, PP=4 nuovo massimo. FC=1 in 26 minuti contro fisicita nettamente superiore. TL 6/10: 2 errori iniziali poi 4/4, recupero sotto pressione massima. Ultima partita della stagione 2025-26.","tipoGara":"Torneo","stagione":"2025-26","pt":24,"p2sPit":null,"p2tPit":null,"fsTiri":null,"minutiQ":[],"difficolta":null,"maglia":"","id":"2026-06-13|CBO Blu|GSV U13S","ndStop":false}];
+
+/* ---------- costanti ---------- */
+var K_STATE='gs2.state', K_ARC='gs2.archive', K_SEED='gs2.seeded', K_MAG='gs2.maglie', K_STAG='gs2.stagione';
+var K_MIG2='gs2.mig2';
+var K_MIG3='gs2.mig3';
+/* parziali: da parziali di quarto a progressivi da tabellone */
+var MIG3_CUMUL_IDS=["2026-06-13|CBO Blu|GSV U13S"];
+/* torneo AVIS Cernusco: giocato in prestito al Lecco, non con Villa Guardia */
+var MIG2_IDS=["2026-05-16|BAT Ticino|GSV U12", "2026-05-16|Liberi e Forti Monza|GSV U12", "2026-05-17|Brescia|GSV U12", "2026-05-17|Calusco|GSV U12", "2026-05-17|Collegno|GSV U12"];
+
+var CATS = ['GSV U13S','GSV U14S','PV U13G','PV U14S'];
+var TIPI = ['Campionato','Torneo','Amichevole','Playoff'];
+var DIFF_TXT = {
+  1:'1 — nettamente inferiore',
+  2:'2 — inferiore',
+  3:'3 — equivalente',
+  4:'4 — superiore',
+  5:'5 — nettamente superiore'
+};
+
+/* righe di tiro, ordinate per frequenza reale */
+var SHOTS = [
+  {k:'p2Pit', n:'2 punti', s:'dal pitturato'},
+  {k:'p2Fuo', n:'2 punti', s:'fuori dal pitturato'},
+  {k:'tl',    n:'Tiri liberi', s:''},
+  {k:'p3',    n:'3 punti', s:''}
+];
+
+/* contatori, ordinati per frequenza reale */
+var CNTS = [
+  {k:'rimO', l:'Rimbalzi offensivi'},
+  {k:'rimD', l:'Rimbalzi difensivi'},
+  {k:'fsTiri', l:'Fallo subito con tiri liberi'},
+  {k:'fsNo', l:'Fallo subito senza tiri'},
+  {k:'pr', l:'Palle recuperate'},
+  {k:'pp', l:'Palle perse'},
+  {k:'fc', l:'Falli commessi'},
+  {k:'ast', l:'Assist'},
+  {k:'stopD', l:'Stoppate date', dim:1},
+  {k:'stopS', l:'Stoppate subite', dim:1}
+];
+
+/* ---------- utilità ---------- */
+function $(id){return document.getElementById(id);}
+function el(t,c,x){var e=document.createElement(t); if(c)e.className=c; if(x!=null)e.textContent=x; return e;}
+function n(v){v=parseInt(v,10); return isNaN(v)?0:v;}
+/* null = non inserito: resta distinto dallo zero */
+function nz(v){ if(v===''||v==null) return null; v=parseInt(v,10); return isNaN(v)?null:v; }
+function fnum(v){ return v==null?'?':String(v); }
+function fpair(p){ p=p||[]; return fnum(p[0])+'-'+fnum(p[1]); }
+/* punti del singolo periodo, per differenza fra progressivi */
+function quartiDa(parz){
+  var out=[],pa=0,pb=0,ok=true,i,a,b;
+  parz=parz||[];
+  for(i=0;i<parz.length;i++){
+    a=parz[i][0]; b=parz[i][1];
+    if(!ok || a==null || b==null){
+      out.push('?');
+      if(a!=null && b!=null){ pa=a; pb=b; ok=true; } else { ok=false; }
+    } else {
+      out.push((a-pa)+'-'+(b-pb)); pa=a; pb=b;
+    }
+  }
+  return out;
+}
+function todayISO(){var d=new Date(),p=function(x){return(x<10?'0':'')+x;};
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
+function itDate(iso){if(!iso)return''; var p=iso.split('-'); return p[2]+'/'+p[1]+'/'+p[0].slice(2);}
+function pct(s,t){return t>0?Math.round(s/t*1000)/10:null;}
+function fpct(s,t){var p=pct(s,t); return p===null?'—':(p.toFixed(1)+'%');}
+function avg(x,g){return g>0?Math.round(x/g*100)/100:0;}
+
+/* stagione da data, taglio al 1 agosto */
+function seasonOf(iso){
+  var p=(iso||todayISO()).split('-'), y=n(p[0]), m=n(p[1]);
+  var start = (m>=8)? y : y-1;
+  return start+'-'+String(start+1).slice(2);
+}
+
+/* ---------- stato ---------- */
+function blank(){
+  var s={data:todayISO(), avversario:'', categoria:CATS[0], tipoGara:'Campionato',
+         maglia:'', stagione:'', difficolta:null, nota:'',
+         minutiQ:[null,null,null,null],
+         parziali:[[null,null],[null,null],[null,null],[null,null]]};
+  var i;
+  for(i=0;i<SHOTS.length;i++){ s[SHOTS[i].k+'S']=0; s[SHOTS[i].k+'X']=0; }
+  for(i=0;i<CNTS.length;i++){ s[CNTS[i].k]=0; }
+  s.stagione = seasonOf(s.data);
+  return s;
+}
+var state, archive=[], maglie={}, stagManuale=null;
+
+function load(k,d){ try{var v=localStorage.getItem(k); return v?JSON.parse(v):d;}catch(e){return d;} }
+function save(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} }
+function saveState(){ save(K_STATE,state); }
+function saveArc(){ save(K_ARC,archive); }
+
+/* ---------- calcoli ---------- */
+function totals(s){
+  var p2s=n(s.p2PitS)+n(s.p2FuoS), p2t=p2s+n(s.p2PitX)+n(s.p2FuoX);
+  var p3s=n(s.p3S), p3t=p3s+n(s.p3X);
+  var tls=n(s.tlS), tlt=tls+n(s.tlX);
+  var pt = p2s*2 + p3s*3 + tls;
+  var rim = n(s.rimO)+n(s.rimD);
+  var fs = n(s.fsTiri)+n(s.fsNo);
+  var val = pt - n(s.tlX) - n(s.p2PitX) - n(s.p2FuoX) - n(s.p3X)
+          + n(s.pr) - n(s.pp) + n(s.rimO) + n(s.rimD) + n(s.ast)
+          - n(s.fc) + fs + n(s.stopD) - n(s.stopS);
+  return {p2s:p2s,p2t:p2t,p3s:p3s,p3t:p3t,tls:tls,tlt:tlt,pt:pt,rim:rim,fs:fs,val:val};
+}
+function minTot(s){ var t=0,i,q=s.minutiQ||[]; for(i=0;i<q.length;i++) if(q[i]!=null) t+=n(q[i]); return t; }
+function isDD(s){
+  var t=totals(s);
+  var v=[t.pt,t.rim,n(s.ast),n(s.stopD),n(s.pr)];
+  var c=0,i; for(i=0;i<v.length;i++) if(v[i]>=10) c++;
+  return c>=2;
+}
+function scoreOf(s){
+  /* i parziali sono progressivi da tabellone: il finale e' l'ultimo inserito */
+  var i,p=s.parziali||[],a=null,b=null;
+  for(i=0;i<p.length;i++){
+    if(p[i] && (p[i][0]!=null || p[i][1]!=null)){ a=n(p[i][0]); b=n(p[i][1]); }
+  }
+  if(a===null) return {noi:0,avv:0,esito:'',vuoto:true};
+  return {noi:a,avv:b, esito:(a>b?'V':(a<b?'P':'=')), vuoto:false};
+}
+
+/* ---------- normalizzazione record archivio ---------- */
+function norm(g){
+  var o = {
+    id: g.id || ((g.data||'')+'|'+(g.avversario||'')+'|'+(g.categoria||'')),
+    data:g.data||'', avversario:g.avversario||'', categoria:g.categoria||'',
+    tipoGara:g.tipoGara||'Campionato', maglia:g.maglia||'',
+    stagione:g.stagione||seasonOf(g.data),
+    minuti:n(g.minuti), minutiQ:g.minutiQ||[],
+    rimO:n(g.rimO), rimD:n(g.rimD), ast:n(g.ast), pp:n(g.pp), pr:n(g.pr),
+    stopDate:n(g.stopDate), stopSubite:n(g.stopSubite), ndStop:!!g.ndStop,
+    fs:n(g.fs), fsTiri:(g.fsTiri==null?null:n(g.fsTiri)), fc:n(g.fc),
+    p2s:n(g.p2s), p2t:n(g.p2t),
+    p2sPit:(g.p2sPit==null?null:n(g.p2sPit)), p2tPit:(g.p2tPit==null?null:n(g.p2tPit)),
+    p3s:n(g.p3s), p3t:n(g.p3t), tls:n(g.tls), tlt:n(g.tlt),
+    parziali:g.parziali||[], risultatoTesto:g.risultatoTesto||'',
+    difficolta:(g.difficolta==null?null:n(g.difficolta)),
+    nota:g.nota||'', quartiGiocati:g.quartiGiocati||''
+  };
+  o.pt = o.p2s*2 + o.p3s*3 + o.tls;
+  if(o.parziali && o.parziali.length){
+    if(MIG3_CUMUL_IDS.indexOf(o.id)>=0 && !monotona(o.parziali)){
+      var ca=0,cb=0;
+      o.parziali = o.parziali.map(function(p){ ca+=n(p[0]); cb+=n(p[1]); return [ca,cb]; });
+    }
+    var sc3=scoreOf(o);
+    o.risultatoTesto = sc3.vuoto?'':(sc3.esito+' '+sc3.noi+'-'+sc3.avv);
+  }
+  return o;
+}
+/* i progressivi non possono calare: serve a non riconvertire due volte */
+function monotona(p){
+  var i,a=null,b=null;
+  for(i=0;i<p.length;i++){
+    if(p[i][0]==null&&p[i][1]==null) continue;
+    if(a!==null && (n(p[i][0])<a || n(p[i][1])<b)) return false;
+    a=n(p[i][0]); b=n(p[i][1]);
+  }
+  return true;
+}
+function fromState(s){
+  var t=totals(s), sc=scoreOf(s);
+  return norm({
+    id:s.data+'|'+s.avversario+'|'+s.categoria,
+    data:s.data, avversario:s.avversario, categoria:s.categoria,
+    tipoGara:s.tipoGara, maglia:s.maglia, stagione:s.stagione,
+    minuti:minTot(s), minutiQ:(s.minutiQ||[]).slice(),
+    rimO:n(s.rimO), rimD:n(s.rimD), ast:n(s.ast), pp:n(s.pp), pr:n(s.pr),
+    stopDate:n(s.stopD), stopSubite:n(s.stopS),
+    fs:t.fs, fsTiri:n(s.fsTiri), fc:n(s.fc),
+    p2s:t.p2s, p2t:t.p2t,
+    p2sPit:n(s.p2PitS), p2tPit:n(s.p2PitS)+n(s.p2PitX),
+    p3s:t.p3s, p3t:t.p3t, tls:t.tls, tlt:t.tlt,
+    parziali:(s.parziali||[]).map(function(x){return [nz(x[0]),nz(x[1])];}),
+    risultatoTesto:sc.vuoto?'':(sc.esito+' '+sc.noi+'-'+sc.avv),
+    difficolta:s.difficolta, nota:s.nota, quartiGiocati:''
+  });
+}
+function valOf(g){
+  return g.pt - (g.tlt-g.tls) - (g.p2t-g.p2s) - (g.p3t-g.p3s)
+       + g.pr - g.pp + g.rimO + g.rimD + g.ast
+       - g.fc + g.fs + g.stopDate - g.stopSubite;
+}
+function ddOf(g){
+  var v=[g.pt,g.rimO+g.rimD,g.ast,g.stopDate,g.pr],c=0,i;
+  for(i=0;i<v.length;i++) if(v[i]>=10) c++;
+  return c>=2;
+}
+
+/* ---------- merge archivio ---------- */
+function mergeArc(list, incoming){
+  var byId={},i,added=0,upd=0;
+  for(i=0;i<list.length;i++) byId[list[i].id]=list[i];
+  for(i=0;i<incoming.length;i++){
+    var g=norm(incoming[i]);
+    if(byId[g.id]) upd++; else added++;
+    byId[g.id]=g;
+  }
+  var out=[],k;
+  for(k in byId) if(byId.hasOwnProperty(k)) out.push(byId[k]);
+  out.sort(function(a,b){return a.data<b.data?-1:(a.data>b.data?1:0);});
+  return {list:out, added:added, updated:upd};
+}
+
+/* ---------- recupero archivio versione precedente ---------- */
+function rescueOld(){
+  var found=[],i,k,v,arr,j;
+  try{
+    for(i=0;i<localStorage.length;i++){
+      k=localStorage.key(i);
+      if(k===K_ARC||k===K_STATE) continue;
+      try{ v=JSON.parse(localStorage.getItem(k)); }catch(e){ continue; }
+      arr = Array.isArray(v)? v : (v && Array.isArray(v.archive) ? v.archive : null);
+      if(!arr) continue;
+      for(j=0;j<arr.length;j++){
+        var g=arr[j];
+        if(g && typeof g==='object' && g.data && (g.avversario!==undefined)) found.push(g);
+      }
+    }
+  }catch(e){}
+  return found;
+}
+
+/* ---------- avvio ---------- */
+function boot(){
+  archive = load(K_ARC,null);
+  maglie  = load(K_MAG,{}) || {};
+  stagManuale = load(K_STAG,null);
+
+  if(!Array.isArray(archive)){
+    archive = [];
+    var old = rescueOld();
+    if(old.length) archive = mergeArc(archive, old).list;
+  }
+  if(!load(K_SEED,false)){
+    archive = mergeArc(archive, SEED).list;
+    save(K_SEED,true);
+    saveArc();
+  }
+  archive = archive.map(norm);
+
+  if(!load(K_MIG2,false)){
+    var chg=0;
+    archive.forEach(function(x){
+      if(MIG2_IDS.indexOf(x.id)>=0){
+        x.categoria='Lecco U12';
+        x.id=x.data+'|'+x.avversario+'|Lecco U12';
+        chg++;
+      }
+    });
+    save(K_MIG2,true);
+    if(chg) saveArc();
+  }
+
+  /* conversione e ricalcolo avvengono in norm(): qui si rende persistente */
+  if(!load(K_MIG3,false)){ save(K_MIG3,true); saveArc(); }
+
+  state = load(K_STATE,null);
+  if(!state || typeof state!=='object' || !state.minutiQ) state = blank();
+  if(state.parziali) state.parziali=state.parziali.map(function(p){return [nz(p[0]),nz(p[1])];});
+  if(state.minutiQ) state.minutiQ=state.minutiQ.map(nz);
+  if(stagManuale) state.stagione = stagManuale;
+
+  buildLive(); buildPartita(); bindNote();
+  renderAll();
+}
+
+/* ---------- costruzione LIVE ---------- */
+function buildLive(){
+  var sh=$('shots'); sh.innerHTML='';
+  SHOTS.forEach(function(c){
+    var row=el('div','srow');
+    var nm=el('div','sname');
+    nm.appendChild(el('b',null,c.n));
+    var sub=el('span',null,''); sub.id='sub_'+c.k; nm.appendChild(sub);
+    row.appendChild(nm);
+    var bt=el('div','sbtns');
+    bt.appendChild(pillFor(c.k+'S','ok'));
+    bt.appendChild(pillFor(c.k+'X','no'));
+    row.appendChild(bt);
+    if(c.s){ nm.querySelector('b').textContent=c.n; sub.dataset.pre=c.s; }
+    sh.appendChild(row);
+  });
+  var gr=$('grid'); gr.innerHTML='';
+  CNTS.forEach(function(c){
+    var d=el('div','cnt'+(c.dim?' dim':''));
+    var m=el('button','m','−'); m.onclick=function(){bump(c.k,-1);};
+    var v=el('div','v','0'); v.id='v_'+c.k;
+    var p=el('button','p','+'); p.onclick=function(){bump(c.k,1);};
+    d.appendChild(el('div','lab',c.l)); d.appendChild(m); d.appendChild(v); d.appendChild(p);
+    gr.appendChild(d);
+  });
+}
+function pillFor(key,cls){
+  var w=el('div','pill '+cls);
+  var m=el('button','m','−'); m.onclick=function(){bump(key,-1);};
+  var v=el('div','v','0'); v.id='v_'+key;
+  var p=el('button','p','+'); p.onclick=function(){bump(key,1);};
+  w.appendChild(m); w.appendChild(v); w.appendChild(p);
+  return w;
+}
+function bump(k,d){
+  state[k]=Math.max(0,n(state[k])+d);
+  saveState(); renderLive();
+}
+
+/* ---------- costruzione PARTITA ---------- */
+function buildPartita(){
+  var c=$('fCat'); c.innerHTML='';
+  CATS.forEach(function(x){
+    var b=el('button','chip',x);
+    b.onclick=function(){ state.categoria=x; applyMaglia(); saveState(); renderPartita(); };
+    b.dataset.v=x; c.appendChild(b);
+  });
+  var t=$('fTipo'); t.innerHTML='';
+  TIPI.forEach(function(x){
+    var b=el('button','chip sm',x);
+    b.onclick=function(){ state.tipoGara=x; saveState(); renderPartita(); };
+    b.dataset.v=x; t.appendChild(b);
+  });
+  var d=$('fDiff'); d.innerHTML='';
+  [1,2,3,4,5].forEach(function(x){
+    var b=el('button','chip',String(x));
+    b.onclick=function(){ state.difficolta=(state.difficolta===x?null:x); saveState(); renderPartita(); };
+    b.dataset.v=String(x); d.appendChild(b);
+  });
+  $('fData').onchange=function(){ state.data=this.value;
+    if(!stagManuale) state.stagione=seasonOf(state.data);
+    saveState(); renderPartita(); };
+  $('fAvv').oninput=function(){ state.avversario=this.value; saveState(); };
+  $('fMaglia').oninput=function(){ state.maglia=this.value;
+    maglie[state.categoria]=this.value; save(K_MAG,maglie); saveState(); };
+  $('bAddOT').onclick=function(){
+    state.minutiQ.push(null); state.parziali.push([null,null]);
+    saveState(); renderPartita(); toast('Tempo supplementare aggiunto');
+  };
+}
+function applyMaglia(){
+  if(maglie[state.categoria]!=null && maglie[state.categoria]!=='') state.maglia=maglie[state.categoria];
+}
+function periodLabel(i,len){
+  var base=4;
+  return i<base ? ('Q'+(i+1)) : ('TS'+(i-base+1));
+}
+function renderPartitaFields(){
+  var mq=$('fMinQ'); mq.innerHTML='';
+  state.minutiQ.forEach(function(v,i){
+    var r=el('div','qrow');
+    r.appendChild(el('div','qn',periodLabel(i,state.minutiQ.length)));
+    var inp=el('input'); inp.type='number'; inp.inputMode='numeric'; inp.min='0'; inp.max='20';
+    inp.value=(v==null)?'':v; inp.placeholder='';
+    inp.oninput=function(){ state.minutiQ[i]=nz(this.value); saveState();
+      $('fMinTot').textContent=minTot(state); renderLive(); };
+    r.appendChild(inp);
+    r.appendChild(el('div','sep','min'));
+    mq.appendChild(r);
+  });
+  $('fMinTot').textContent=minTot(state);
+
+  var pz=$('fParz'); pz.innerHTML='';
+  state.parziali.forEach(function(p,i){
+    var r=el('div','qrow');
+    r.appendChild(el('div','qn',periodLabel(i,state.parziali.length)));
+    var a=el('input'); a.type='number'; a.inputMode='numeric'; a.value=(p[0]==null)?'':p[0];
+    a.placeholder='noi';
+    a.oninput=function(){ state.parziali[i][0]=nz(this.value); saveState(); showProg(); };
+    var s=el('div','sep','–');
+    var b=el('input'); b.type='number'; b.inputMode='numeric'; b.value=(p[1]==null)?'':p[1];
+    b.placeholder='avv';
+    b.oninput=function(){ state.parziali[i][1]=nz(this.value); saveState(); showProg(); };
+    r.appendChild(a); r.appendChild(s); r.appendChild(b);
+    pz.appendChild(r);
+  });
+  showProg();
+}
+function showProg(){
+  var sc=scoreOf(state), run=[],i;
+  for(i=0;i<state.parziali.length;i++) run.push(fpair(state.parziali[i]));
+  $('fProg').innerHTML = sc.vuoto ? ''
+    : ('Progressivi: '+run.join(' | ')+'<br>Finale: <b>'+sc.noi+'-'+sc.avv+'</b> ('+
+       (sc.esito==='V'?'vittoria':(sc.esito==='P'?'sconfitta':'pareggio'))+')');
+}
+
+/* ---------- NOTE ---------- */
+function bindNote(){
+  $('fNota').oninput=function(){ state.nota=this.value; saveState(); };
+  $('fStag').onchange=function(){
+    var v=this.value.trim();
+    if(v){ stagManuale=v; save(K_STAG,v); state.stagione=v; }
+    else { stagManuale=null; save(K_STAG,null); state.stagione=seasonOf(state.data); }
+    saveState(); toast('Stagione: '+state.stagione);
+  };
+  $('bSave').onclick=doSave;
+  $('bReset').onclick=doReset;
+  $('bBackup').onclick=doBackup;
+  $('bImport').onclick=function(){ $('fFile').click(); };
+  $('fFile').onchange=function(){ if(this.files&&this.files[0]) doImport(this.files[0]); this.value=''; };
+  $('bCsv').onclick=doCsv;
+}
+function doSave(){
+  if(!state.avversario.trim()){ toast('Manca il nome dell\'avversario'); go('partita'); return; }
+  var g=fromState(state);
+  var r=mergeArc(archive,[g]); archive=r.list; saveArc(); renderArchivio();
+  toast(r.added? 'Partita salvata in archivio' : 'Partita aggiornata in archivio');
+}
+function doReset(){
+  if(!confirm('Azzerare la partita in corso?\nL\'archivio non viene toccato.')) return;
+  var keepCat=state.categoria, keepTipo=state.tipoGara;
+  state=blank(); state.categoria=keepCat; state.tipoGara=keepTipo;
+  if(stagManuale) state.stagione=stagManuale;
+  applyMaglia(); saveState(); renderAll(); go('live'); toast('Partita azzerata');
+}
+function doBackup(){
+  var payload={app:'giorgio-stats',version:3,exportedAt:new Date().toISOString(),
+               live:state,archive:archive,maglie:maglie};
+  var name='giorgio-stats-backup-'+todayISO()+'.json';
+  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  try{
+    var f=new File([blob],name,{type:'application/json'});
+    if(navigator.canShare && navigator.canShare({files:[f]})){
+      navigator.share({files:[f],title:'Backup Giorgio Stats'})
+        .then(function(){toast('Backup condiviso');})
+        .catch(function(e){ if(!e||e.name!=='AbortError') dl(blob,name); });
+      return;
+    }
+  }catch(e){}
+  dl(blob,name);
+}
+function dl(blob,name){
+  var u=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=u; a.download=name; document.body.appendChild(a); a.click();
+  document.body.removeChild(a); setTimeout(function(){URL.revokeObjectURL(u);},4000);
+  toast('File scaricato');
+}
+function doImport(file){
+  var r=new FileReader();
+  r.onload=function(){
+    try{
+      var p=JSON.parse(r.result);
+      if(!p||p.app!=='giorgio-stats'||!Array.isArray(p.archive)){ toast('File non valido'); return; }
+      var res=mergeArc(archive,p.archive); archive=res.list; saveArc();
+      if(p.maglie){ maglie=p.maglie; save(K_MAG,maglie); }
+      renderArchivio();
+      toast('Importate '+res.added+' nuove, '+res.updated+' aggiornate');
+    }catch(e){ toast('File non leggibile'); }
+  };
+  r.onerror=function(){ toast('Errore di lettura'); };
+  r.readAsText(file);
+}
+function doCsv(){
+  var H=['Stagione','Data','Avversario','Squadra e categoria','Tipo gara','Maglia','Difficolta',
+    'Minuti','Minuti per periodo','Punti','Valutazione','Doppia doppia',
+    'Rimb off','Rimb dif','Rimb tot','Assist','Palle perse','Palle recuperate',
+    'Stoppate date','Stoppate subite','Stoppate subite rilevate','Falli subiti','di cui con tiri liberi','Falli commessi',
+    '2pt segnati','2pt tentati','2pt %',
+    '2pt pitturato segnati','2pt pitturato tentati','2pt pitturato %',
+    '2pt fuori segnati','2pt fuori tentati','2pt fuori %',
+    '3pt segnati','3pt tentati','3pt %','TL segnati','TL tentati','TL %',
+    'Parziali','Risultato','Nota'];
+  var rows=[H];
+  archive.slice().sort(function(a,b){return a.data<b.data?-1:1;}).forEach(function(g){
+    var fs=g.p2sPit==null?null:(g.p2s-g.p2sPit), ft=g.p2tPit==null?null:(g.p2t-g.p2tPit);
+    rows.push([
+      g.stagione,itDate(g.data),g.avversario,g.categoria,g.tipoGara,g.maglia,
+      g.difficolta==null?'':g.difficolta,
+      g.minuti,(g.minutiQ||[]).join('+'),g.pt,valOf(g),ddOf(g)?'SI':'',
+      g.rimO,g.rimD,g.rimO+g.rimD,g.ast,g.pp,g.pr,
+      g.stopDate,g.stopSubite,g.ndStop?'NO':'SI',
+      g.fs,g.fsTiri==null?'':g.fsTiri,g.fc,
+      g.p2s,g.p2t,fpct(g.p2s,g.p2t),
+      g.p2sPit==null?'':g.p2sPit,g.p2tPit==null?'':g.p2tPit,g.p2tPit==null?'':fpct(g.p2sPit,g.p2tPit),
+      fs==null?'':fs,ft==null?'':ft,ft==null?'':fpct(fs,ft),
+      g.p3s,g.p3t,fpct(g.p3s,g.p3t),g.tls,g.tlt,fpct(g.tls,g.tlt),
+      (g.parziali||[]).map(fpair).join(' | '),
+      g.risultatoTesto,(g.nota||'').replace(/\r?\n/g,' ')
+    ]);
+  });
+  var csv=rows.map(function(r){
+    return r.map(function(c){
+      c=(c==null?'':String(c));
+      return /[";\n]/.test(c) ? '"'+c.replace(/"/g,'""')+'"' : c;
+    }).join(';');
+  }).join('\r\n');
+  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  var name='giorgio-stats-'+todayISO()+'.csv';
+  try{
+    var f=new File([blob],name,{type:'text/csv'});
+    if(navigator.canShare && navigator.canShare({files:[f]})){
+      navigator.share({files:[f],title:'Giorgio Stats CSV'})
+        .then(function(){toast('CSV condiviso');})
+        .catch(function(e){ if(!e||e.name!=='AbortError') dl(blob,name); });
+      return;
+    }
+  }catch(e){}
+  dl(blob,name);
+}
+
+/* ---------- render ---------- */
+function renderAll(){ renderLive(); renderPartita(); renderNote(); renderArchivio(); }
+
+function renderLive(){
+  var t=totals(state),i;
+  $('bPt').textContent=t.pt;
+  $('bVal').textContent=t.val;
+  $('bMin').textContent=minTot(state);
+  $('bDD').className='bdd'+(isDD(state)?' on':'');
+  for(i=0;i<SHOTS.length;i++){
+    var k=SHOTS[i].k;
+    $('v_'+k+'S').textContent=n(state[k+'S']);
+    $('v_'+k+'X').textContent=n(state[k+'X']);
+    var s=n(state[k+'S']), tt=s+n(state[k+'X']);
+    var sub=$('sub_'+k), pre=sub.dataset.pre?sub.dataset.pre+' · ':'';
+    sub.textContent=pre+s+'/'+tt+(tt?' · '+fpct(s,tt):'');
+  }
+  for(i=0;i<CNTS.length;i++) $('v_'+CNTS[i].k).textContent=n(state[CNTS[i].k]);
+}
+function renderPartita(){
+  $('fData').value=state.data;
+  $('fAvv').value=state.avversario;
+  $('fMaglia').value=state.maglia;
+  var mark=function(box,v){
+    var b=box.querySelectorAll('.chip'),i;
+    for(i=0;i<b.length;i++) b[i].className=b[i].className.replace(' on','')+(b[i].dataset.v===String(v)?' on':'');
+  };
+  mark($('fCat'),state.categoria); mark($('fTipo'),state.tipoGara);
+  mark($('fDiff'),state.difficolta);
+  $('fDiffTxt').textContent = state.difficolta
+    ? DIFF_TXT[state.difficolta]+' rispetto al livello attuale di Giorgio.'
+    : 'Da assegnare a fine partita, rispetto al livello attuale di Giorgio.';
+  renderPartitaFields();
+}
+function renderNote(){
+  $('fNota').value=state.nota;
+  $('fStag').value=state.stagione||'';
+}
+
+function aggregate(list){
+  var a={g:list.length,min:0,pt:0,rimO:0,rimD:0,ast:0,pp:0,pr:0,stopD:0,stopS:0,ndN:0,
+         fs:0,fsT:0,fsTN:0,fc:0,p2s:0,p2t:0,p2sP:0,p2tP:0,pitN:0,p3s:0,p3t:0,tls:0,tlt:0,dd:0,val:0,
+         diffSum:0,diffN:0};
+  list.forEach(function(g){
+    a.min+=g.minuti; a.pt+=g.pt; a.rimO+=g.rimO; a.rimD+=g.rimD; a.ast+=g.ast;
+    a.pp+=g.pp; a.pr+=g.pr; a.stopD+=g.stopDate;
+    a.stopS+=g.stopSubite; if(g.ndStop) a.ndN++;
+    a.fs+=g.fs; if(g.fsTiri!=null){ a.fsT+=g.fsTiri; a.fsTN++; }
+    a.fc+=g.fc; a.p2s+=g.p2s; a.p2t+=g.p2t;
+    if(g.p2tPit!=null){ a.p2sP+=g.p2sPit; a.p2tP+=g.p2tPit; a.pitN++; }
+    a.p3s+=g.p3s; a.p3t+=g.p3t; a.tls+=g.tls; a.tlt+=g.tlt;
+    if(ddOf(g)) a.dd++;
+    a.val+=valOf(g);
+    if(g.difficolta!=null){ a.diffSum+=g.difficolta; a.diffN++; }
+  });
+  return a;
+}
+function statTable(a){
+  var t=el('table'), g=a.g;
+  function row(k,v){ var r=el('tr'); r.appendChild(el('td','k',k)); r.appendChild(el('td',null,v)); t.appendChild(r); }
+  var h=el('tr'); h.appendChild(el('th',null,'Su '+g+' partite')); h.appendChild(el('th',null,'Media'));
+  t.appendChild(h);
+  row('Minuti',avg(a.min,g));
+  row('Punti',avg(a.pt,g));
+  row('Valutazione',avg(a.val,g));
+  row('Rimbalzi',avg(a.rimO+a.rimD,g)+'  ('+avg(a.rimO,g)+' off)');
+  row('Assist',avg(a.ast,g));
+  row('Palle recuperate',avg(a.pr,g));
+  row('Palle perse',avg(a.pp,g));
+  row('Falli subiti',avg(a.fs,g)+(a.fsTN?'  ('+avg(a.fsT,a.fsTN)+' con TL)':''));
+  row('Falli commessi',avg(a.fc,g));
+  row('Stoppate date',avg(a.stopD,g));
+  row('Stoppate subite',avg(a.stopS,g)+(a.ndN?'  *':''));
+  row('Doppie doppie',a.dd);
+  if(a.diffN) row('Difficoltà media',avg(a.diffSum,a.diffN)+'  (su '+a.diffN+')');
+  t.dataset.nd=a.ndN?String(a.ndN):'';
+  var h2=el('tr'); h2.appendChild(el('th',null,'Tiro')); h2.appendChild(el('th',null,'')); t.appendChild(h2);
+  row('2 punti',a.p2s+'/'+a.p2t+'  '+fpct(a.p2s,a.p2t));
+  if(a.pitN){
+    row('— dal pitturato',a.p2sP+'/'+a.p2tP+'  '+fpct(a.p2sP,a.p2tP));
+    row('— fuori pitturato',(a.p2s-a.p2sP)+'/'+(a.p2t-a.p2tP)+'  '+fpct(a.p2s-a.p2sP,a.p2t-a.p2tP));
+  }
+  row('3 punti',a.p3s+'/'+a.p3t+'  '+fpct(a.p3s,a.p3t));
+  row('Tiri liberi',a.tls+'/'+a.tlt+'  '+fpct(a.tls,a.tlt));
+  return t;
+}
+
+var arcSeason=null, arcCompare=false;
+function seasons(){
+  var s={},i,out=[];
+  for(i=0;i<archive.length;i++) s[archive[i].stagione]=1;
+  for(i in s) if(s.hasOwnProperty(i)) out.push(i);
+  out.sort(); out.reverse();
+  return out;
+}
+function renderArchivio(){
+  var b=$('arcBody'); b.innerHTML='';
+  var ss=seasons();
+  if(!ss.length){ b.appendChild(el('div','hint','Nessuna partita in archivio.')); return; }
+  if(!arcSeason || ss.indexOf(arcSeason)<0) arcSeason=ss[0];
+
+  var h=el('h2',null,'STAGIONE'); h.style.marginTop='2px'; b.appendChild(h);
+  var chips=el('div','chips');
+  ss.forEach(function(s){
+    var c=el('button','chip'+(s===arcSeason?' on':''),s);
+    c.onclick=function(){ arcSeason=s; arcCompare=false; renderArchivio(); };
+    chips.appendChild(c);
+  });
+  if(ss.length>1){
+    var cc=el('button','chip sm'+(arcCompare?' on':''),'Confronta');
+    cc.onclick=function(){ arcCompare=!arcCompare; renderArchivio(); };
+    chips.appendChild(cc);
+  }
+  b.appendChild(chips);
+
+  if(arcCompare){ b.appendChild(compareBox(ss)); return; }
+
+  var list=archive.filter(function(g){return g.stagione===arcSeason;});
+  var wins=0,loss=0,drw=0;
+  list.forEach(function(g){
+    var r=g.risultatoTesto||'';
+    if(/^V/.test(r)) wins++; else if(/^P/.test(r)) loss++; else if(/^=/.test(r)) drw++;
+  });
+
+  b.appendChild(el('h2',null,'TOTALE STAGIONE'));
+  var box=el('div','box'); box.appendChild(statTable(aggregate(list)));
+  if(wins+loss+drw) box.appendChild(el('div','hint','Bilancio noto: '+wins+'V '+loss+'P '+(drw?drw+'= ':'')));
+  var aggS=aggregate(list);
+  if(aggS.ndN) box.appendChild(el('div','warn','* Stoppate subite non rilevate in '+aggS.ndN+' partite su '+aggS.g+', conteggiate come 0. Nella stagione 2025-26 non erano tracciate: la media reale e la valutazione sono leggermente sovrastimate.'));
+  if(!aggS.pitN) box.appendChild(el('div','warn','Tiri da due non divisi per zona in questa stagione: il dato pitturato / fuori pitturato parte dalla 2026-27.'));
+  b.appendChild(box);
+
+  var cats={},i;
+  list.forEach(function(g){ (cats[g.categoria]=cats[g.categoria]||[]).push(g); });
+  var ck=[]; for(i in cats) if(cats.hasOwnProperty(i)) ck.push(i); ck.sort();
+  if(ck.length>1){
+    b.appendChild(el('h2',null,'PER SQUADRA E CATEGORIA'));
+    ck.forEach(function(k){
+      var bb=el('div','box');
+      bb.appendChild(el('div','fld')).appendChild(el('label',null,k));
+      bb.appendChild(statTable(aggregate(cats[k])));
+      b.appendChild(bb);
+    });
+  }
+  var tp={};
+  list.forEach(function(g){ (tp[g.tipoGara]=tp[g.tipoGara]||[]).push(g); });
+  var tk=[]; for(i in tp) if(tp.hasOwnProperty(i)) tk.push(i);
+  if(tk.length>1){
+    b.appendChild(el('h2',null,'PER TIPO DI GARA'));
+    var tb=el('div','box'), tt=el('table');
+    var hr=el('tr'); ['Tipo','PG','Pt','Val','2pt%'].forEach(function(x){hr.appendChild(el('th',null,x));});
+    tt.appendChild(hr);
+    tk.forEach(function(k){
+      var a=aggregate(tp[k]), r=el('tr');
+      r.appendChild(el('td',null,k)); r.appendChild(el('td',null,a.g));
+      r.appendChild(el('td',null,avg(a.pt,a.g))); r.appendChild(el('td',null,avg(a.val,a.g)));
+      r.appendChild(el('td',null,fpct(a.p2s,a.p2t)));
+      tt.appendChild(r);
+    });
+    tb.appendChild(tt); b.appendChild(tb);
+  }
+
+  b.appendChild(el('h2',null,'PARTITE ('+list.length+')'));
+  var lb=el('div','box');
+  list.slice().reverse().forEach(function(g){
+    var d=el('div','gm');
+    var dd=el('div','d'); dd.innerHTML=itDate(g.data).replace('/','/<br>');
+    d.appendChild(dd);
+    var o=el('div','o');
+    var nm=el('b',null,g.avversario);
+    if(ddOf(g)){ var tg=el('span','tag','DD'); nm.appendChild(tg); }
+    o.appendChild(nm);
+    o.appendChild(el('span',null,g.categoria+' · '+g.tipoGara+(g.risultatoTesto?' · '+g.risultatoTesto:'')));
+    d.appendChild(o);
+    var s=el('div','s');
+    s.appendChild(el('b',null,g.pt));
+    s.appendChild(el('span',null,g.rimO+g.rimD+' r · '+valOf(g)+' v'));
+    d.appendChild(s);
+    d.onclick=function(){ showGame(g); };
+    lb.appendChild(d);
+  });
+  b.appendChild(lb);
+}
+function compareBox(ss){
+  var box=el('div','box'), t=el('table');
+  var use=ss.slice(0,3);
+  var hr=el('tr'); hr.appendChild(el('th',null,''));
+  use.forEach(function(s){ hr.appendChild(el('th',null,s)); });
+  t.appendChild(hr);
+  var aggs=use.map(function(s){ return aggregate(archive.filter(function(g){return g.stagione===s;})); });
+  function line(lab,fn){
+    var r=el('tr'); r.appendChild(el('td','k',lab));
+    aggs.forEach(function(a){ r.appendChild(el('td',null,fn(a))); });
+    t.appendChild(r);
+  }
+  line('Partite',function(a){return a.g;});
+  line('Minuti',function(a){return avg(a.min,a.g);});
+  line('Punti',function(a){return avg(a.pt,a.g);});
+  line('Valutazione',function(a){return avg(a.val,a.g);});
+  line('Rimbalzi',function(a){return avg(a.rimO+a.rimD,a.g);});
+  line('Rimb. off.',function(a){return avg(a.rimO,a.g);});
+  line('Assist',function(a){return avg(a.ast,a.g);});
+  line('Recuperate',function(a){return avg(a.pr,a.g);});
+  line('Perse',function(a){return avg(a.pp,a.g);});
+  line('Falli subiti',function(a){return avg(a.fs,a.g);});
+  line('2pt %',function(a){return fpct(a.p2s,a.p2t);});
+  line('— pitturato',function(a){return a.pitN?fpct(a.p2sP,a.p2tP):'n.d.';});
+  line('— fuori',function(a){return a.pitN?fpct(a.p2s-a.p2sP,a.p2t-a.p2tP):'n.d.';});
+  line('3pt %',function(a){return fpct(a.p3s,a.p3t);});
+  line('TL %',function(a){return fpct(a.tls,a.tlt);});
+  line('Doppie doppie',function(a){return a.dd;});
+  box.appendChild(t);
+  box.appendChild(el('div','hint','Medie per partita. Le voci "n.d." non erano tracciate in quella stagione.'));
+  return box;
+}
+function showGame(g){
+  var s=$('sheet'); s.innerHTML='';
+  s.appendChild(el('h2',null,itDate(g.data)+' · '+g.categoria));
+  var t=el('div'); t.style.fontSize='19px'; t.style.fontWeight='800'; t.style.marginBottom='2px';
+  t.textContent=g.avversario; s.appendChild(t);
+  var sub=el('div','hint',g.tipoGara+(g.risultatoTesto?' · '+g.risultatoTesto:'')+
+    (g.maglia?' · maglia '+g.maglia:'')+(g.difficolta?' · difficoltà '+g.difficolta+'/5':''));
+  sub.style.marginTop='0'; s.appendChild(sub);
+
+  var tb=el('table');
+  function r(k,v){ var x=el('tr'); x.appendChild(el('td','k',k)); x.appendChild(el('td',null,v)); tb.appendChild(x); }
+  r('Minuti',g.minuti+((g.minutiQ&&g.minutiQ.length)?'  ('+g.minutiQ.map(fnum).join('+')+')':''));
+  r('Punti',g.pt); r('Valutazione',valOf(g));
+  r('Rimbalzi',(g.rimO+g.rimD)+'  ('+g.rimO+' off / '+g.rimD+' dif)');
+  r('Assist',g.ast); r('Recuperate',g.pr); r('Perse',g.pp);
+  r('Falli subiti',g.fs+(g.fsTiri!=null?'  ('+g.fsTiri+' con TL)':''));
+  r('Falli commessi',g.fc);
+  r('Stoppate',g.stopDate+' date / '+g.stopSubite+' subite'+(g.ndStop?' (n.r.)':''));
+  r('2 punti',g.p2s+'/'+g.p2t+'  '+fpct(g.p2s,g.p2t));
+  if(g.p2tPit!=null){
+    r('— pitturato',g.p2sPit+'/'+g.p2tPit+'  '+fpct(g.p2sPit,g.p2tPit));
+    r('— fuori',(g.p2s-g.p2sPit)+'/'+(g.p2t-g.p2tPit)+'  '+fpct(g.p2s-g.p2sPit,g.p2t-g.p2tPit));
+  }
+  r('3 punti',g.p3s+'/'+g.p3t+'  '+fpct(g.p3s,g.p3t));
+  r('Tiri liberi',g.tls+'/'+g.tlt+'  '+fpct(g.tls,g.tlt));
+  if(g.parziali&&g.parziali.length){
+    r('Progressivi',g.parziali.map(fpair).join(' | '));
+    r('Per quarto',quartiDa(g.parziali).join(' | '));
+  }
+  if(g.quartiGiocati) r('Quarti giocati',g.quartiGiocati);
+  s.appendChild(tb);
+
+  if(g.nota){ s.appendChild(el('h2',null,'NOTA')); s.appendChild(el('div','hint',g.nota)); }
+  if(g.ndStop||g.p2tPit==null){
+    var w=[];
+    if(g.ndStop) w.push('stoppate subite non rilevate, conteggiate come 0');
+    if(g.p2tPit==null) w.push('tiri da due non divisi per zona');
+    s.appendChild(el('div','warn','Tracciamento ridotto: '+w.join('; ')+'.'));
+  }
+  var b1=el('button','btn','Carica come partita in corso');
+  b1.onclick=function(){ loadGame(g); closeModal(); };
+  s.appendChild(b1);
+  var b2=el('button','btn dgr','Elimina dall\'archivio');
+  b2.onclick=function(){
+    if(!confirm('Eliminare '+g.avversario+' del '+itDate(g.data)+'?')) return;
+    archive=archive.filter(function(x){return x.id!==g.id;});
+    saveArc(); closeModal(); renderArchivio(); toast('Partita eliminata');
+  };
+  s.appendChild(b2);
+  var b3=el('button','btn','Chiudi'); b3.onclick=closeModal; s.appendChild(b3);
+  $('modal').className='modal on';
+}
+function loadGame(g){
+  state=blank();
+  state.data=g.data; state.avversario=g.avversario; state.categoria=g.categoria;
+  state.tipoGara=g.tipoGara; state.maglia=g.maglia; state.stagione=g.stagione;
+  state.difficolta=g.difficolta; state.nota=g.nota;
+  state.minutiQ=(g.minutiQ&&g.minutiQ.length)?g.minutiQ.slice():[g.minuti,null,null,null];
+  state.parziali=(g.parziali&&g.parziali.length)?g.parziali.map(function(p){return [p[0],p[1]];}):[[null,null],[null,null],[null,null],[null,null]];
+  var pitS=g.p2sPit==null?g.p2s:g.p2sPit, pitT=g.p2tPit==null?g.p2t:g.p2tPit;
+  state.p2PitS=pitS; state.p2PitX=pitT-pitS;
+  state.p2FuoS=g.p2s-pitS; state.p2FuoX=(g.p2t-pitT)-(g.p2s-pitS);
+  state.p3S=g.p3s; state.p3X=g.p3t-g.p3s;
+  state.tlS=g.tls; state.tlX=g.tlt-g.tls;
+  state.rimO=g.rimO; state.rimD=g.rimD; state.ast=g.ast; state.pp=g.pp; state.pr=g.pr;
+  state.stopD=g.stopDate; state.stopS=g.stopSubite||0;
+  state.fsTiri=g.fsTiri==null?0:g.fsTiri; state.fsNo=g.fs-(g.fsTiri==null?0:g.fsTiri);
+  state.fc=g.fc;
+  saveState(); renderAll(); go('live'); toast('Partita caricata');
+}
+function closeModal(){ $('modal').className='modal'; }
+$('modal').onclick=function(e){ if(e.target===this) closeModal(); };
+
+/* ---------- nav ---------- */
+function go(id){
+  var ps=document.querySelectorAll('.panel'),bs=document.querySelectorAll('nav button'),i;
+  for(i=0;i<ps.length;i++) ps[i].className='panel'+(ps[i].id===id?' on':'');
+  for(i=0;i<bs.length;i++) bs[i].className=(bs[i].dataset.go===id?'on':'');
+  if(id==='archivio') renderArchivio();
+}
+(function(){
+  var bs=document.querySelectorAll('nav button'),i;
+  for(i=0;i<bs.length;i++) bs[i].onclick=(function(b){return function(){go(b.dataset.go);};})(bs[i]);
+})();
+
+/* ---------- toast ---------- */
+var tTimer=null;
+function toast(m){
+  var t=$('toast'); t.textContent=m; t.className='toast on';
+  clearTimeout(tTimer); tTimer=setTimeout(function(){ t.className='toast'; },2100);
+}
+
+/* ---------- esposizione per i test ---------- */
+if(typeof window!=='undefined'){
+  window.GS={ totals:totals, minTot:minTot, isDD:isDD, scoreOf:scoreOf, seasonOf:seasonOf,
+              norm:norm, valOf:valOf, ddOf:ddOf, mergeArc:mergeArc, aggregate:aggregate,
+              fromState:fromState, blank:blank, SEED:SEED,
+              _get:function(){return {state:state,archive:archive};} };
+}
+
+boot();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); });
+}
+})();
+</script>
+</body>
+</html>
