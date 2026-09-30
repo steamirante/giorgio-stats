@@ -93,6 +93,11 @@ h2:first-child{margin-top:2px}
   font-size:13px;font-weight:600}
 .chip.on{background:var(--acc);border-color:var(--acc);color:#000}
 .chip.sm{padding:7px 9px;font-size:12px}
+.chip.eti{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.avvrow{display:flex;gap:6px;align-items:center}
+.avvrow input{flex:1 1 auto;min-width:0}
+.avvrow .chip{flex:0 0 auto;white-space:nowrap}
+.star{color:var(--acc);margin-left:4px}
 .btn{display:block;width:100%;padding:13px;border-radius:10px;background:var(--card2);
   border:1px solid var(--line);font-size:14px;font-weight:700;margin-top:8px;text-align:center}
 .btn.acc{background:var(--acc);border-color:var(--acc);color:#000}
@@ -155,7 +160,7 @@ td.k{color:var(--mute)}
       <h2>GARA</h2>
       <div class="box">
         <div class="fld"><label>Data</label><input type="date" id="fData"></div>
-        <div class="fld"><label>Avversario</label><input type="text" id="fAvv" placeholder="Nome squadra"></div>
+        <div class="fld"><label>Avversario</label><div class="avvrow"><input type="text" id="fAvv" placeholder="Nome squadra"><button class="chip sm" id="fTop">☆ Top Match</button></div></div>
         <div class="fld"><label>Squadra e categoria</label><div class="chips" id="fCat"></div></div>
         <div class="fld"><label>Tipo gara</label><div class="chips" id="fTipo"></div></div>
         <div class="fld"><label>Numero di maglia</label><input type="number" id="fMaglia" inputmode="numeric" placeholder="—"></div>
@@ -216,7 +221,7 @@ td.k{color:var(--mute)}
       </div>
 
       <div class="box" style="margin-top:14px">
-        <div class="hint">Giorgio Stats v2.1.1 — settembre 2026<br>Creata da Stefano Amirante con Claude</div>
+        <div class="hint">Giorgio Stats v2.1.2 — settembre 2026<br>Creata da Stefano Amirante con Claude</div>
       </div>
     </div>
   </section>
@@ -239,7 +244,7 @@ td.k{color:var(--mute)}
 
 <script>
 /* =========================================================
-   GIORGIO STATS v2.1.1 — settembre 2026
+   GIORGIO STATS v2.1.2 — settembre 2026
    ========================================================= */
 (function(){
 'use strict';
@@ -248,13 +253,16 @@ td.k{color:var(--mute)}
 /* ---------- costanti ---------- */
 var K_STATE='gs2.state', K_ARC='gs2.archive', K_MAG='gs2.maglie', K_STAG='gs2.stagione';
 var K_MIG2='gs2.mig2';
+var K_ETI='gs2.etichette';
 var K_MIG3='gs2.mig3';
 /* parziali: da parziali di quarto a progressivi da tabellone */
 var MIG3_CUMUL_IDS=["2026-06-13|CBO Blu|GSV U13S"];
 /* torneo AVIS Cernusco: giocato in prestito al Lecco, non con Villa Guardia */
 var MIG2_IDS=["2026-05-16|BAT Ticino|GSV U12", "2026-05-16|Liberi e Forti Monza|GSV U12", "2026-05-17|Brescia|GSV U12", "2026-05-17|Calusco|GSV U12", "2026-05-17|Collegno|GSV U12"];
 
-var CATS = ['GSV U13S','GSV U14S','PV U13G','PV U14S'];
+/* etichette di squadra iniziali: create solo se la chiave non esiste */
+var ETI_INIZIALI = ['GSV U13S','GSV U14S','PV U13G','PV U14S'];
+var ETI_MAX = 8, ETI_LEN = 8;
 var TIPI = ['Campionato','Torneo','Amichevole','Playoff'];
 var DIFF_TXT = {
   1:'1 — nettamente inferiore',
@@ -325,7 +333,7 @@ function seasonOf(iso){
 
 /* ---------- stato ---------- */
 function blank(){
-  var s={data:todayISO(), avversario:'', categoria:CATS[0], tipoGara:'Campionato',
+  var s={data:todayISO(), avversario:'', categoria:(etichette.length?etichette[0]:''), tipoGara:'Campionato', topMatch:false,
          maglia:'', stagione:'', difficolta:null, nota:'',
          minutiQ:[null,null,null,null],
          parziali:[[null,null],[null,null],[null,null],[null,null]]};
@@ -335,12 +343,24 @@ function blank(){
   s.stagione = seasonOf(s.data);
   return s;
 }
-var state, archive=[], maglie={}, stagManuale=null;
+var state, archive=[], maglie={}, stagManuale=null, etichette=[];
 
 function load(k,d){ try{var v=localStorage.getItem(k); return v?JSON.parse(v):d;}catch(e){return d;} }
 function save(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} }
 function saveState(){ save(K_STATE,state); }
 function saveArc(){ save(K_ARC,archive); }
+function saveEti(){ save(K_ETI,etichette); }
+/* elenco etichette ripulito: testi non vuoti, max 8 caratteri, senza doppioni, max 8 voci */
+function cleanEti(v){
+  if(!Array.isArray(v)) return null;
+  var out=[],i,x;
+  for(i=0;i<v.length && out.length<ETI_MAX;i++){
+    if(typeof v[i]!=='string') continue;
+    x=v[i].trim();
+    if(x && x.length<=ETI_LEN && out.indexOf(x)<0) out.push(x);
+  }
+  return out;
+}
 
 /* ---------- calcoli ---------- */
 function totals(s){
@@ -378,6 +398,7 @@ function norm(g){
     id: g.id || ((g.data||'')+'|'+(g.avversario||'')+'|'+(g.categoria||'')),
     data:g.data||'', avversario:g.avversario||'', categoria:g.categoria||'',
     tipoGara:g.tipoGara||'Campionato', maglia:g.maglia||'',
+    topMatch:!!g.topMatch,
     stagione:g.stagione||seasonOf(g.data),
     minuti:n(g.minuti), minutiQ:g.minutiQ||[],
     rimO:n(g.rimO), rimD:n(g.rimD), ast:n(g.ast), pp:n(g.pp), pr:n(g.pr),
@@ -416,7 +437,7 @@ function fromState(s){
   return norm({
     id:s.data+'|'+s.avversario+'|'+s.categoria,
     data:s.data, avversario:s.avversario, categoria:s.categoria,
-    tipoGara:s.tipoGara, maglia:s.maglia, stagione:s.stagione,
+    tipoGara:s.tipoGara, maglia:s.maglia, stagione:s.stagione, topMatch:!!s.topMatch,
     minuti:minTot(s), minutiQ:(s.minutiQ||[]).slice(),
     rimO:n(s.rimO), rimD:n(s.rimD), ast:n(s.ast), pp:n(s.pp), pr:n(s.pr),
     stopDate:n(s.stopD), stopSubite:n(s.stopS),
@@ -480,6 +501,11 @@ function boot(){
   maglie  = load(K_MAG,{}) || {};
   stagManuale = load(K_STAG,null);
 
+  /* etichette di squadra: se la chiave manca (o non e' leggibile) si crea con le 4 iniziali */
+  var rawEti=null; try{ rawEti=localStorage.getItem(K_ETI); }catch(e){}
+  etichette = rawEti===null ? null : cleanEti(load(K_ETI,null));
+  if(!etichette){ etichette=ETI_INIZIALI.slice(); saveEti(); }
+
   if(!Array.isArray(archive)){
     archive = [];
     var old = rescueOld();
@@ -508,6 +534,7 @@ function boot(){
   if(state.parziali) state.parziali=state.parziali.map(function(p){return [nz(p[0]),nz(p[1])];});
   if(state.minutiQ) state.minutiQ=state.minutiQ.map(nz);
   if(stagManuale) state.stagione = stagManuale;
+  state.topMatch = !!state.topMatch;
 
   buildLive(); buildPartita(); bindNote();
   renderAll();
@@ -554,12 +581,6 @@ function bump(k,d){
 
 /* ---------- costruzione PARTITA ---------- */
 function buildPartita(){
-  var c=$('fCat'); c.innerHTML='';
-  CATS.forEach(function(x){
-    var b=el('button','chip',x);
-    b.onclick=function(){ state.categoria=x; applyMaglia(); saveState(); renderPartita(); };
-    b.dataset.v=x; c.appendChild(b);
-  });
   var t=$('fTipo'); t.innerHTML='';
   TIPI.forEach(function(x){
     var b=el('button','chip sm',x);
@@ -576,12 +597,72 @@ function buildPartita(){
     if(!stagManuale) state.stagione=seasonOf(state.data);
     saveState(); renderPartita(); };
   $('fAvv').oninput=function(){ state.avversario=this.value; saveState(); };
+  $('fTop').onclick=function(){ state.topMatch=!state.topMatch; saveState(); renderPartita(); };
   $('fMaglia').oninput=function(){ state.maglia=this.value;
     maglie[state.categoria]=this.value; save(K_MAG,maglie); saveState(); };
   $('bAddOT').onclick=function(){
     state.minutiQ.push(null); state.parziali.push([null,null]);
     saveState(); renderPartita(); toast('Tempo supplementare aggiunto');
   };
+}
+/* pulsanti etichette: salvate, eventuale etichetta della sola partita, "+" */
+function renderCats(){
+  var c=$('fCat'); c.innerHTML='';
+  etichette.forEach(function(x){
+    var b=el('button','chip eti'+(x===state.categoria?' on':''),x);
+    pressione(b, function(){
+      if(!confirm('Cancellare l\'etichetta "'+x+'"?\nLe partite in archivio non vengono modificate.')) return;
+      etichette=etichette.filter(function(e){return e!==x;});
+      saveEti(); renderPartita(); toast('Etichetta cancellata');
+    }, function(){ state.categoria=x; applyMaglia(); saveState(); renderPartita(); });
+    c.appendChild(b);
+  });
+  if(state.categoria && etichette.indexOf(state.categoria)<0){
+    c.appendChild(el('button','chip eti on',state.categoria));
+  }
+  var add=el('button','chip','+');
+  add.onclick=nuovaEtichetta;
+  c.appendChild(add);
+}
+/* tocco breve = onTap; pressione prolungata = onLong, senza selezionare */
+function pressione(b,onLong,onTap){
+  var tm=null, lungo=false;
+  function stop(){ clearTimeout(tm); tm=null; }
+  b.addEventListener('pointerdown',function(){
+    lungo=false; stop();
+    tm=setTimeout(function(){ tm=null; lungo=true; onLong(); },600);
+  });
+  b.addEventListener('pointerup',stop);
+  b.addEventListener('pointerleave',stop);
+  b.addEventListener('pointercancel',stop);
+  b.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+  b.onclick=function(){ if(lungo){ lungo=false; return; } onTap(); };
+}
+function nuovaEtichetta(){
+  if(etichette.length>=ETI_MAX){
+    toast('Massimo '+ETI_MAX+' etichette: cancellane una per crearne una nuova');
+    return;
+  }
+  var s=$('sheet'); s.innerHTML='';
+  s.appendChild(el('h2',null,'NUOVA ETICHETTA DI SQUADRA'));
+  var inp=el('input'); inp.type='text'; inp.maxLength=ETI_LEN; inp.placeholder='Max '+ETI_LEN+' caratteri';
+  s.appendChild(inp);
+  var err=el('div','warn',''); s.appendChild(err);
+  var ok=el('button','btn acc','Salva');
+  ok.onclick=function(){
+    var v=inp.value.trim();
+    if(!v){ err.textContent='Il nome non può essere vuoto.'; return; }
+    if(v.length>ETI_LEN){ err.textContent='Massimo '+ETI_LEN+' caratteri.'; return; }
+    if(etichette.indexOf(v)>=0){ err.textContent='Etichetta già presente.'; return; }
+    etichette.push(v); saveEti();
+    state.categoria=v; applyMaglia(); saveState();
+    closeModal(); renderPartita(); toast('Etichetta creata');
+  };
+  inp.onkeydown=function(e){ if(e.key==='Enter') ok.onclick(); };
+  s.appendChild(ok);
+  var no=el('button','btn','Annulla'); no.onclick=closeModal; s.appendChild(no);
+  $('modal').className='modal on';
+  inp.focus();
 }
 function applyMaglia(){
   if(maglie[state.categoria]!=null && maglie[state.categoria]!=='') state.maglia=maglie[state.categoria];
@@ -647,6 +728,7 @@ function bindNote(){
 }
 function doSave(){
   if(!state.avversario.trim()){ toast('Manca il nome dell\'avversario'); go('partita'); return; }
+  if(!state.categoria){ toast('Manca l\'etichetta di squadra: creane o sceglierne una'); go('partita'); return; }
   var g=fromState(state);
   var r=mergeArc(archive,[g]); archive=r.list; saveArc(); renderArchivio();
   toast(r.added? 'Partita salvata in archivio' : 'Partita aggiornata in archivio');
@@ -654,13 +736,14 @@ function doSave(){
 function doReset(){
   if(!confirm('Azzerare la partita in corso?\nL\'archivio non viene toccato.')) return;
   var keepCat=state.categoria, keepTipo=state.tipoGara;
-  state=blank(); state.categoria=keepCat; state.tipoGara=keepTipo;
+  state=blank(); state.tipoGara=keepTipo;
+  if(etichette.indexOf(keepCat)>=0) state.categoria=keepCat;
   if(stagManuale) state.stagione=stagManuale;
   applyMaglia(); saveState(); renderAll(); go('live'); toast('Partita azzerata');
 }
 function doBackup(){
   var payload={app:'giorgio-stats',version:3,exportedAt:new Date().toISOString(),
-               live:state,archive:archive,maglie:maglie};
+               live:state,archive:archive,maglie:maglie,etichette:etichette};
   var name='giorgio-stats-backup-'+todayISO()+'.json';
   var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   try{
@@ -688,6 +771,7 @@ function doImport(file){
       if(!p||p.app!=='giorgio-stats'||!Array.isArray(p.archive)){ toast('File non valido'); return; }
       var res=mergeArc(archive,p.archive); archive=res.list; saveArc();
       if(p.maglie){ maglie=p.maglie; save(K_MAG,maglie); }
+      if(Array.isArray(p.etichette)){ etichette=cleanEti(p.etichette); saveEti(); renderPartita(); }
       renderArchivio();
       toast('Importate '+res.added+' nuove, '+res.updated+' aggiornate');
     }catch(e){ toast('File non leggibile'); }
@@ -704,7 +788,7 @@ function doCsv(){
     '2pt pitturato segnati','2pt pitturato tentati','2pt pitturato %',
     '2pt fuori segnati','2pt fuori tentati','2pt fuori %',
     '3pt segnati','3pt tentati','3pt %','TL segnati','TL tentati','TL %',
-    'Parziali','Risultato','Nota'];
+    'Parziali','Risultato','Nota','Top Match'];
   var rows=[H];
   archive.slice().sort(function(a,b){return a.data<b.data?-1:1;}).forEach(function(g){
     var fs=g.p2sPit==null?null:(g.p2s-g.p2sPit), ft=g.p2tPit==null?null:(g.p2t-g.p2tPit);
@@ -720,7 +804,8 @@ function doCsv(){
       fs==null?'':fs,ft==null?'':ft,ft==null?'':fpct(fs,ft),
       g.p3s,g.p3t,fpct(g.p3s,g.p3t),g.tls,g.tlt,fpct(g.tls,g.tlt),
       (g.parziali||[]).map(fpair).join(' | '),
-      g.risultatoTesto,(g.nota||'').replace(/\r?\n/g,' ')
+      g.risultatoTesto,(g.nota||'').replace(/\r?\n/g,' '),
+      g.topMatch?'Sì':'No'
     ]);
   });
   var csv=rows.map(function(r){
@@ -766,11 +851,14 @@ function renderPartita(){
   $('fData').value=state.data;
   $('fAvv').value=state.avversario;
   $('fMaglia').value=state.maglia;
+  $('fTop').className='chip sm'+(state.topMatch?' on':'');
+  $('fTop').textContent=(state.topMatch?'★':'☆')+' Top Match';
+  renderCats();
   var mark=function(box,v){
     var b=box.querySelectorAll('.chip'),i;
     for(i=0;i<b.length;i++) b[i].className=b[i].className.replace(' on','')+(b[i].dataset.v===String(v)?' on':'');
   };
-  mark($('fCat'),state.categoria); mark($('fTipo'),state.tipoGara);
+  mark($('fTipo'),state.tipoGara);
   mark($('fDiff'),state.difficolta);
   $('fDiffTxt').textContent = state.difficolta
     ? DIFF_TXT[state.difficolta]+' rispetto al livello attuale di Giorgio.'
@@ -830,7 +918,7 @@ function statTable(a){
   return t;
 }
 
-var arcSeason=null, arcCompare=false;
+var arcSeason=null, arcCompare=false, arcCareer=false, arcTop=false;
 function seasons(){
   var s={},i,out=[];
   for(i=0;i<archive.length;i++) s[archive[i].stagione]=1;
@@ -847,10 +935,18 @@ function renderArchivio(){
   var h=el('h2',null,'STAGIONE'); h.style.marginTop='2px'; b.appendChild(h);
   var chips=el('div','chips');
   ss.forEach(function(s){
-    var c=el('button','chip'+(s===arcSeason?' on':''),s);
-    c.onclick=function(){ arcSeason=s; arcCompare=false; renderArchivio(); };
+    var c=el('button','chip'+(!arcCareer&&s===arcSeason?' on':''),s);
+    c.onclick=function(){ arcSeason=s; arcCareer=false; arcCompare=false; renderArchivio(); };
     chips.appendChild(c);
   });
+  var cr=el('button','chip'+(arcCareer?' on':''),'In carriera');
+  cr.onclick=function(){ arcCareer=true; arcCompare=false; renderArchivio(); };
+  chips.appendChild(cr);
+  if(!arcCompare){
+    var tm=el('button','chip sm'+(arcTop?' on':''),'★ Top Match');
+    tm.onclick=function(){ arcTop=!arcTop; renderArchivio(); };
+    chips.appendChild(tm);
+  }
   if(ss.length>1){
     var cc=el('button','chip sm'+(arcCompare?' on':''),'Confronta');
     cc.onclick=function(){ arcCompare=!arcCompare; renderArchivio(); };
@@ -860,14 +956,15 @@ function renderArchivio(){
 
   if(arcCompare){ b.appendChild(compareBox(ss)); return; }
 
-  var list=archive.filter(function(g){return g.stagione===arcSeason;});
+  var list=arcCareer ? archive.slice() : archive.filter(function(g){return g.stagione===arcSeason;});
+  if(arcTop) list=list.filter(function(g){return g.topMatch;});
   var wins=0,loss=0,drw=0;
   list.forEach(function(g){
     var r=g.risultatoTesto||'';
     if(/^V/.test(r)) wins++; else if(/^P/.test(r)) loss++; else if(/^=/.test(r)) drw++;
   });
 
-  b.appendChild(el('h2',null,'TOTALE STAGIONE'));
+  b.appendChild(el('h2',null,arcCareer?'TOTALE IN CARRIERA':'TOTALE STAGIONE'));
   var box=el('div','box'); box.appendChild(statTable(aggregate(list)));
   if(wins+loss+drw) box.appendChild(el('div','hint','Bilancio noto: '+wins+'V '+loss+'P '+(drw?drw+'= ':'')));
   var aggS=aggregate(list);
@@ -876,7 +973,7 @@ function renderArchivio(){
   b.appendChild(box);
 
   var cats={},i;
-  list.forEach(function(g){ (cats[g.categoria]=cats[g.categoria]||[]).push(g); });
+  if(!arcCareer) list.forEach(function(g){ (cats[g.categoria]=cats[g.categoria]||[]).push(g); });
   var ck=[]; for(i in cats) if(cats.hasOwnProperty(i)) ck.push(i); ck.sort();
   if(ck.length>1){
     b.appendChild(el('h2',null,'PER SQUADRA E CATEGORIA'));
@@ -888,7 +985,7 @@ function renderArchivio(){
     });
   }
   var tp={};
-  list.forEach(function(g){ (tp[g.tipoGara]=tp[g.tipoGara]||[]).push(g); });
+  if(!arcCareer) list.forEach(function(g){ (tp[g.tipoGara]=tp[g.tipoGara]||[]).push(g); });
   var tk=[]; for(i in tp) if(tp.hasOwnProperty(i)) tk.push(i);
   if(tk.length>1){
     b.appendChild(el('h2',null,'PER TIPO DI GARA'));
@@ -913,6 +1010,7 @@ function renderArchivio(){
     d.appendChild(dd);
     var o=el('div','o');
     var nm=el('b',null,g.avversario);
+    if(g.topMatch) nm.appendChild(el('span','star','★'));
     if(ddOf(g)){ var tg=el('span','tag','DD'); nm.appendChild(tg); }
     o.appendChild(nm);
     o.appendChild(el('span',null,g.categoria+' · '+g.tipoGara+(g.risultatoTesto?' · '+g.risultatoTesto:'')));
@@ -962,7 +1060,9 @@ function showGame(g){
   var s=$('sheet'); s.innerHTML='';
   s.appendChild(el('h2',null,itDate(g.data)+' · '+g.categoria));
   var t=el('div'); t.style.fontSize='19px'; t.style.fontWeight='800'; t.style.marginBottom='2px';
-  t.textContent=g.avversario; s.appendChild(t);
+  t.textContent=g.avversario;
+  if(g.topMatch) t.appendChild(el('span','star','★'));
+  s.appendChild(t);
   var sub=el('div','hint',g.tipoGara+(g.risultatoTesto?' · '+g.risultatoTesto:'')+
     (g.maglia?' · maglia '+g.maglia:'')+(g.difficolta?' · difficoltà '+g.difficolta+'/5':''));
   sub.style.marginTop='0'; s.appendChild(sub);
@@ -1014,6 +1114,7 @@ function loadGame(g){
   state=blank();
   state.data=g.data; state.avversario=g.avversario; state.categoria=g.categoria;
   state.tipoGara=g.tipoGara; state.maglia=g.maglia; state.stagione=g.stagione;
+  state.topMatch=!!g.topMatch;
   state.difficolta=g.difficolta; state.nota=g.nota;
   state.minutiQ=(g.minutiQ&&g.minutiQ.length)?g.minutiQ.slice():[g.minuti,null,null,null];
   state.parziali=(g.parziali&&g.parziali.length)?g.parziali.map(function(p){return [p[0],p[1]];}):[[null,null],[null,null],[null,null],[null,null]];
