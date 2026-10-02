@@ -143,10 +143,11 @@ td.k{color:var(--mute)}
   <!-- ============ LIVE ============ -->
   <section class="panel on" id="live">
     <div class="board">
-      <div class="bcell bpt"><b id="bPt">0</b><span>PUNTI</span></div>
-      <div class="bcell bval"><b id="bVal">0</b><span>VALUTAZIONE</span></div>
-      <div class="bcell"><b id="bMin">0</b><span>MINUTI</span></div>
+      <div class="bcell bpt"><b id="bPt">0</b><span data-i18n="bPunti">PUNTI</span></div>
+      <div class="bcell bval"><b id="bVal">0</b><span data-i18n="bVal">VALUTAZIONE</span></div>
+      <div class="bcell"><b id="bMin">0</b><span data-i18n="bMin">MINUTI</span></div>
       <div class="bdd" id="bDD">DD</div>
+      <div class="bdd" id="bTD">TD</div>
     </div>
     <div class="body">
       <div class="shots" id="shots"></div>
@@ -157,30 +158,30 @@ td.k{color:var(--mute)}
   <!-- ============ PARTITA ============ -->
   <section class="panel" id="partita">
     <div class="scroll">
-      <h2>GARA</h2>
+      <h2 data-i18n="hGara">GARA</h2>
       <div class="box">
-        <div class="fld"><label>Data</label><input type="date" id="fData"></div>
-        <div class="fld"><label>Avversario</label><div class="avvrow"><input type="text" id="fAvv" placeholder="Nome squadra"><button class="chip sm" id="fTop">☆ Top Match</button></div></div>
-        <div class="fld"><label>Squadra e categoria</label><div class="chips" id="fCat"></div></div>
-        <div class="fld"><label>Tipo gara</label><div class="chips" id="fTipo"></div></div>
-        <div class="fld"><label>Numero di maglia</label><input type="number" id="fMaglia" inputmode="numeric" placeholder="—"></div>
+        <div class="fld"><label data-i18n="lData">Data</label><input type="date" id="fData"></div>
+        <div class="fld"><label data-i18n="lAvv">Avversario</label><div class="avvrow"><input type="text" id="fAvv" placeholder="Nome squadra" data-i18n-ph="phAvv"><button class="chip sm" id="fTop">☆ Top Match</button></div></div>
+        <div class="fld"><label data-i18n="lCat">Squadra e categoria</label><div class="chips" id="fCat"></div></div>
+        <div class="fld"><label data-i18n="lTipo">Tipo gara</label><div class="chips" id="fTipo"></div></div>
+        <div class="fld"><label data-i18n="lMaglia">Numero di maglia</label><input type="number" id="fMaglia" inputmode="numeric" placeholder="—"></div>
       </div>
 
-      <h2>MINUTI GIOCATI</h2>
+      <h2 data-i18n="hMinuti">MINUTI GIOCATI</h2>
       <div class="box">
         <div id="fMinQ"></div>
-        <div class="hint">Totale calcolato: <b id="fMinTot">0</b> minuti.</div>
+        <div class="hint"><span data-i18n="totCalc">Totale calcolato:</span> <b id="fMinTot">0</b> <span data-i18n="totMinuti">minuti.</span></div>
       </div>
 
-      <h2>PARZIALI</h2>
+      <h2 data-i18n="hParz">PARZIALI</h2>
       <div class="box">
         <div id="fParz"></div>
-        <button class="btn" id="bAddOT">Aggiungi tempo supplementare</button>
-        <div class="hint">Punteggio reale di ogni periodo. Progressivo ed esito calcolati.</div>
+        <button class="btn" id="bAddOT" data-i18n="bAddOT">Aggiungi tempo supplementare</button>
+        <div class="hint" data-i18n="hintParz">Punteggio reale di ogni periodo. Progressivo ed esito calcolati.</div>
         <div class="hint" id="fProg"></div>
       </div>
 
-      <h2>DIFFICOLTÀ DELL'AVVERSARIO</h2>
+      <h2 data-i18n="hDiff">DIFFICOLTÀ DELL'AVVERSARIO</h2>
       <div class="box">
         <div class="chips" id="fDiff"></div>
         <div class="hint" id="fDiffTxt">Da assegnare a fine partita, rispetto al livello attuale di Giorgio.</div>
@@ -191,37 +192,42 @@ td.k{color:var(--mute)}
   <!-- ============ NOTE ============ -->
   <section class="panel" id="note">
     <div class="scroll">
-      <h2>NOTA DELLA PARTITA</h2>
+      <h2 data-i18n="hNota">NOTA DELLA PARTITA</h2>
       <div class="box">
-        <textarea id="fNota" rows="7" placeholder="Contesto, avversario, episodi, osservazioni tecniche."></textarea>
+        <textarea id="fNota" rows="7" placeholder="Contesto, avversario, episodi, osservazioni tecniche." data-i18n-ph="phNota"></textarea>
       </div>
 
-      <h2>ARCHIVIAZIONE</h2>
+      <h2 data-i18n="hArchiv">ARCHIVIAZIONE</h2>
       <div class="box">
-        <button class="btn acc" id="bSave">Salva partita in archivio</button>
-        <div class="hint">Risalvare la stessa partita la aggiorna, non la duplica.</div>
-        <button class="btn dgr" id="bReset">Azzera partita in corso</button>
-        <div class="hint">Non tocca l'archivio.</div>
+        <button class="btn acc" id="bSave" data-i18n="bSave">Salva partita in archivio</button>
+        <div class="hint" data-i18n="hintSave">Risalvare la stessa partita la aggiorna, non la duplica.</div>
+        <button class="btn dgr" id="bReset" data-i18n="bReset">Azzera partita in corso</button>
+        <div class="hint" data-i18n="hintReset">Non tocca l'archivio.</div>
       </div>
 
-      <h2>DATI</h2>
+      <h2 data-i18n="hDati">DATI</h2>
       <div class="box">
-        <button class="btn" id="bBackup">Backup (condividi o scarica)</button>
-        <button class="btn" id="bImport">Importa backup</button>
-        <button class="btn" id="bCsv">Esporta CSV per Excel</button>
+        <button class="btn" id="bBackup" data-i18n="bBackup">Backup (condividi o scarica)</button>
+        <button class="btn" id="bImport" data-i18n="bImport">Importa backup</button>
+        <button class="btn" id="bCsv" data-i18n="bCsv">Esporta CSV per Excel</button>
         <input type="file" id="fFile" accept="application/json,.json" style="display:none">
-        <div class="hint">Il CSV si apre in Excel con doppio clic: punto e virgola, UTF-8.</div>
+        <div class="hint" data-i18n="hintCsv">Il CSV si apre in Excel con doppio clic: punto e virgola, UTF-8.</div>
       </div>
 
-      <h2>STAGIONE</h2>
+      <h2 data-i18n="hStag">STAGIONE</h2>
       <div class="box">
-        <div class="fld"><label>Stagione attribuita alle nuove partite</label>
+        <div class="fld"><label data-i18n="lStag">Stagione attribuita alle nuove partite</label>
           <input type="text" id="fStag" placeholder="2026-27"></div>
-        <div class="hint">Assegnata in automatico con taglio al 1° agosto. Modificala solo se serve.</div>
+        <div class="hint" data-i18n="hintStag">Assegnata in automatico con taglio al 1° agosto. Modificala solo se serve.</div>
+      </div>
+
+      <h2 data-i18n="hLingua">LINGUA</h2>
+      <div class="box">
+        <div class="chips" id="fLingua"></div>
       </div>
 
       <div class="box" style="margin-top:14px">
-        <div class="hint">Giorgio Stats v2.1.2 — settembre 2026<br>Creata da Stefano Amirante con Claude</div>
+        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.2.0 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante con Claude</span></div>
       </div>
     </div>
   </section>
@@ -233,10 +239,10 @@ td.k{color:var(--mute)}
 </main>
 
 <nav>
-  <button class="on" data-go="live"><i>●</i>LIVE</button>
-  <button data-go="partita"><i>▣</i>PARTITA</button>
-  <button data-go="note"><i>✎</i>NOTE</button>
-  <button data-go="archivio"><i>▤</i>ARCHIVIO</button>
+  <button class="on" data-go="live"><i>●</i><span data-i18n="navLive">LIVE</span></button>
+  <button data-go="partita"><i>▣</i><span data-i18n="navPartita">PARTITA</span></button>
+  <button data-go="note"><i>✎</i><span data-i18n="navNote">NOTE</span></button>
+  <button data-go="archivio"><i>▤</i><span data-i18n="navArchivio">ARCHIVIO</span></button>
 </nav>
 
 <div class="toast" id="toast"></div>
@@ -244,7 +250,7 @@ td.k{color:var(--mute)}
 
 <script>
 /* =========================================================
-   GIORGIO STATS v2.1.2 — settembre 2026
+   GIORGIO STATS v2.2.0 — ottobre 2026
    ========================================================= */
 (function(){
 'use strict';
@@ -264,35 +270,225 @@ var MIG2_IDS=["2026-05-16|BAT Ticino|GSV U12", "2026-05-16|Liberi e Forti Monza|
 var ETI_INIZIALI = ['GSV U13S','GSV U14S','PV U13G','PV U14S'];
 var ETI_MAX = 8, ETI_LEN = 8;
 var TIPI = ['Campionato','Torneo','Amichevole','Playoff'];
-var DIFF_TXT = {
-  1:'1 — nettamente inferiore',
-  2:'2 — inferiore',
-  3:'3 — equivalente',
-  4:'4 — superiore',
-  5:'5 — nettamente superiore'
-};
 
-/* righe di tiro, ordinate per frequenza reale */
+/* righe di tiro, ordinate per frequenza reale (n, s: chiavi di traduzione) */
 var SHOTS = [
-  {k:'p2Pit', n:'2 punti', s:'dal pitturato'},
-  {k:'p2Fuo', n:'2 punti', s:'fuori dal pitturato'},
-  {k:'tl',    n:'Tiri liberi', s:''},
-  {k:'p3',    n:'3 punti', s:''}
+  {k:'p2Pit', n:'sh_p2', s:'sh_pit'},
+  {k:'p2Fuo', n:'sh_p2', s:'sh_fuo'},
+  {k:'tl',    n:'sh_tl', s:''},
+  {k:'p3',    n:'sh_p3', s:''}
 ];
 
-/* contatori, ordinati per frequenza reale */
+/* contatori, ordinati per frequenza reale (etichetta: chiave 'c_'+k) */
 var CNTS = [
-  {k:'rimO', l:'Rimbalzi offensivi'},
-  {k:'rimD', l:'Rimbalzi difensivi'},
-  {k:'fsTiri', l:'Fallo subito con tiri liberi'},
-  {k:'fsNo', l:'Fallo subito senza tiri'},
-  {k:'pr', l:'Palle recuperate'},
-  {k:'pp', l:'Palle perse'},
-  {k:'fc', l:'Falli commessi'},
-  {k:'ast', l:'Assist'},
-  {k:'stopD', l:'Stoppate date', dim:1},
-  {k:'stopS', l:'Stoppate subite', dim:1}
+  {k:'rimO'},
+  {k:'rimD'},
+  {k:'fsTiri'},
+  {k:'fsNo'},
+  {k:'pr'},
+  {k:'pp'},
+  {k:'fc'},
+  {k:'ast'},
+  {k:'stopD', dim:1},
+  {k:'stopS', dim:1}
 ];
+
+/* ---------- lingua ---------- */
+/* una lingua = un dizionario; le chiavi mancanti ricadono sull'italiano */
+var K_LANG='gs2.lingua';
+var I18N = {
+it:{
+  _nome:'Italiano',
+  bPunti:'PUNTI', bVal:'VALUTAZIONE', bMin:'MINUTI',
+  navLive:'LIVE', navPartita:'PARTITA', navNote:'NOTE', navArchivio:'ARCHIVIO',
+  hGara:'GARA', lData:'Data', lAvv:'Avversario', phAvv:'Nome squadra',
+  lCat:'Squadra e categoria', lTipo:'Tipo gara', lMaglia:'Numero di maglia',
+  hMinuti:'MINUTI GIOCATI', totCalc:'Totale calcolato:', totMinuti:'minuti.',
+  hParz:'PARZIALI', bAddOT:'Aggiungi tempo supplementare',
+  hintParz:'Punteggio reale di ogni periodo. Progressivo ed esito calcolati.',
+  hDiff:'DIFFICOLTÀ DELL\'AVVERSARIO',
+  diffNo:'Da assegnare a fine partita, rispetto al livello attuale di Giorgio.',
+  diffSi:'{0} rispetto al livello attuale di Giorgio.',
+  diff1:'1 — nettamente inferiore', diff2:'2 — inferiore', diff3:'3 — equivalente',
+  diff4:'4 — superiore', diff5:'5 — nettamente superiore',
+  hNota:'NOTA DELLA PARTITA', phNota:'Contesto, avversario, episodi, osservazioni tecniche.',
+  hArchiv:'ARCHIVIAZIONE', bSave:'Salva partita in archivio',
+  hintSave:'Risalvare la stessa partita la aggiorna, non la duplica.',
+  bReset:'Azzera partita in corso', hintReset:'Non tocca l\'archivio.',
+  hDati:'DATI', bBackup:'Backup (condividi o scarica)', bImport:'Importa backup',
+  bCsv:'Esporta CSV per Excel', hintCsv:'Il CSV si apre in Excel con doppio clic: punto e virgola, UTF-8.',
+  hStag:'STAGIONE', lStag:'Stagione attribuita alle nuove partite',
+  hintStag:'Assegnata in automatico con taglio al 1° agosto. Modificala solo se serve.',
+  hLingua:'LINGUA',
+  verRiga:'Giorgio Stats v2.2.0 — ottobre 2026', creata:'Creata da Stefano Amirante con Claude',
+  tipo_Campionato:'Campionato', tipo_Torneo:'Torneo', tipo_Amichevole:'Amichevole', tipo_Playoff:'Playoff',
+  sh_p2:'2 punti', sh_pit:'dal pitturato', sh_fuo:'fuori dal pitturato', sh_tl:'Tiri liberi', sh_p3:'3 punti',
+  c_rimO:'Rimbalzi offensivi', c_rimD:'Rimbalzi difensivi',
+  c_fsTiri:'Fallo subito con tiri liberi', c_fsNo:'Fallo subito senza tiri',
+  c_pr:'Palle recuperate', c_pp:'Palle perse', c_fc:'Falli commessi', c_ast:'Assist',
+  c_stopD:'Stoppate date', c_stopS:'Stoppate subite',
+  perQ:'Q', perTS:'TS', sepMin:'min', phNoi:'noi', phAvvP:'avv',
+  prog:'Progressivi: ', finale:'Finale: ', vittoria:'vittoria', sconfitta:'sconfitta', pareggio:'pareggio',
+  resV:'V', resP:'P',
+  tOT:'Tempo supplementare aggiunto',
+  cfEti:'Cancellare l\'etichetta "{0}"?\nLe partite in archivio non vengono modificate.',
+  tEtiCanc:'Etichetta cancellata', tEtiMax:'Massimo {0} etichette: cancellane una per crearne una nuova',
+  hNuovaEti:'NUOVA ETICHETTA DI SQUADRA', phEti:'Max {0} caratteri', bSalva:'Salva',
+  eEtiVuota:'Il nome non può essere vuoto.', eEtiLen:'Massimo {0} caratteri.', eEtiDup:'Etichetta già presente.',
+  tEtiCreata:'Etichetta creata', bAnnulla:'Annulla',
+  tStag:'Stagione: {0}',
+  tNoAvv:'Manca il nome dell\'avversario', tNoCat:'Manca l\'etichetta di squadra: creane o sceglierne una',
+  tSalvata:'Partita salvata in archivio', tAggiornata:'Partita aggiornata in archivio',
+  cfReset:'Azzerare la partita in corso?\nL\'archivio non viene toccato.', tAzzerata:'Partita azzerata',
+  shareBackup:'Backup Giorgio Stats', tBackupCond:'Backup condiviso', tScaricato:'File scaricato',
+  tNonValido:'File non valido', tImport:'Importate {0} nuove, {1} aggiornate',
+  tNonLeggibile:'File non leggibile', tErrLettura:'Errore di lettura', tCsvCond:'CSV condiviso',
+  csvH:['Stagione','Data','Avversario','Squadra e categoria','Tipo gara','Maglia','Difficolta',
+    'Minuti','Minuti per periodo','Punti','Valutazione','Doppia doppia',
+    'Rimb off','Rimb dif','Rimb tot','Assist','Palle perse','Palle recuperate',
+    'Stoppate date','Stoppate subite','Stoppate subite rilevate','Falli subiti','di cui con tiri liberi','Falli commessi',
+    '2pt segnati','2pt tentati','2pt %',
+    '2pt pitturato segnati','2pt pitturato tentati','2pt pitturato %',
+    '2pt fuori segnati','2pt fuori tentati','2pt fuori %',
+    '3pt segnati','3pt tentati','3pt %','TL segnati','TL tentati','TL %',
+    'Parziali','Risultato','Nota','Top Match','Tripla doppia'],
+  csvSI:'SI', csvNO:'NO', csvSi:'Sì', csvNo:'No',
+  stSu:'Su {0} partite', stMedia:'Media', stMinuti:'Minuti', stPunti:'Punti', stVal:'Valutazione',
+  stRimb:'Rimbalzi', stOff:'({0} off)', stAst:'Assist', stPr:'Palle recuperate', stPp:'Palle perse',
+  stFs:'Falli subiti', stConTL:'({0} con TL)', stFc:'Falli commessi', stStopD:'Stoppate date',
+  stStopS:'Stoppate subite', stDD:'Doppie doppie', stTD:'Triple doppie',
+  stDiff:'Difficoltà media', stSuN:'(su {0})', stTiro:'Tiro', st2p:'2 punti',
+  stPit:'— dal pitturato', stFuo:'— fuori pitturato', st3p:'3 punti', stTl:'Tiri liberi',
+  aVuoto:'Nessuna partita in archivio.', aStag:'STAGIONE', aCarriera:'In carriera', aConfronta:'Confronta',
+  aTotCarr:'TOTALE IN CARRIERA', aTotStag:'TOTALE STAGIONE', aBilancio:'Bilancio noto: ',
+  aWarnStop:'* Stoppate subite non rilevate in {0} partite su {1}, conteggiate come 0. Nella stagione 2025-26 non erano tracciate: la media reale e la valutazione sono leggermente sovrastimate.',
+  aWarnPit:'Tiri da due non divisi per zona in questa stagione: il dato pitturato / fuori pitturato parte dalla 2026-27.',
+  aPerCat:'PER SQUADRA E CATEGORIA', aPerTipo:'PER TIPO DI GARA',
+  aTh:['Tipo','PG','Pt','Val','2pt%'], aPartite:'PARTITE ({0})', aRV:'{0} r · {1} v',
+  cPartite:'Partite', cMinuti:'Minuti', cPunti:'Punti', cVal:'Valutazione', cRimb:'Rimbalzi',
+  cRimbOff:'Rimb. off.', cAst:'Assist', cRec:'Recuperate', cPerse:'Perse', cFs:'Falli subiti',
+  c2p:'2pt %', cPit:'— pitturato', cFuo:'— fuori', c3p:'3pt %', cTl:'TL %',
+  cDD:'Doppie doppie', cTD:'Triple doppie', cNd:'n.d.',
+  cHint:'Medie per partita. Le voci "n.d." non erano tracciate in quella stagione.',
+  gMaglia:' · maglia {0}', gDiff:' · difficoltà {0}/5',
+  gMinuti:'Minuti', gPunti:'Punti', gVal:'Valutazione', gRimb:'Rimbalzi', gRimbDett:'({0} off / {1} dif)',
+  gAst:'Assist', gRec:'Recuperate', gPerse:'Perse', gFs:'Falli subiti', gConTL:'({0} con TL)',
+  gFc:'Falli commessi', gStop:'Stoppate', gStopDett:'{0} date / {1} subite', gNr:' (n.r.)',
+  g2p:'2 punti', gPit:'— pitturato', gFuo:'— fuori', g3p:'3 punti', gTl:'Tiri liberi',
+  gProg:'Progressivi', gPerQ:'Per quarto', gQGioc:'Quarti giocati', gNota:'NOTA',
+  gRidotto:'Tracciamento ridotto: {0}.', gWStop:'stoppate subite non rilevate, conteggiate come 0',
+  gWPit:'tiri da due non divisi per zona',
+  bCarica:'Carica come partita in corso', bElimina:'Elimina dall\'archivio',
+  cfElimina:'Eliminare {0} del {1}?', tEliminata:'Partita eliminata', bChiudi:'Chiudi',
+  tCaricata:'Partita caricata'
+},
+en:{
+  _nome:'English',
+  bPunti:'POINTS', bVal:'EFFICIENCY', bMin:'MINUTES',
+  navLive:'LIVE', navPartita:'GAME', navNote:'NOTES', navArchivio:'ARCHIVE',
+  hGara:'GAME', lData:'Date', lAvv:'Opponent', phAvv:'Team name',
+  lCat:'Team and category', lTipo:'Game type', lMaglia:'Jersey number',
+  hMinuti:'MINUTES PLAYED', totCalc:'Calculated total:', totMinuti:'minutes.',
+  hParz:'PERIOD SCORES', bAddOT:'Add overtime',
+  hintParz:'Actual score of each period. Running score and result calculated.',
+  hDiff:'OPPONENT DIFFICULTY',
+  diffNo:'To be assigned at the end of the game, relative to Giorgio\'s current level.',
+  diffSi:'{0} relative to Giorgio\'s current level.',
+  diff1:'1 — clearly weaker', diff2:'2 — weaker', diff3:'3 — equal',
+  diff4:'4 — stronger', diff5:'5 — clearly stronger',
+  hNota:'GAME NOTE', phNota:'Context, opponent, key moments, technical observations.',
+  hArchiv:'ARCHIVING', bSave:'Save game to archive',
+  hintSave:'Saving the same game again updates it, it does not duplicate it.',
+  bReset:'Reset current game', hintReset:'Does not affect the archive.',
+  hDati:'DATA', bBackup:'Backup (share or download)', bImport:'Import backup',
+  bCsv:'Export CSV for Excel', hintCsv:'The CSV opens in Excel with a double click: semicolon, UTF-8.',
+  hStag:'SEASON', lStag:'Season assigned to new games',
+  hintStag:'Assigned automatically with the cutoff on August 1. Change it only if needed.',
+  hLingua:'LANGUAGE',
+  verRiga:'Giorgio Stats v2.2.0 — October 2026', creata:'Created by Stefano Amirante with Claude',
+  tipo_Campionato:'League', tipo_Torneo:'Tournament', tipo_Amichevole:'Friendly', tipo_Playoff:'Playoff',
+  sh_p2:'2 points', sh_pit:'in the paint', sh_fuo:'outside the paint', sh_tl:'Free throws', sh_p3:'3 points',
+  c_rimO:'Offensive rebounds', c_rimD:'Defensive rebounds',
+  c_fsTiri:'Foul drawn with free throws', c_fsNo:'Foul drawn without free throws',
+  c_pr:'Steals', c_pp:'Turnovers', c_fc:'Fouls committed', c_ast:'Assists',
+  c_stopD:'Blocks', c_stopS:'Blocks received',
+  perQ:'Q', perTS:'OT', sepMin:'min', phNoi:'us', phAvvP:'opp',
+  prog:'Running score: ', finale:'Final: ', vittoria:'win', sconfitta:'loss', pareggio:'tie',
+  resV:'W', resP:'L',
+  tOT:'Overtime added',
+  cfEti:'Delete the label "{0}"?\nGames in the archive are not changed.',
+  tEtiCanc:'Label deleted', tEtiMax:'Maximum {0} labels: delete one to create a new one',
+  hNuovaEti:'NEW TEAM LABEL', phEti:'Max {0} characters', bSalva:'Save',
+  eEtiVuota:'The name cannot be empty.', eEtiLen:'Maximum {0} characters.', eEtiDup:'Label already exists.',
+  tEtiCreata:'Label created', bAnnulla:'Cancel',
+  tStag:'Season: {0}',
+  tNoAvv:'Opponent name is missing', tNoCat:'Team label is missing: create or choose one',
+  tSalvata:'Game saved to archive', tAggiornata:'Game updated in archive',
+  cfReset:'Reset the current game?\nThe archive is not affected.', tAzzerata:'Game reset',
+  shareBackup:'Giorgio Stats backup', tBackupCond:'Backup shared', tScaricato:'File downloaded',
+  tNonValido:'Invalid file', tImport:'Imported {0} new, {1} updated',
+  tNonLeggibile:'Unreadable file', tErrLettura:'Read error', tCsvCond:'CSV shared',
+  csvH:['Season','Date','Opponent','Team and category','Game type','Jersey','Difficulty',
+    'Minutes','Minutes per period','Points','Efficiency','Double-double',
+    'Off reb','Def reb','Tot reb','Assists','Turnovers','Steals',
+    'Blocks','Blocks received','Blocks received recorded','Fouls drawn','of which with free throws','Fouls committed',
+    '2P made','2P attempted','2P %',
+    '2P paint made','2P paint attempted','2P paint %',
+    '2P outside made','2P outside attempted','2P outside %',
+    '3P made','3P attempted','3P %','FT made','FT attempted','FT %',
+    'Period scores','Result','Note','Top Match','Triple-double'],
+  csvSI:'YES', csvNO:'NO', csvSi:'Yes', csvNo:'No',
+  stSu:'Over {0} games', stMedia:'Average', stMinuti:'Minutes', stPunti:'Points', stVal:'Efficiency',
+  stRimb:'Rebounds', stOff:'({0} off)', stAst:'Assists', stPr:'Steals', stPp:'Turnovers',
+  stFs:'Fouls drawn', stConTL:'({0} with FT)', stFc:'Fouls committed', stStopD:'Blocks',
+  stStopS:'Blocks received', stDD:'Double-doubles', stTD:'Triple-doubles',
+  stDiff:'Average difficulty', stSuN:'(over {0})', stTiro:'Shooting', st2p:'2 points',
+  stPit:'— in the paint', stFuo:'— outside the paint', st3p:'3 points', stTl:'Free throws',
+  aVuoto:'No games in archive.', aStag:'SEASON', aCarriera:'Career', aConfronta:'Compare',
+  aTotCarr:'CAREER TOTAL', aTotStag:'SEASON TOTAL', aBilancio:'Known record: ',
+  aWarnStop:'* Blocks received not recorded in {0} of {1} games, counted as 0. In the 2025-26 season they were not tracked: the actual average and the efficiency are slightly overestimated.',
+  aWarnPit:'Two-point shots not split by zone in this season: paint / outside-the-paint data starts from 2026-27.',
+  aPerCat:'BY TEAM AND CATEGORY', aPerTipo:'BY GAME TYPE',
+  aTh:['Type','GP','Pts','Eff','2P%'], aPartite:'GAMES ({0})', aRV:'{0} r · {1} e',
+  cPartite:'Games', cMinuti:'Minutes', cPunti:'Points', cVal:'Efficiency', cRimb:'Rebounds',
+  cRimbOff:'Off. reb.', cAst:'Assists', cRec:'Steals', cPerse:'Turnovers', cFs:'Fouls drawn',
+  c2p:'2P %', cPit:'— paint', cFuo:'— outside', c3p:'3P %', cTl:'FT %',
+  cDD:'Double-doubles', cTD:'Triple-doubles', cNd:'n/a',
+  cHint:'Per-game averages. Items marked "n/a" were not tracked in that season.',
+  gMaglia:' · jersey {0}', gDiff:' · difficulty {0}/5',
+  gMinuti:'Minutes', gPunti:'Points', gVal:'Efficiency', gRimb:'Rebounds', gRimbDett:'({0} off / {1} def)',
+  gAst:'Assists', gRec:'Steals', gPerse:'Turnovers', gFs:'Fouls drawn', gConTL:'({0} with FT)',
+  gFc:'Fouls committed', gStop:'Blocks', gStopDett:'{0} made / {1} received', gNr:' (not rec.)',
+  g2p:'2 points', gPit:'— paint', gFuo:'— outside', g3p:'3 points', gTl:'Free throws',
+  gProg:'Running score', gPerQ:'By quarter', gQGioc:'Quarters played', gNota:'NOTE',
+  gRidotto:'Reduced tracking: {0}.', gWStop:'blocks received not recorded, counted as 0',
+  gWPit:'two-point shots not split by zone',
+  bCarica:'Load as current game', bElimina:'Delete from archive',
+  cfElimina:'Delete {0} on {1}?', tEliminata:'Game deleted', bChiudi:'Close',
+  tCaricata:'Game loaded'
+}
+};
+var lingua='it';
+/* lettura di un testo; {0}, {1}... sostituiti dagli argomenti */
+function t(k){
+  var d=I18N[lingua]||I18N.it, v=(d[k]!=null)?d[k]:I18N.it[k], a=arguments;
+  if(typeof v!=='string') return v;
+  return v.replace(/\{(\d+)\}/g,function(m,i){ var x=a[+i+1]; return x==null?'':String(x); });
+}
+/* alias per le funzioni in cui t e' una variabile locale */
+var tx=t;
+function tipoTxt(x){ var v=t('tipo_'+x); return v==null?x:v; }
+/* risultato salvato "V 50-40": si traduce solo la lettera dell'esito */
+function resTxt(r){
+  var m=/^([VP])( .*)$/.exec(r||'');
+  return m ? (m[1]==='V'?t('resV'):t('resP'))+m[2] : (r||'');
+}
+/* minuti decimali in m:ss, secondi arrotondati */
+function fmin(v){
+  if(v==null) return '?';
+  var s=Math.round(v*60), r=s%60;
+  return Math.floor(s/60)+':'+(r<10?'0':'')+r;
+}
 
 /* ---------- utilità ---------- */
 function $(id){return document.getElementById(id);}
@@ -376,11 +572,14 @@ function totals(s){
   return {p2s:p2s,p2t:p2t,p3s:p3s,p3t:p3t,tls:tls,tlt:tlt,pt:pt,rim:rim,fs:fs,val:val};
 }
 function minTot(s){ var t=0,i,q=s.minutiQ||[]; for(i=0;i<q.length;i++) if(q[i]!=null) t+=n(q[i]); return t; }
-function isDD(s){
+function isDD(s){ return ddVoci(s)>=2; }
+function isTD(s){ return ddVoci(s)>=3; }
+/* voci a 10 o piu' fra punti, rimbalzi, assist, stoppate date, recuperate */
+function ddVoci(s){
   var t=totals(s);
   var v=[t.pt,t.rim,n(s.ast),n(s.stopD),n(s.pr)];
   var c=0,i; for(i=0;i<v.length;i++) if(v[i]>=10) c++;
-  return c>=2;
+  return c;
 }
 function scoreOf(s){
   /* i parziali sono progressivi da tabellone: il finale e' l'ultimo inserito */
@@ -455,10 +654,12 @@ function valOf(g){
        + g.pr - g.pp + g.rimO + g.rimD + g.ast
        - g.fc + g.fs + g.stopDate - g.stopSubite;
 }
-function ddOf(g){
+function ddOf(g){ return ddVociG(g)>=2; }
+function tdOf(g){ return ddVociG(g)>=3; }
+function ddVociG(g){
   var v=[g.pt,g.rimO+g.rimD,g.ast,g.stopDate,g.pr],c=0,i;
   for(i=0;i<v.length;i++) if(v[i]>=10) c++;
-  return c>=2;
+  return c;
 }
 
 /* ---------- merge archivio ---------- */
@@ -500,6 +701,8 @@ function boot(){
   archive = load(K_ARC,null);
   maglie  = load(K_MAG,{}) || {};
   stagManuale = load(K_STAG,null);
+  var lg=load(K_LANG,null);
+  lingua = (typeof lg==='string' && I18N.hasOwnProperty(lg)) ? lg : 'it';
 
   /* etichette di squadra: se la chiave manca (o non e' leggibile) si crea con le 4 iniziali */
   var rawEti=null; try{ rawEti=localStorage.getItem(K_ETI); }catch(e){}
@@ -537,6 +740,7 @@ function boot(){
   state.topMatch = !!state.topMatch;
 
   buildLive(); buildPartita(); bindNote();
+  applyLang();
   renderAll();
 }
 
@@ -546,14 +750,14 @@ function buildLive(){
   SHOTS.forEach(function(c){
     var row=el('div','srow');
     var nm=el('div','sname');
-    nm.appendChild(el('b',null,c.n));
+    nm.appendChild(el('b',null,t(c.n)));
     var sub=el('span',null,''); sub.id='sub_'+c.k; nm.appendChild(sub);
     row.appendChild(nm);
     var bt=el('div','sbtns');
     bt.appendChild(pillFor(c.k+'S','ok'));
     bt.appendChild(pillFor(c.k+'X','no'));
     row.appendChild(bt);
-    if(c.s){ nm.querySelector('b').textContent=c.n; sub.dataset.pre=c.s; }
+    if(c.s){ nm.querySelector('b').textContent=t(c.n); sub.dataset.pre=t(c.s); }
     sh.appendChild(row);
   });
   var gr=$('grid'); gr.innerHTML='';
@@ -562,7 +766,7 @@ function buildLive(){
     var m=el('button','m','−'); m.onclick=function(){bump(c.k,-1);};
     var v=el('div','v','0'); v.id='v_'+c.k;
     var p=el('button','p','+'); p.onclick=function(){bump(c.k,1);};
-    d.appendChild(el('div','lab',c.l)); d.appendChild(m); d.appendChild(v); d.appendChild(p);
+    d.appendChild(el('div','lab',t('c_'+c.k))); d.appendChild(m); d.appendChild(v); d.appendChild(p);
     gr.appendChild(d);
   });
 }
@@ -583,7 +787,7 @@ function bump(k,d){
 function buildPartita(){
   var t=$('fTipo'); t.innerHTML='';
   TIPI.forEach(function(x){
-    var b=el('button','chip sm',x);
+    var b=el('button','chip sm',tipoTxt(x));
     b.onclick=function(){ state.tipoGara=x; saveState(); renderPartita(); };
     b.dataset.v=x; t.appendChild(b);
   });
@@ -602,7 +806,7 @@ function buildPartita(){
     maglie[state.categoria]=this.value; save(K_MAG,maglie); saveState(); };
   $('bAddOT').onclick=function(){
     state.minutiQ.push(null); state.parziali.push([null,null]);
-    saveState(); renderPartita(); toast('Tempo supplementare aggiunto');
+    saveState(); renderPartita(); toast(tx('tOT'));
   };
 }
 /* pulsanti etichette: salvate, eventuale etichetta della sola partita, "+" */
@@ -611,9 +815,9 @@ function renderCats(){
   etichette.forEach(function(x){
     var b=el('button','chip eti'+(x===state.categoria?' on':''),x);
     pressione(b, function(){
-      if(!confirm('Cancellare l\'etichetta "'+x+'"?\nLe partite in archivio non vengono modificate.')) return;
+      if(!confirm(t('cfEti',x))) return;
       etichette=etichette.filter(function(e){return e!==x;});
-      saveEti(); renderPartita(); toast('Etichetta cancellata');
+      saveEti(); renderPartita(); toast(t('tEtiCanc'));
     }, function(){ state.categoria=x; applyMaglia(); saveState(); renderPartita(); });
     c.appendChild(b);
   });
@@ -640,27 +844,27 @@ function pressione(b,onLong,onTap){
 }
 function nuovaEtichetta(){
   if(etichette.length>=ETI_MAX){
-    toast('Massimo '+ETI_MAX+' etichette: cancellane una per crearne una nuova');
+    toast(t('tEtiMax',ETI_MAX));
     return;
   }
   var s=$('sheet'); s.innerHTML='';
-  s.appendChild(el('h2',null,'NUOVA ETICHETTA DI SQUADRA'));
-  var inp=el('input'); inp.type='text'; inp.maxLength=ETI_LEN; inp.placeholder='Max '+ETI_LEN+' caratteri';
+  s.appendChild(el('h2',null,t('hNuovaEti')));
+  var inp=el('input'); inp.type='text'; inp.maxLength=ETI_LEN; inp.placeholder=t('phEti',ETI_LEN);
   s.appendChild(inp);
   var err=el('div','warn',''); s.appendChild(err);
-  var ok=el('button','btn acc','Salva');
+  var ok=el('button','btn acc',t('bSalva'));
   ok.onclick=function(){
     var v=inp.value.trim();
-    if(!v){ err.textContent='Il nome non può essere vuoto.'; return; }
-    if(v.length>ETI_LEN){ err.textContent='Massimo '+ETI_LEN+' caratteri.'; return; }
-    if(etichette.indexOf(v)>=0){ err.textContent='Etichetta già presente.'; return; }
+    if(!v){ err.textContent=t('eEtiVuota'); return; }
+    if(v.length>ETI_LEN){ err.textContent=t('eEtiLen',ETI_LEN); return; }
+    if(etichette.indexOf(v)>=0){ err.textContent=t('eEtiDup'); return; }
     etichette.push(v); saveEti();
     state.categoria=v; applyMaglia(); saveState();
-    closeModal(); renderPartita(); toast('Etichetta creata');
+    closeModal(); renderPartita(); toast(t('tEtiCreata'));
   };
   inp.onkeydown=function(e){ if(e.key==='Enter') ok.onclick(); };
   s.appendChild(ok);
-  var no=el('button','btn','Annulla'); no.onclick=closeModal; s.appendChild(no);
+  var no=el('button','btn',t('bAnnulla')); no.onclick=closeModal; s.appendChild(no);
   $('modal').className='modal on';
   inp.focus();
 }
@@ -669,7 +873,7 @@ function applyMaglia(){
 }
 function periodLabel(i,len){
   var base=4;
-  return i<base ? ('Q'+(i+1)) : ('TS'+(i-base+1));
+  return i<base ? (t('perQ')+(i+1)) : (t('perTS')+(i-base+1));
 }
 function renderPartitaFields(){
   var mq=$('fMinQ'); mq.innerHTML='';
@@ -679,23 +883,23 @@ function renderPartitaFields(){
     var inp=el('input'); inp.type='number'; inp.inputMode='numeric'; inp.min='0'; inp.max='20';
     inp.value=(v==null)?'':v; inp.placeholder='';
     inp.oninput=function(){ state.minutiQ[i]=nz(this.value); saveState();
-      $('fMinTot').textContent=minTot(state); renderLive(); };
+      $('fMinTot').textContent=fmin(minTot(state)); renderLive(); };
     r.appendChild(inp);
-    r.appendChild(el('div','sep','min'));
+    r.appendChild(el('div','sep',t('sepMin')));
     mq.appendChild(r);
   });
-  $('fMinTot').textContent=minTot(state);
+  $('fMinTot').textContent=fmin(minTot(state));
 
   var pz=$('fParz'); pz.innerHTML='';
   state.parziali.forEach(function(p,i){
     var r=el('div','qrow');
     r.appendChild(el('div','qn',periodLabel(i,state.parziali.length)));
     var a=el('input'); a.type='number'; a.inputMode='numeric'; a.value=(p[0]==null)?'':p[0];
-    a.placeholder='noi';
+    a.placeholder=t('phNoi');
     a.oninput=function(){ state.parziali[i][0]=nz(this.value); saveState(); showProg(); };
     var s=el('div','sep','–');
     var b=el('input'); b.type='number'; b.inputMode='numeric'; b.value=(p[1]==null)?'':p[1];
-    b.placeholder='avv';
+    b.placeholder=t('phAvvP');
     b.oninput=function(){ state.parziali[i][1]=nz(this.value); saveState(); showProg(); };
     r.appendChild(a); r.appendChild(s); r.appendChild(b);
     pz.appendChild(r);
@@ -706,8 +910,8 @@ function showProg(){
   var sc=scoreOf(state), run=[],i;
   for(i=0;i<state.parziali.length;i++) run.push(fpair(state.parziali[i]));
   $('fProg').innerHTML = sc.vuoto ? ''
-    : ('Progressivi: '+run.join(' | ')+'<br>Finale: <b>'+sc.noi+'-'+sc.avv+'</b> ('+
-       (sc.esito==='V'?'vittoria':(sc.esito==='P'?'sconfitta':'pareggio'))+')');
+    : (t('prog')+run.join(' | ')+'<br>'+t('finale')+'<b>'+sc.noi+'-'+sc.avv+'</b> ('+
+       (sc.esito==='V'?t('vittoria'):(sc.esito==='P'?t('sconfitta'):t('pareggio')))+')');
 }
 
 /* ---------- NOTE ---------- */
@@ -717,7 +921,7 @@ function bindNote(){
     var v=this.value.trim();
     if(v){ stagManuale=v; save(K_STAG,v); state.stagione=v; }
     else { stagManuale=null; save(K_STAG,null); state.stagione=seasonOf(state.data); }
-    saveState(); toast('Stagione: '+state.stagione);
+    saveState(); toast(t('tStag',state.stagione));
   };
   $('bSave').onclick=doSave;
   $('bReset').onclick=doReset;
@@ -727,19 +931,19 @@ function bindNote(){
   $('bCsv').onclick=doCsv;
 }
 function doSave(){
-  if(!state.avversario.trim()){ toast('Manca il nome dell\'avversario'); go('partita'); return; }
-  if(!state.categoria){ toast('Manca l\'etichetta di squadra: creane o sceglierne una'); go('partita'); return; }
+  if(!state.avversario.trim()){ toast(t('tNoAvv')); go('partita'); return; }
+  if(!state.categoria){ toast(t('tNoCat')); go('partita'); return; }
   var g=fromState(state);
   var r=mergeArc(archive,[g]); archive=r.list; saveArc(); renderArchivio();
-  toast(r.added? 'Partita salvata in archivio' : 'Partita aggiornata in archivio');
+  toast(r.added? t('tSalvata') : t('tAggiornata'));
 }
 function doReset(){
-  if(!confirm('Azzerare la partita in corso?\nL\'archivio non viene toccato.')) return;
+  if(!confirm(t('cfReset'))) return;
   var keepCat=state.categoria, keepTipo=state.tipoGara;
   state=blank(); state.tipoGara=keepTipo;
   if(etichette.indexOf(keepCat)>=0) state.categoria=keepCat;
   if(stagManuale) state.stagione=stagManuale;
-  applyMaglia(); saveState(); renderAll(); go('live'); toast('Partita azzerata');
+  applyMaglia(); saveState(); renderAll(); go('live'); toast(t('tAzzerata'));
 }
 function doBackup(){
   var payload={app:'giorgio-stats',version:3,exportedAt:new Date().toISOString(),
@@ -749,8 +953,8 @@ function doBackup(){
   try{
     var f=new File([blob],name,{type:'application/json'});
     if(navigator.canShare && navigator.canShare({files:[f]})){
-      navigator.share({files:[f],title:'Backup Giorgio Stats'})
-        .then(function(){toast('Backup condiviso');})
+      navigator.share({files:[f],title:t('shareBackup')})
+        .then(function(){toast(t('tBackupCond'));})
         .catch(function(e){ if(!e||e.name!=='AbortError') dl(blob,name); });
       return;
     }
@@ -761,51 +965,44 @@ function dl(blob,name){
   var u=URL.createObjectURL(blob), a=document.createElement('a');
   a.href=u; a.download=name; document.body.appendChild(a); a.click();
   document.body.removeChild(a); setTimeout(function(){URL.revokeObjectURL(u);},4000);
-  toast('File scaricato');
+  toast(t('tScaricato'));
 }
 function doImport(file){
   var r=new FileReader();
   r.onload=function(){
     try{
       var p=JSON.parse(r.result);
-      if(!p||p.app!=='giorgio-stats'||!Array.isArray(p.archive)){ toast('File non valido'); return; }
+      if(!p||p.app!=='giorgio-stats'||!Array.isArray(p.archive)){ toast(t('tNonValido')); return; }
       var res=mergeArc(archive,p.archive); archive=res.list; saveArc();
       if(p.maglie){ maglie=p.maglie; save(K_MAG,maglie); }
       if(Array.isArray(p.etichette)){ etichette=cleanEti(p.etichette); saveEti(); renderPartita(); }
       renderArchivio();
-      toast('Importate '+res.added+' nuove, '+res.updated+' aggiornate');
-    }catch(e){ toast('File non leggibile'); }
+      toast(t('tImport',res.added,res.updated));
+    }catch(e){ toast(t('tNonLeggibile')); }
   };
-  r.onerror=function(){ toast('Errore di lettura'); };
+  r.onerror=function(){ toast(t('tErrLettura')); };
   r.readAsText(file);
 }
 function doCsv(){
-  var H=['Stagione','Data','Avversario','Squadra e categoria','Tipo gara','Maglia','Difficolta',
-    'Minuti','Minuti per periodo','Punti','Valutazione','Doppia doppia',
-    'Rimb off','Rimb dif','Rimb tot','Assist','Palle perse','Palle recuperate',
-    'Stoppate date','Stoppate subite','Stoppate subite rilevate','Falli subiti','di cui con tiri liberi','Falli commessi',
-    '2pt segnati','2pt tentati','2pt %',
-    '2pt pitturato segnati','2pt pitturato tentati','2pt pitturato %',
-    '2pt fuori segnati','2pt fuori tentati','2pt fuori %',
-    '3pt segnati','3pt tentati','3pt %','TL segnati','TL tentati','TL %',
-    'Parziali','Risultato','Nota','Top Match'];
+  var H=t('csvH').slice();
   var rows=[H];
   archive.slice().sort(function(a,b){return a.data<b.data?-1:1;}).forEach(function(g){
     var fs=g.p2sPit==null?null:(g.p2s-g.p2sPit), ft=g.p2tPit==null?null:(g.p2t-g.p2tPit);
     rows.push([
-      g.stagione,itDate(g.data),g.avversario,g.categoria,g.tipoGara,g.maglia,
+      g.stagione,itDate(g.data),g.avversario,g.categoria,tipoTxt(g.tipoGara),g.maglia,
       g.difficolta==null?'':g.difficolta,
-      g.minuti,(g.minutiQ||[]).join('+'),g.pt,valOf(g),ddOf(g)?'SI':'',
+      fmin(g.minuti),(g.minutiQ||[]).map(function(m){return m==null?'':fmin(m);}).join('+'),g.pt,valOf(g),ddOf(g)?t('csvSI'):'',
       g.rimO,g.rimD,g.rimO+g.rimD,g.ast,g.pp,g.pr,
-      g.stopDate,g.stopSubite,g.ndStop?'NO':'SI',
+      g.stopDate,g.stopSubite,g.ndStop?t('csvNO'):t('csvSI'),
       g.fs,g.fsTiri==null?'':g.fsTiri,g.fc,
       g.p2s,g.p2t,fpct(g.p2s,g.p2t),
       g.p2sPit==null?'':g.p2sPit,g.p2tPit==null?'':g.p2tPit,g.p2tPit==null?'':fpct(g.p2sPit,g.p2tPit),
       fs==null?'':fs,ft==null?'':ft,ft==null?'':fpct(fs,ft),
       g.p3s,g.p3t,fpct(g.p3s,g.p3t),g.tls,g.tlt,fpct(g.tls,g.tlt),
       (g.parziali||[]).map(fpair).join(' | '),
-      g.risultatoTesto,(g.nota||'').replace(/\r?\n/g,' '),
-      g.topMatch?'Sì':'No'
+      resTxt(g.risultatoTesto),(g.nota||'').replace(/\r?\n/g,' '),
+      g.topMatch?t('csvSi'):t('csvNo'),
+      tdOf(g)?t('csvSI'):''
     ]);
   });
   var csv=rows.map(function(r){
@@ -820,7 +1017,7 @@ function doCsv(){
     var f=new File([blob],name,{type:'text/csv'});
     if(navigator.canShare && navigator.canShare({files:[f]})){
       navigator.share({files:[f],title:'Giorgio Stats CSV'})
-        .then(function(){toast('CSV condiviso');})
+        .then(function(){toast(t('tCsvCond'));})
         .catch(function(e){ if(!e||e.name!=='AbortError') dl(blob,name); });
       return;
     }
@@ -835,8 +1032,9 @@ function renderLive(){
   var t=totals(state),i;
   $('bPt').textContent=t.pt;
   $('bVal').textContent=t.val;
-  $('bMin').textContent=minTot(state);
+  $('bMin').textContent=fmin(minTot(state));
   $('bDD').className='bdd'+(isDD(state)?' on':'');
+  $('bTD').className='bdd'+(isTD(state)?' on':'');
   for(i=0;i<SHOTS.length;i++){
     var k=SHOTS[i].k;
     $('v_'+k+'S').textContent=n(state[k+'S']);
@@ -861,18 +1059,42 @@ function renderPartita(){
   mark($('fTipo'),state.tipoGara);
   mark($('fDiff'),state.difficolta);
   $('fDiffTxt').textContent = state.difficolta
-    ? DIFF_TXT[state.difficolta]+' rispetto al livello attuale di Giorgio.'
-    : 'Da assegnare a fine partita, rispetto al livello attuale di Giorgio.';
+    ? t('diffSi',t('diff'+state.difficolta))
+    : t('diffNo');
   renderPartitaFields();
 }
 function renderNote(){
   $('fNota').value=state.nota;
   $('fStag').value=state.stagione||'';
+  renderLingua();
+}
+/* selettore lingua: un pulsante per ogni dizionario */
+function renderLingua(){
+  var c=$('fLingua'); c.innerHTML='';
+  Object.keys(I18N).forEach(function(k){
+    var b=el('button','chip'+(k===lingua?' on':''),I18N[k]._nome);
+    b.onclick=function(){ setLang(k); };
+    c.appendChild(b);
+  });
+}
+/* testi fissi della pagina */
+function applyLang(){
+  document.documentElement.lang=lingua;
+  var a=document.querySelectorAll('[data-i18n]'),i;
+  for(i=0;i<a.length;i++) a[i].textContent=t(a[i].getAttribute('data-i18n'));
+  a=document.querySelectorAll('[data-i18n-ph]');
+  for(i=0;i<a.length;i++) a[i].placeholder=t(a[i].getAttribute('data-i18n-ph'));
+}
+/* cambio lingua: si ricostruisce l'interfaccia, lo stato non si tocca */
+function setLang(k){
+  if(!I18N.hasOwnProperty(k) || k===lingua) return;
+  lingua=k; save(K_LANG,k);
+  applyLang(); buildLive(); buildPartita(); renderAll();
 }
 
 function aggregate(list){
   var a={g:list.length,min:0,pt:0,rimO:0,rimD:0,ast:0,pp:0,pr:0,stopD:0,stopS:0,ndN:0,
-         fs:0,fsT:0,fsTN:0,fc:0,p2s:0,p2t:0,p2sP:0,p2tP:0,pitN:0,p3s:0,p3t:0,tls:0,tlt:0,dd:0,val:0,
+         fs:0,fsT:0,fsTN:0,fc:0,p2s:0,p2t:0,p2sP:0,p2tP:0,pitN:0,p3s:0,p3t:0,tls:0,tlt:0,dd:0,td:0,val:0,
          diffSum:0,diffN:0};
   list.forEach(function(g){
     a.min+=g.minuti; a.pt+=g.pt; a.rimO+=g.rimO; a.rimD+=g.rimD; a.ast+=g.ast;
@@ -883,6 +1105,7 @@ function aggregate(list){
     if(g.p2tPit!=null){ a.p2sP+=g.p2sPit; a.p2tP+=g.p2tPit; a.pitN++; }
     a.p3s+=g.p3s; a.p3t+=g.p3t; a.tls+=g.tls; a.tlt+=g.tlt;
     if(ddOf(g)) a.dd++;
+    if(tdOf(g)) a.td++;
     a.val+=valOf(g);
     if(g.difficolta!=null){ a.diffSum+=g.difficolta; a.diffN++; }
   });
@@ -891,30 +1114,31 @@ function aggregate(list){
 function statTable(a){
   var t=el('table'), g=a.g;
   function row(k,v){ var r=el('tr'); r.appendChild(el('td','k',k)); r.appendChild(el('td',null,v)); t.appendChild(r); }
-  var h=el('tr'); h.appendChild(el('th',null,'Su '+g+' partite')); h.appendChild(el('th',null,'Media'));
+  var h=el('tr'); h.appendChild(el('th',null,tx('stSu',g))); h.appendChild(el('th',null,tx('stMedia')));
   t.appendChild(h);
-  row('Minuti',avg(a.min,g));
-  row('Punti',avg(a.pt,g));
-  row('Valutazione',avg(a.val,g));
-  row('Rimbalzi',avg(a.rimO+a.rimD,g)+'  ('+avg(a.rimO,g)+' off)');
-  row('Assist',avg(a.ast,g));
-  row('Palle recuperate',avg(a.pr,g));
-  row('Palle perse',avg(a.pp,g));
-  row('Falli subiti',avg(a.fs,g)+(a.fsTN?'  ('+avg(a.fsT,a.fsTN)+' con TL)':''));
-  row('Falli commessi',avg(a.fc,g));
-  row('Stoppate date',avg(a.stopD,g));
-  row('Stoppate subite',avg(a.stopS,g)+(a.ndN?'  *':''));
-  row('Doppie doppie',a.dd);
-  if(a.diffN) row('Difficoltà media',avg(a.diffSum,a.diffN)+'  (su '+a.diffN+')');
+  row(tx('stMinuti'),fmin(avg(a.min,g)));
+  row(tx('stPunti'),avg(a.pt,g));
+  row(tx('stVal'),avg(a.val,g));
+  row(tx('stRimb'),avg(a.rimO+a.rimD,g)+'  '+tx('stOff',avg(a.rimO,g)));
+  row(tx('stAst'),avg(a.ast,g));
+  row(tx('stPr'),avg(a.pr,g));
+  row(tx('stPp'),avg(a.pp,g));
+  row(tx('stFs'),avg(a.fs,g)+(a.fsTN?'  '+tx('stConTL',avg(a.fsT,a.fsTN)):''));
+  row(tx('stFc'),avg(a.fc,g));
+  row(tx('stStopD'),avg(a.stopD,g));
+  row(tx('stStopS'),avg(a.stopS,g)+(a.ndN?'  *':''));
+  row(tx('stDD'),a.dd);
+  row(tx('stTD'),a.td);
+  if(a.diffN) row(tx('stDiff'),avg(a.diffSum,a.diffN)+'  '+tx('stSuN',a.diffN));
   t.dataset.nd=a.ndN?String(a.ndN):'';
-  var h2=el('tr'); h2.appendChild(el('th',null,'Tiro')); h2.appendChild(el('th',null,'')); t.appendChild(h2);
-  row('2 punti',a.p2s+'/'+a.p2t+'  '+fpct(a.p2s,a.p2t));
+  var h2=el('tr'); h2.appendChild(el('th',null,tx('stTiro'))); h2.appendChild(el('th',null,'')); t.appendChild(h2);
+  row(tx('st2p'),a.p2s+'/'+a.p2t+'  '+fpct(a.p2s,a.p2t));
   if(a.pitN){
-    row('— dal pitturato',a.p2sP+'/'+a.p2tP+'  '+fpct(a.p2sP,a.p2tP));
-    row('— fuori pitturato',(a.p2s-a.p2sP)+'/'+(a.p2t-a.p2tP)+'  '+fpct(a.p2s-a.p2sP,a.p2t-a.p2tP));
+    row(tx('stPit'),a.p2sP+'/'+a.p2tP+'  '+fpct(a.p2sP,a.p2tP));
+    row(tx('stFuo'),(a.p2s-a.p2sP)+'/'+(a.p2t-a.p2tP)+'  '+fpct(a.p2s-a.p2sP,a.p2t-a.p2tP));
   }
-  row('3 punti',a.p3s+'/'+a.p3t+'  '+fpct(a.p3s,a.p3t));
-  row('Tiri liberi',a.tls+'/'+a.tlt+'  '+fpct(a.tls,a.tlt));
+  row(tx('st3p'),a.p3s+'/'+a.p3t+'  '+fpct(a.p3s,a.p3t));
+  row(tx('stTl'),a.tls+'/'+a.tlt+'  '+fpct(a.tls,a.tlt));
   return t;
 }
 
@@ -929,17 +1153,17 @@ function seasons(){
 function renderArchivio(){
   var b=$('arcBody'); b.innerHTML='';
   var ss=seasons();
-  if(!ss.length){ b.appendChild(el('div','hint','Nessuna partita in archivio.')); return; }
+  if(!ss.length){ b.appendChild(el('div','hint',t('aVuoto'))); return; }
   if(!arcSeason || ss.indexOf(arcSeason)<0) arcSeason=ss[0];
 
-  var h=el('h2',null,'STAGIONE'); h.style.marginTop='2px'; b.appendChild(h);
+  var h=el('h2',null,t('aStag')); h.style.marginTop='2px'; b.appendChild(h);
   var chips=el('div','chips');
   ss.forEach(function(s){
     var c=el('button','chip'+(!arcCareer&&s===arcSeason?' on':''),s);
     c.onclick=function(){ arcSeason=s; arcCareer=false; arcCompare=false; renderArchivio(); };
     chips.appendChild(c);
   });
-  var cr=el('button','chip'+(arcCareer?' on':''),'In carriera');
+  var cr=el('button','chip'+(arcCareer?' on':''),t('aCarriera'));
   cr.onclick=function(){ arcCareer=true; arcCompare=false; renderArchivio(); };
   chips.appendChild(cr);
   if(!arcCompare){
@@ -948,7 +1172,7 @@ function renderArchivio(){
     chips.appendChild(tm);
   }
   if(ss.length>1){
-    var cc=el('button','chip sm'+(arcCompare?' on':''),'Confronta');
+    var cc=el('button','chip sm'+(arcCompare?' on':''),t('aConfronta'));
     cc.onclick=function(){ arcCompare=!arcCompare; renderArchivio(); };
     chips.appendChild(cc);
   }
@@ -964,19 +1188,19 @@ function renderArchivio(){
     if(/^V/.test(r)) wins++; else if(/^P/.test(r)) loss++; else if(/^=/.test(r)) drw++;
   });
 
-  b.appendChild(el('h2',null,arcCareer?'TOTALE IN CARRIERA':'TOTALE STAGIONE'));
+  b.appendChild(el('h2',null,arcCareer?t('aTotCarr'):t('aTotStag')));
   var box=el('div','box'); box.appendChild(statTable(aggregate(list)));
-  if(wins+loss+drw) box.appendChild(el('div','hint','Bilancio noto: '+wins+'V '+loss+'P '+(drw?drw+'= ':'')));
+  if(wins+loss+drw) box.appendChild(el('div','hint',t('aBilancio')+wins+t('resV')+' '+loss+t('resP')+' '+(drw?drw+'= ':'')));
   var aggS=aggregate(list);
-  if(aggS.ndN) box.appendChild(el('div','warn','* Stoppate subite non rilevate in '+aggS.ndN+' partite su '+aggS.g+', conteggiate come 0. Nella stagione 2025-26 non erano tracciate: la media reale e la valutazione sono leggermente sovrastimate.'));
-  if(!aggS.pitN) box.appendChild(el('div','warn','Tiri da due non divisi per zona in questa stagione: il dato pitturato / fuori pitturato parte dalla 2026-27.'));
+  if(aggS.ndN) box.appendChild(el('div','warn',t('aWarnStop',aggS.ndN,aggS.g)));
+  if(!aggS.pitN) box.appendChild(el('div','warn',t('aWarnPit')));
   b.appendChild(box);
 
   var cats={},i;
   if(!arcCareer) list.forEach(function(g){ (cats[g.categoria]=cats[g.categoria]||[]).push(g); });
   var ck=[]; for(i in cats) if(cats.hasOwnProperty(i)) ck.push(i); ck.sort();
   if(ck.length>1){
-    b.appendChild(el('h2',null,'PER SQUADRA E CATEGORIA'));
+    b.appendChild(el('h2',null,t('aPerCat')));
     ck.forEach(function(k){
       var bb=el('div','box');
       bb.appendChild(el('div','fld')).appendChild(el('label',null,k));
@@ -988,13 +1212,13 @@ function renderArchivio(){
   if(!arcCareer) list.forEach(function(g){ (tp[g.tipoGara]=tp[g.tipoGara]||[]).push(g); });
   var tk=[]; for(i in tp) if(tp.hasOwnProperty(i)) tk.push(i);
   if(tk.length>1){
-    b.appendChild(el('h2',null,'PER TIPO DI GARA'));
+    b.appendChild(el('h2',null,t('aPerTipo')));
     var tb=el('div','box'), tt=el('table');
-    var hr=el('tr'); ['Tipo','PG','Pt','Val','2pt%'].forEach(function(x){hr.appendChild(el('th',null,x));});
+    var hr=el('tr'); t('aTh').forEach(function(x){hr.appendChild(el('th',null,x));});
     tt.appendChild(hr);
     tk.forEach(function(k){
       var a=aggregate(tp[k]), r=el('tr');
-      r.appendChild(el('td',null,k)); r.appendChild(el('td',null,a.g));
+      r.appendChild(el('td',null,tipoTxt(k))); r.appendChild(el('td',null,a.g));
       r.appendChild(el('td',null,avg(a.pt,a.g))); r.appendChild(el('td',null,avg(a.val,a.g)));
       r.appendChild(el('td',null,fpct(a.p2s,a.p2t)));
       tt.appendChild(r);
@@ -1002,7 +1226,7 @@ function renderArchivio(){
     tb.appendChild(tt); b.appendChild(tb);
   }
 
-  b.appendChild(el('h2',null,'PARTITE ('+list.length+')'));
+  b.appendChild(el('h2',null,t('aPartite',list.length)));
   var lb=el('div','box');
   list.slice().reverse().forEach(function(g){
     var d=el('div','gm');
@@ -1012,12 +1236,13 @@ function renderArchivio(){
     var nm=el('b',null,g.avversario);
     if(g.topMatch) nm.appendChild(el('span','star','★'));
     if(ddOf(g)){ var tg=el('span','tag','DD'); nm.appendChild(tg); }
+    if(tdOf(g)) nm.appendChild(el('span','tag','TD'));
     o.appendChild(nm);
-    o.appendChild(el('span',null,g.categoria+' · '+g.tipoGara+(g.risultatoTesto?' · '+g.risultatoTesto:'')));
+    o.appendChild(el('span',null,g.categoria+' · '+tipoTxt(g.tipoGara)+(g.risultatoTesto?' · '+resTxt(g.risultatoTesto):'')));
     d.appendChild(o);
     var s=el('div','s');
     s.appendChild(el('b',null,g.pt));
-    s.appendChild(el('span',null,g.rimO+g.rimD+' r · '+valOf(g)+' v'));
+    s.appendChild(el('span',null,t('aRV',g.rimO+g.rimD,valOf(g))));
     d.appendChild(s);
     d.onclick=function(){ showGame(g); };
     lb.appendChild(d);
@@ -1036,24 +1261,25 @@ function compareBox(ss){
     aggs.forEach(function(a){ r.appendChild(el('td',null,fn(a))); });
     t.appendChild(r);
   }
-  line('Partite',function(a){return a.g;});
-  line('Minuti',function(a){return avg(a.min,a.g);});
-  line('Punti',function(a){return avg(a.pt,a.g);});
-  line('Valutazione',function(a){return avg(a.val,a.g);});
-  line('Rimbalzi',function(a){return avg(a.rimO+a.rimD,a.g);});
-  line('Rimb. off.',function(a){return avg(a.rimO,a.g);});
-  line('Assist',function(a){return avg(a.ast,a.g);});
-  line('Recuperate',function(a){return avg(a.pr,a.g);});
-  line('Perse',function(a){return avg(a.pp,a.g);});
-  line('Falli subiti',function(a){return avg(a.fs,a.g);});
-  line('2pt %',function(a){return fpct(a.p2s,a.p2t);});
-  line('— pitturato',function(a){return a.pitN?fpct(a.p2sP,a.p2tP):'n.d.';});
-  line('— fuori',function(a){return a.pitN?fpct(a.p2s-a.p2sP,a.p2t-a.p2tP):'n.d.';});
-  line('3pt %',function(a){return fpct(a.p3s,a.p3t);});
-  line('TL %',function(a){return fpct(a.tls,a.tlt);});
-  line('Doppie doppie',function(a){return a.dd;});
+  line(tx('cPartite'),function(a){return a.g;});
+  line(tx('cMinuti'),function(a){return fmin(avg(a.min,a.g));});
+  line(tx('cPunti'),function(a){return avg(a.pt,a.g);});
+  line(tx('cVal'),function(a){return avg(a.val,a.g);});
+  line(tx('cRimb'),function(a){return avg(a.rimO+a.rimD,a.g);});
+  line(tx('cRimbOff'),function(a){return avg(a.rimO,a.g);});
+  line(tx('cAst'),function(a){return avg(a.ast,a.g);});
+  line(tx('cRec'),function(a){return avg(a.pr,a.g);});
+  line(tx('cPerse'),function(a){return avg(a.pp,a.g);});
+  line(tx('cFs'),function(a){return avg(a.fs,a.g);});
+  line(tx('c2p'),function(a){return fpct(a.p2s,a.p2t);});
+  line(tx('cPit'),function(a){return a.pitN?fpct(a.p2sP,a.p2tP):tx('cNd');});
+  line(tx('cFuo'),function(a){return a.pitN?fpct(a.p2s-a.p2sP,a.p2t-a.p2tP):tx('cNd');});
+  line(tx('c3p'),function(a){return fpct(a.p3s,a.p3t);});
+  line(tx('cTl'),function(a){return fpct(a.tls,a.tlt);});
+  line(tx('cDD'),function(a){return a.dd;});
+  line(tx('cTD'),function(a){return a.td;});
   box.appendChild(t);
-  box.appendChild(el('div','hint','Medie per partita. Le voci "n.d." non erano tracciate in quella stagione.'));
+  box.appendChild(el('div','hint',tx('cHint')));
   return box;
 }
 function showGame(g){
@@ -1062,52 +1288,54 @@ function showGame(g){
   var t=el('div'); t.style.fontSize='19px'; t.style.fontWeight='800'; t.style.marginBottom='2px';
   t.textContent=g.avversario;
   if(g.topMatch) t.appendChild(el('span','star','★'));
+  if(ddOf(g)) t.appendChild(el('span','tag','DD'));
+  if(tdOf(g)) t.appendChild(el('span','tag','TD'));
   s.appendChild(t);
-  var sub=el('div','hint',g.tipoGara+(g.risultatoTesto?' · '+g.risultatoTesto:'')+
-    (g.maglia?' · maglia '+g.maglia:'')+(g.difficolta?' · difficoltà '+g.difficolta+'/5':''));
+  var sub=el('div','hint',tipoTxt(g.tipoGara)+(g.risultatoTesto?' · '+resTxt(g.risultatoTesto):'')+
+    (g.maglia?tx('gMaglia',g.maglia):'')+(g.difficolta?tx('gDiff',g.difficolta):''));
   sub.style.marginTop='0'; s.appendChild(sub);
 
   var tb=el('table');
   function r(k,v){ var x=el('tr'); x.appendChild(el('td','k',k)); x.appendChild(el('td',null,v)); tb.appendChild(x); }
-  r('Minuti',g.minuti+((g.minutiQ&&g.minutiQ.length)?'  ('+g.minutiQ.map(fnum).join('+')+')':''));
-  r('Punti',g.pt); r('Valutazione',valOf(g));
-  r('Rimbalzi',(g.rimO+g.rimD)+'  ('+g.rimO+' off / '+g.rimD+' dif)');
-  r('Assist',g.ast); r('Recuperate',g.pr); r('Perse',g.pp);
-  r('Falli subiti',g.fs+(g.fsTiri!=null?'  ('+g.fsTiri+' con TL)':''));
-  r('Falli commessi',g.fc);
-  r('Stoppate',g.stopDate+' date / '+g.stopSubite+' subite'+(g.ndStop?' (n.r.)':''));
-  r('2 punti',g.p2s+'/'+g.p2t+'  '+fpct(g.p2s,g.p2t));
+  r(tx('gMinuti'),fmin(g.minuti)+((g.minutiQ&&g.minutiQ.length)?'  ('+g.minutiQ.map(fmin).join('+')+')':''));
+  r(tx('gPunti'),g.pt); r(tx('gVal'),valOf(g));
+  r(tx('gRimb'),(g.rimO+g.rimD)+'  '+tx('gRimbDett',g.rimO,g.rimD));
+  r(tx('gAst'),g.ast); r(tx('gRec'),g.pr); r(tx('gPerse'),g.pp);
+  r(tx('gFs'),g.fs+(g.fsTiri!=null?'  '+tx('gConTL',g.fsTiri):''));
+  r(tx('gFc'),g.fc);
+  r(tx('gStop'),tx('gStopDett',g.stopDate,g.stopSubite)+(g.ndStop?tx('gNr'):''));
+  r(tx('g2p'),g.p2s+'/'+g.p2t+'  '+fpct(g.p2s,g.p2t));
   if(g.p2tPit!=null){
-    r('— pitturato',g.p2sPit+'/'+g.p2tPit+'  '+fpct(g.p2sPit,g.p2tPit));
-    r('— fuori',(g.p2s-g.p2sPit)+'/'+(g.p2t-g.p2tPit)+'  '+fpct(g.p2s-g.p2sPit,g.p2t-g.p2tPit));
+    r(tx('gPit'),g.p2sPit+'/'+g.p2tPit+'  '+fpct(g.p2sPit,g.p2tPit));
+    r(tx('gFuo'),(g.p2s-g.p2sPit)+'/'+(g.p2t-g.p2tPit)+'  '+fpct(g.p2s-g.p2sPit,g.p2t-g.p2tPit));
   }
-  r('3 punti',g.p3s+'/'+g.p3t+'  '+fpct(g.p3s,g.p3t));
-  r('Tiri liberi',g.tls+'/'+g.tlt+'  '+fpct(g.tls,g.tlt));
+  r(tx('g3p'),g.p3s+'/'+g.p3t+'  '+fpct(g.p3s,g.p3t));
+  r(tx('gTl'),g.tls+'/'+g.tlt+'  '+fpct(g.tls,g.tlt));
   if(g.parziali&&g.parziali.length){
-    r('Progressivi',g.parziali.map(fpair).join(' | '));
-    r('Per quarto',quartiDa(g.parziali).join(' | '));
+    r(tx('gProg'),g.parziali.map(fpair).join(' | '));
+    r(tx('gPerQ'),quartiDa(g.parziali).join(' | '));
   }
-  if(g.quartiGiocati) r('Quarti giocati',g.quartiGiocati);
+  if(g.quartiGiocati) r(tx('gQGioc'),g.quartiGiocati);
   s.appendChild(tb);
 
-  if(g.nota){ s.appendChild(el('h2',null,'NOTA')); s.appendChild(el('div','hint',g.nota)); }
+  if(g.nota){ s.appendChild(el('h2',null,tx('gNota'))); s.appendChild(el('div','hint',g.nota)); }
   if(g.ndStop||g.p2tPit==null){
     var w=[];
-    if(g.ndStop) w.push('stoppate subite non rilevate, conteggiate come 0');
-    if(g.p2tPit==null) w.push('tiri da due non divisi per zona');
-    s.appendChild(el('div','warn','Tracciamento ridotto: '+w.join('; ')+'.'));
+    if(g.ndStop) w.push(tx('gWStop'));
+    if(g.p2tPit==null) w.push(tx('gWPit'));
+    s.appendChild(el('div','warn',tx('gRidotto',w.join('; '))));
   }
-  var b1=el('button','btn','Carica come partita in corso');
+  var b1=el('button','btn',tx('bCarica'));
   b1.onclick=function(){ loadGame(g); closeModal(); };
   s.appendChild(b1);
-  var b2=el('button','btn dgr','Elimina dall\'archivio');
+  var b2=el('button','btn dgr',tx('bElimina'));
   b2.onclick=function(){
-    if(!confirm('Eliminare '+g.avversario+' del '+itDate(g.data)+'?')) return;
+    if(!confirm(tx('cfElimina',g.avversario,itDate(g.data)))) return;
     archive=archive.filter(function(x){return x.id!==g.id;});
-    saveArc(); closeModal(); renderArchivio(); toast('Partita eliminata');
+    saveArc(); closeModal(); renderArchivio(); toast(tx('tEliminata'));
   };
   s.appendChild(b2);
-  var b3=el('button','btn','Chiudi'); b3.onclick=closeModal; s.appendChild(b3);
+  var b3=el('button','btn',tx('bChiudi')); b3.onclick=closeModal; s.appendChild(b3);
   $('modal').className='modal on';
 }
 function loadGame(g){
@@ -1127,7 +1355,7 @@ function loadGame(g){
   state.stopD=g.stopDate; state.stopS=g.stopSubite||0;
   state.fsTiri=g.fsTiri==null?0:g.fsTiri; state.fsNo=g.fs-(g.fsTiri==null?0:g.fsTiri);
   state.fc=g.fc;
-  saveState(); renderAll(); go('live'); toast('Partita caricata');
+  saveState(); renderAll(); go('live'); toast(t('tCaricata'));
 }
 function closeModal(){ $('modal').className='modal'; }
 $('modal').onclick=function(e){ if(e.target===this) closeModal(); };
