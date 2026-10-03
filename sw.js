@@ -1,5 +1,5 @@
-/* Giorgio Stats — service worker v2.2.0 (02/10/2026) */
-var CACHE = 'giorgio-stats-v2.2.0';
+/* Giorgio Stats — service worker v2.3.0 (03/10/2026) */
+var CACHE = 'giorgio-stats-v2.3.0';
 var ASSETS = [
   './',
   './index.html',
