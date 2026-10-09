@@ -250,7 +250,7 @@ td.k{color:var(--mute)}
       </div>
 
       <div class="box" style="margin-top:14px">
-        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.3.2 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante con Claude</span></div>
+        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.3.2 · build 2 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante con Claude</span></div>
       </div>
     </div>
   </section>
@@ -273,12 +273,15 @@ td.k{color:var(--mute)}
 
 <script>
 /* =========================================================
-   GIORGIO STATS v2.3.2 — ottobre 2026
+   GIORGIO STATS v2.3.2 · build 2 — ottobre 2026
    ========================================================= */
 (function(){
 'use strict';
 
-/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi). */
+/* Numero di build della versione Giorgio, mostrato accanto alla versione nella scheda Note. Contatore della singola versione: riparte da 1 a ogni nuovo numero di versione e cresce di 1 a ogni nuova pubblicazione della stessa versione (la v2.3.2 pubblicata per prima è la build 1). */
+var BUILD=2;
+
+/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata). */
 var FUNZIONI=Object.freeze({
   multilingue:true,
   spagnolo:true,
@@ -365,7 +368,7 @@ it:{
   hStag:'STAGIONE', lStag:'Stagione attribuita alle nuove partite',
   hintStag:'Assegnata in automatico con taglio al 1° agosto. Modificala solo se serve.',
   hLingua:'LINGUA',
-  verRiga:'Giorgio Stats v2.3.2 — ottobre 2026', creata:'Creata da Stefano Amirante con Claude',
+  verRiga:'Giorgio Stats v2.3.2 · build {0} — ottobre 2026', creata:'Creata da Stefano Amirante con Claude',
   tipo_Campionato:'Campionato', tipo_Torneo:'Torneo', tipo_Amichevole:'Amichevole', tipo_Playoff:'Playoff',
   sh_p2:'2 punti', sh_pit:'dal pitturato', sh_fuo:'fuori dal pitturato', sh_tl:'Tiri liberi', sh_p3:'3 punti',
   c_rimO:'Rimbalzi offensivi', c_rimD:'Rimbalzi difensivi',
@@ -386,6 +389,7 @@ it:{
   tSalvata:'Partita salvata in archivio', tAggiornata:'Partita aggiornata in archivio',
   cfReset:'Azzerare la partita in corso?\nL\'archivio non viene toccato.', tAzzerata:'Partita azzerata',
   shareBackup:'Backup Giorgio Stats', tBackupCond:'Backup condiviso', tScaricato:'File scaricato',
+  tSalvato:'File salvato', tAnnullato:'Salvataggio annullato', tErrSalva:'Errore nel salvataggio',
   tNonValido:'File non valido', tImport:'Importate {0} nuove, {1} aggiornate',
   tNonLeggibile:'File non leggibile', tErrLettura:'Errore di lettura', tCsvCond:'CSV condiviso',
   csvH:['Stagione','Data','Avversario','Squadra e categoria','Tipo gara','Maglia','Difficolta',
@@ -458,7 +462,7 @@ en:{
   hStag:'SEASON', lStag:'Season assigned to new games',
   hintStag:'Assigned automatically with the cutoff on August 1. Change it only if needed.',
   hLingua:'LANGUAGE',
-  verRiga:'Giorgio Stats v2.3.2 — October 2026', creata:'Created by Stefano Amirante with Claude',
+  verRiga:'Giorgio Stats v2.3.2 · build {0} — October 2026', creata:'Created by Stefano Amirante with Claude',
   tipo_Campionato:'League', tipo_Torneo:'Tournament', tipo_Amichevole:'Friendly', tipo_Playoff:'Playoff',
   sh_p2:'2 points', sh_pit:'in the paint', sh_fuo:'outside the paint', sh_tl:'Free throws', sh_p3:'3 points',
   c_rimO:'Offensive rebounds', c_rimD:'Defensive rebounds',
@@ -479,6 +483,7 @@ en:{
   tSalvata:'Game saved to archive', tAggiornata:'Game updated in archive',
   cfReset:'Reset the current game?\nThe archive is not affected.', tAzzerata:'Game reset',
   shareBackup:'Giorgio Stats backup', tBackupCond:'Backup shared', tScaricato:'File downloaded',
+  tSalvato:'File saved', tAnnullato:'Save cancelled', tErrSalva:'Save failed',
   tNonValido:'Invalid file', tImport:'Imported {0} new, {1} updated',
   tNonLeggibile:'Unreadable file', tErrLettura:'Read error', tCsvCond:'CSV shared',
   csvH:['Season','Date','Opponent','Team and category','Game type','Jersey','Difficulty',
@@ -551,7 +556,7 @@ es:{
   hStag:'TEMPORADA', lStag:'Temporada asignada a los nuevos partidos',
   hintStag:'Asignada automáticamente con corte el 1 de agosto. Modifícala solo si es necesario.',
   hLingua:'IDIOMA',
-  verRiga:'Giorgio Stats v2.3.2 — octubre 2026', creata:'Creada por Stefano Amirante con Claude',
+  verRiga:'Giorgio Stats v2.3.2 · build {0} — octubre 2026', creata:'Creada por Stefano Amirante con Claude',
   tipo_Campionato:'Liga', tipo_Torneo:'Torneo', tipo_Amichevole:'Amistoso', tipo_Playoff:'Playoff',
   sh_p2:'2 puntos', sh_pit:'desde la zona', sh_fuo:'fuera de la zona', sh_tl:'Tiros libres', sh_p3:'3 puntos',
   c_rimO:'Rebotes ofensivos', c_rimD:'Rebotes defensivos',
@@ -572,6 +577,7 @@ es:{
   tSalvata:'Partido guardado en el archivo', tAggiornata:'Partido actualizado en el archivo',
   cfReset:'¿Reiniciar el partido en curso?\nEl archivo no se modifica.', tAzzerata:'Partido reiniciado',
   shareBackup:'Copia de seguridad Giorgio Stats', tBackupCond:'Copia de seguridad compartida', tScaricato:'Archivo descargado',
+  tSalvato:'Archivo guardado', tAnnullato:'Guardado cancelado', tErrSalva:'Error al guardar',
   tNonValido:'Archivo no válido', tImport:'Importados {0} nuevos, {1} actualizados',
   tNonLeggibile:'Archivo ilegible', tErrLettura:'Error de lectura', tCsvCond:'CSV compartido',
   csvH:['Temporada','Fecha','Rival','Equipo y categoria','Tipo de partido','Camiseta','Dificultad',
@@ -1352,7 +1358,9 @@ function doBackup(){
   var payload={app:'giorgio-stats',version:3,exportedAt:new Date().toISOString(),
                live:live,archive:archive,maglie:maglie,etichette:etichette};
   var name='giorgio-stats-backup-'+todayISO()+'.json';
-  var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  var testo=JSON.stringify(payload,null,2);
+  if(pluginSalva()){ salvaNativo(name,'application/json',testo); return; }
+  var blob=new Blob([testo],{type:'application/json'});
   try{
     var f=new File([blob],name,{type:'application/json'});
     if(navigator.canShare && navigator.canShare({files:[f]})){
@@ -1363,6 +1371,24 @@ function doBackup(){
     }
   }catch(e){}
   dl(blob,name);
+}
+/* pacchetto Android: plugin nativo SalvaFile; assente nel browser e nella versione Giorgio */
+function pluginSalva(){
+  var C=window.Capacitor;
+  try{
+    if(!C || typeof C.isNativePlatform!=='function' || C.isNativePlatform()!==true) return null;
+  }catch(e){ return null; }
+  return (C.Plugins && C.Plugins.SalvaFile) || null;
+}
+/* salvataggio con il plugin nativo: niente condivisione e niente download */
+function salvaNativo(nome,tipo,testo){
+  var p;
+  try{ p=pluginSalva().salva({nome:nome,tipo:tipo,contenuto:testo}); }
+  catch(e){ toast(t('tErrSalva')); return; }
+  Promise.resolve(p).then(function(r){
+    var es=r&&r.esito;
+    toast(es==='salvato'? t('tSalvato') : (es==='annullato'? t('tAnnullato') : t('tErrSalva')));
+  },function(){ toast(t('tErrSalva')); });
 }
 function dl(blob,name){
   var u=URL.createObjectURL(blob), a=document.createElement('a');
@@ -1420,8 +1446,9 @@ function doCsv(){
       return /[";\n]/.test(c) ? '"'+c.replace(/"/g,'""')+'"' : c;
     }).join(';');
   }).join('\r\n');
-  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
   var name='giorgio-stats-'+todayISO()+'.csv';
+  if(pluginSalva()){ salvaNativo(name,'text/csv','\ufeff'+csv); return; }
+  var blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
   try{
     var f=new File([blob],name,{type:'text/csv'});
     if(navigator.canShare && navigator.canShare({files:[f]})){
@@ -1498,6 +1525,7 @@ function applyLang(){
   document.documentElement.lang=lingua;
   var a=document.querySelectorAll('[data-i18n]'),i;
   for(i=0;i<a.length;i++) a[i].textContent=t(a[i].getAttribute('data-i18n'));
+  a=document.querySelector('[data-i18n="verRiga"]'); if(a) a.textContent=t('verRiga',BUILD);
   a=document.querySelectorAll('[data-i18n-ph]');
   for(i=0;i<a.length;i++) a[i].placeholder=t(a[i].getAttribute('data-i18n-ph'));
 }
