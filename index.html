@@ -112,9 +112,18 @@ h2:first-child{margin-top:2px}
 .perr{font-size:11px;color:var(--no);line-height:1.35;margin:-3px 0 8px 47px}
 .mv{flex:1;min-width:0;text-align:center;font-size:17px;font-weight:800;-webkit-user-select:none;user-select:none}
 .ctrb{flex:0 0 auto;width:52px;height:42px;font-size:21px;font-weight:700;line-height:1;
-  background:var(--card2);border-radius:9px;touch-action:none;
+  background:var(--card2);border-radius:9px;touch-action:pan-y;
   -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .ctrb.p{color:var(--acc)} .ctrb.m{color:var(--mute)}
+.ctrb:disabled{opacity:.35;cursor:default}
+.qrow .fin{flex:0 0 64px;height:42px;display:flex;align-items:center;justify-content:center;
+  -webkit-user-select:none;user-select:none}
+.qrow .fin i{display:block;width:28px;height:28px;border:2px solid var(--line);border-radius:7px;
+  font-style:normal;font-size:18px;font-weight:800;line-height:24px;text-align:center;color:var(--acc)}
+.qrow .fin.on i{border-color:var(--acc)}
+.qh{margin-bottom:2px}
+.qh .sp{flex:0 0 52px}
+.qh .finh{flex:0 0 64px;text-align:center;font-size:10px;font-weight:700;color:var(--mute);letter-spacing:.3px}
 .fmtv{font-size:15px;font-weight:800;margin-bottom:7px}
 .fmtrow{display:flex;gap:8px;flex-wrap:wrap}
 .fmtg{flex:1 1 140px;display:flex;align-items:center;gap:6px}
@@ -237,11 +246,11 @@ td.k{color:var(--mute)}
 
       <h2 data-i18n="hLingua">LINGUA</h2>
       <div class="box">
-        <div class="chips" id="fLingua"></div>
+        <select id="fLingua"></select>
       </div>
 
       <div class="box" style="margin-top:14px">
-        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.3.1 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante con Claude</span></div>
+        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.3.2 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante con Claude</span></div>
       </div>
     </div>
   </section>
@@ -264,14 +273,15 @@ td.k{color:var(--mute)}
 
 <script>
 /* =========================================================
-   GIORGIO STATS v2.3.1 — ottobre 2026
+   GIORGIO STATS v2.3.2 — ottobre 2026
    ========================================================= */
 (function(){
 'use strict';
 
-/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi. */
+/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi). */
 var FUNZIONI=Object.freeze({
   multilingue:true,
+  spagnolo:true,
   triplaDoppia:true,
   topMatch:true,
   formatoGara:true,
@@ -355,7 +365,7 @@ it:{
   hStag:'STAGIONE', lStag:'Stagione attribuita alle nuove partite',
   hintStag:'Assegnata in automatico con taglio al 1° agosto. Modificala solo se serve.',
   hLingua:'LINGUA',
-  verRiga:'Giorgio Stats v2.3.1 — ottobre 2026', creata:'Creata da Stefano Amirante con Claude',
+  verRiga:'Giorgio Stats v2.3.2 — ottobre 2026', creata:'Creata da Stefano Amirante con Claude',
   tipo_Campionato:'Campionato', tipo_Torneo:'Torneo', tipo_Amichevole:'Amichevole', tipo_Playoff:'Playoff',
   sh_p2:'2 punti', sh_pit:'dal pitturato', sh_fuo:'fuori dal pitturato', sh_tl:'Tiri liberi', sh_p3:'3 punti',
   c_rimO:'Rimbalzi offensivi', c_rimD:'Rimbalzi difensivi',
@@ -364,7 +374,7 @@ it:{
   c_stopD:'Stoppate date', c_stopS:'Stoppate subite',
   perQ:'Q', perT:'T', perTS:'TS', sepMin:'min', phNoi:'noi', phAvvP:'avv',
   prog:'Progressivi: ', finale:'Finale: ', vittoria:'vittoria', sconfitta:'sconfitta', pareggio:'pareggio',
-  resV:'V', resP:'P',
+  resV:'V', resP:'P', resE:'=', hFinito:'Finito',
   tOT:'Tempo supplementare aggiunto',
   cfEti:'Cancellare l\'etichetta "{0}"?\nLe partite in archivio non vengono modificate.',
   tEtiCanc:'Etichetta cancellata', tEtiMax:'Massimo {0} etichette: cancellane una per crearne una nuova',
@@ -448,7 +458,7 @@ en:{
   hStag:'SEASON', lStag:'Season assigned to new games',
   hintStag:'Assigned automatically with the cutoff on August 1. Change it only if needed.',
   hLingua:'LANGUAGE',
-  verRiga:'Giorgio Stats v2.3.1 — October 2026', creata:'Created by Stefano Amirante with Claude',
+  verRiga:'Giorgio Stats v2.3.2 — October 2026', creata:'Created by Stefano Amirante with Claude',
   tipo_Campionato:'League', tipo_Torneo:'Tournament', tipo_Amichevole:'Friendly', tipo_Playoff:'Playoff',
   sh_p2:'2 points', sh_pit:'in the paint', sh_fuo:'outside the paint', sh_tl:'Free throws', sh_p3:'3 points',
   c_rimO:'Offensive rebounds', c_rimD:'Defensive rebounds',
@@ -457,7 +467,7 @@ en:{
   c_stopD:'Blocks', c_stopS:'Blocks received',
   perQ:'Q', perT:'P', perTS:'OT', sepMin:'min', phNoi:'us', phAvvP:'opp',
   prog:'Running score: ', finale:'Final: ', vittoria:'win', sconfitta:'loss', pareggio:'tie',
-  resV:'W', resP:'L',
+  resV:'W', resP:'L', resE:'=', hFinito:'Finished',
   tOT:'Overtime added',
   cfEti:'Delete the label "{0}"?\nGames in the archive are not changed.',
   tEtiCanc:'Label deleted', tEtiMax:'Maximum {0} labels: delete one to create a new one',
@@ -509,6 +519,99 @@ en:{
   bCarica:'Load as current game', bElimina:'Delete from archive',
   cfElimina:'Delete {0} on {1}?', tEliminata:'Game deleted', bChiudi:'Close',
   tCaricata:'Game loaded'
+},
+es:{
+  _nome:'Español',
+  bPunti:'PUNTOS', bVal:'VALORACIÓN', bMin:'MINUTOS',
+  navLive:'EN VIVO', navPartita:'PARTIDO', navNote:'NOTAS', navArchivio:'ARCHIVO',
+  hGara:'PARTIDO', lData:'Fecha', lAvv:'Rival', phAvv:'Nombre del equipo',
+  lCat:'Equipo y categoría', lTipo:'Tipo de partido', lMaglia:'Número de camiseta',
+  hMinuti:'MINUTOS JUGADOS', totCalc:'Total calculado:', totMinuti:'minutos.',
+  hParz:'PARCIALES', bAddOT:'Añadir prórroga', bDelOT:'Eliminar prórroga',
+  lFormato:'Formato del partido', fPeriodi:'Periodos', fDurata:'Duración', fmtNo:'formato no indicado',
+  bFmtAssegna:'Asignar formato',
+  tFmtBloccoP:'Cambio bloqueado: los periodos que se van a eliminar contienen minutos o puntuaciones',
+  tFmtBloccoD:'Cambio bloqueado: un periodo tiene más minutos que la nueva duración',
+  cfDelOT:'¿Eliminar la última prórroga ({0}) con sus minutos y sus puntuaciones?',
+  tOTDel:'Prórroga eliminada',
+  eParzVuoto:'Introduce ambos acumulados', eParzCala:'Acumulado inferior al del periodo anterior',
+  tParzErr:'Puntuaciones acumuladas por corregir: guardado bloqueado',
+  hintParz:'Puntuación real de cada periodo. Acumulado y resultado calculados.',
+  hDiff:'DIFICULTAD DEL RIVAL',
+  diffNo:'Por asignar al final del partido, respecto al nivel actual de Giorgio.',
+  diffSi:'{0} respecto al nivel actual de Giorgio.',
+  diff1:'1 — claramente inferior', diff2:'2 — inferior', diff3:'3 — equivalente',
+  diff4:'4 — superior', diff5:'5 — claramente superior',
+  hNota:'NOTA DEL PARTIDO', phNota:'Contexto, rival, episodios, observaciones técnicas.',
+  hArchiv:'ARCHIVO', bSave:'Guardar partido en el archivo',
+  hintSave:'Volver a guardar el mismo partido lo actualiza, no lo duplica.',
+  bReset:'Reiniciar partido en curso', hintReset:'No afecta al archivo.',
+  hDati:'DATOS', bBackup:'Copia de seguridad (compartir o descargar)', bImport:'Importar copia de seguridad',
+  bCsv:'Exportar CSV para Excel', hintCsv:'El CSV se abre en Excel con doble clic: punto y coma, UTF-8.',
+  hStag:'TEMPORADA', lStag:'Temporada asignada a los nuevos partidos',
+  hintStag:'Asignada automáticamente con corte el 1 de agosto. Modifícala solo si es necesario.',
+  hLingua:'IDIOMA',
+  verRiga:'Giorgio Stats v2.3.2 — octubre 2026', creata:'Creada por Stefano Amirante con Claude',
+  tipo_Campionato:'Liga', tipo_Torneo:'Torneo', tipo_Amichevole:'Amistoso', tipo_Playoff:'Playoff',
+  sh_p2:'2 puntos', sh_pit:'desde la zona', sh_fuo:'fuera de la zona', sh_tl:'Tiros libres', sh_p3:'3 puntos',
+  c_rimO:'Rebotes ofensivos', c_rimD:'Rebotes defensivos',
+  c_fsTiri:'Falta recibida con tiros libres', c_fsNo:'Falta recibida sin tiros',
+  c_pr:'Balones recuperados', c_pp:'Balones perdidos', c_fc:'Faltas cometidas', c_ast:'Asistencias',
+  c_stopD:'Tapones a favor', c_stopS:'Tapones recibidos',
+  perQ:'C', perT:'P', perTS:'PR', sepMin:'min', phNoi:'nos', phAvvP:'riv',
+  prog:'Acumulados: ', finale:'Final: ', vittoria:'victoria', sconfitta:'derrota', pareggio:'empate',
+  resV:'G', resP:'P', resE:'E', hFinito:'Terminado',
+  tOT:'Prórroga añadida',
+  cfEti:'¿Borrar la etiqueta "{0}"?\nLos partidos del archivo no se modifican.',
+  tEtiCanc:'Etiqueta borrada', tEtiMax:'Máximo {0} etiquetas: borra una para crear una nueva',
+  hNuovaEti:'NUEVA ETIQUETA DE EQUIPO', phEti:'Máx. {0} caracteres', bSalva:'Guardar',
+  eEtiVuota:'El nombre no puede estar vacío.', eEtiLen:'Máximo {0} caracteres.', eEtiDup:'La etiqueta ya existe.',
+  tEtiCreata:'Etiqueta creada', bAnnulla:'Cancelar',
+  tStag:'Temporada: {0}',
+  tNoAvv:'Falta el nombre del rival', tNoCat:'Falta la etiqueta de equipo: crea o elige una',
+  tSalvata:'Partido guardado en el archivo', tAggiornata:'Partido actualizado en el archivo',
+  cfReset:'¿Reiniciar el partido en curso?\nEl archivo no se modifica.', tAzzerata:'Partido reiniciado',
+  shareBackup:'Copia de seguridad Giorgio Stats', tBackupCond:'Copia de seguridad compartida', tScaricato:'Archivo descargado',
+  tNonValido:'Archivo no válido', tImport:'Importados {0} nuevos, {1} actualizados',
+  tNonLeggibile:'Archivo ilegible', tErrLettura:'Error de lectura', tCsvCond:'CSV compartido',
+  csvH:['Temporada','Fecha','Rival','Equipo y categoria','Tipo de partido','Camiseta','Dificultad',
+    'Minutos','Segundos','Minutos por periodo','Segundos por periodo','Puntos','Valoracion','Doble-doble',
+    'Reb of','Reb def','Reb tot','Asistencias','Balones perdidos','Balones recuperados',
+    'Tapones a favor','Tapones recibidos','Tapones recibidos registrados','Faltas recibidas','de ellas con tiros libres','Faltas cometidas',
+    '2pt anotados','2pt intentados','2pt %',
+    '2pt zona anotados','2pt zona intentados','2pt zona %',
+    '2pt fuera anotados','2pt fuera intentados','2pt fuera %',
+    '3pt anotados','3pt intentados','3pt %','TL anotados','TL intentados','TL %',
+    'Parciales','Resultado','Nota','Top Match','Triple-doble'],
+  csvSI:'SI', csvNO:'NO', csvSi:'Sí', csvNo:'No',
+  stSu:'En {0} partidos', stMedia:'Media', stMinuti:'Minutos', stPunti:'Puntos', stVal:'Valoración',
+  stRimb:'Rebotes', stOff:'({0} of)', stAst:'Asistencias', stPr:'Balones recuperados', stPp:'Balones perdidos',
+  stFs:'Faltas recibidas', stConTL:'({0} con TL)', stFc:'Faltas cometidas', stStopD:'Tapones a favor',
+  stStopS:'Tapones recibidos', stDD:'Dobles-dobles', stTD:'Triples-dobles',
+  stDiff:'Dificultad media', stSuN:'(en {0})', stTiro:'Tiro', st2p:'2 puntos',
+  stPit:'— desde la zona', stFuo:'— fuera de la zona', st3p:'3 puntos', stTl:'Tiros libres',
+  aVuoto:'Ningún partido en el archivo.', aStag:'TEMPORADA', aCarriera:'En la carrera', aConfronta:'Comparar',
+  aTotCarr:'TOTAL EN LA CARRERA', aTotStag:'TOTAL DE LA TEMPORADA', aBilancio:'Balance conocido: ',
+  aWarnStop:'* Tapones recibidos no registrados en {0} de {1} partidos, contados como 0. En la temporada 2025-26 no se registraban: la media real y la valoración están ligeramente sobrestimadas.',
+  aWarnPit:'Tiros de dos no divididos por zona en esta temporada: el dato zona / fuera de la zona empieza en la 2026-27.',
+  aPerCat:'POR EQUIPO Y CATEGORÍA', aPerTipo:'POR TIPO DE PARTIDO',
+  aTh:['Tipo','PJ','Pt','Val','2pt%'], aPartite:'PARTIDOS ({0})', aRV:'{0} r · {1} v',
+  cPartite:'Partidos', cMinuti:'Minutos', cPunti:'Puntos', cVal:'Valoración', cRimb:'Rebotes',
+  cRimbOff:'Reb. of.', cAst:'Asistencias', cRec:'Recuperados', cPerse:'Perdidos', cFs:'Faltas recibidas',
+  c2p:'2pt %', cPit:'— zona', cFuo:'— fuera', c3p:'3pt %', cTl:'TL %',
+  cDD:'Dobles-dobles', cTD:'Triples-dobles', cNd:'n.d.',
+  cHint:'Medias por partido. Los datos "n.d." no se registraban en esa temporada.',
+  gMaglia:' · camiseta {0}', gDiff:' · dificultad {0}/5',
+  gMinuti:'Minutos', gPunti:'Puntos', gVal:'Valoración', gRimb:'Rebotes', gRimbDett:'({0} of / {1} def)',
+  gAst:'Asistencias', gRec:'Recuperados', gPerse:'Perdidos', gFs:'Faltas recibidas', gConTL:'({0} con TL)',
+  gFc:'Faltas cometidas', gStop:'Tapones', gStopDett:'{0} a favor / {1} recibidos', gNr:' (n.r.)',
+  g2p:'2 puntos', gPit:'— zona', gFuo:'— fuera', g3p:'3 puntos', gTl:'Tiros libres',
+  gProg:'Acumulados', gPerQ:'Por cuarto', gQGioc:'Cuartos jugados', gNota:'NOTA',
+  gRidotto:'Registro reducido: {0}.', gWStop:'tapones recibidos no registrados, contados como 0',
+  gWPit:'tiros de dos no divididos por zona',
+  bCarica:'Cargar como partido en curso', bElimina:'Eliminar del archivo',
+  cfElimina:'¿Eliminar {0} del {1}?', tEliminata:'Partido eliminado', bChiudi:'Cerrar',
+  tCaricata:'Partido cargado'
 }
 };
 var lingua='it';
@@ -521,10 +624,10 @@ function t(k){
 /* alias per le funzioni in cui t e' una variabile locale */
 var tx=t;
 function tipoTxt(x){ var v=t('tipo_'+x); return v==null?x:v; }
-/* risultato salvato "V 50-40": si traduce solo la lettera dell'esito */
+/* risultato salvato "V 50-40": si traduce solo la lettera dell'esito ("=" per il pareggio) */
 function resTxt(r){
-  var m=/^([VP])( .*)$/.exec(r||'');
-  return m ? (m[1]==='V'?t('resV'):t('resP'))+m[2] : (r||'');
+  var m=/^([VP=])( .*)$/.exec(r||'');
+  return m ? (m[1]==='V'?t('resV'):(m[1]==='P'?t('resP'):t('resE')))+m[2] : (r||'');
 }
 /* minuti decimali in m:ss, secondi arrotondati */
 function fmin(v){
@@ -600,9 +703,9 @@ function blank(){
   var f=FUNZIONI.formatoGara?fmtProposta():null;
   var s={data:todayISO(), avversario:'', categoria:(etichette.length?etichette[0]:''), tipoGara:'Campionato', topMatch:false,
          maglia:'', stagione:'', difficolta:null, nota:'',
-         formato:f, minutiQ:[], secondiQ:[], parziali:[]};
+         formato:f, minutiQ:[], secondiQ:[], bloccatiQ:[], parziali:[]};
   var i;
-  for(i=0;i<(f?f.periodi:4);i++){ s.minutiQ.push(null); s.secondiQ.push(null); s.parziali.push([null,null]); }
+  for(i=0;i<(f?f.periodi:4);i++){ s.minutiQ.push(null); s.secondiQ.push(null); s.bloccatiQ.push(false); s.parziali.push([null,null]); }
   for(i=0;i<SHOTS.length;i++){ s[SHOTS[i].k+'S']=0; s[SHOTS[i].k+'X']=0; }
   for(i=0;i<CNTS.length;i++){ s[CNTS[i].k]=0; }
   s.stagione = seasonOf(s.data);
@@ -777,8 +880,9 @@ function boot(){
   archive = load(K_ARC,null);
   maglie  = load(K_MAG,{}) || {};
   stagManuale = load(K_STAG,null);
-  var lg=FUNZIONI.multilingue?load(K_LANG,null):null;
-  lingua = (typeof lg==='string' && I18N.hasOwnProperty(lg)) ? lg : 'it';
+  /* lingua salvata non attiva: italiano, senza modificare la chiave */
+  var lg=load(K_LANG,null);
+  lingua = (typeof lg==='string' && lingueAttive().indexOf(lg)>=0) ? lg : 'it';
 
   /* etichette di squadra: se la chiave manca (o non e' leggibile) si crea con le 4 iniziali */
   var rawEti=null; try{ rawEti=localStorage.getItem(K_ETI); }catch(e){}
@@ -813,6 +917,10 @@ function boot(){
   if(state.parziali) state.parziali=state.parziali.map(function(p){return [nz(p[0]),nz(p[1])];});
   /* secondi per periodo: dalla v2.2.0 si ricavano dai minuti */
   state.secondiQ = Array.isArray(state.secondiQ) ? state.secondiQ.map(secOk) : secQ(state).map(secOk);
+  /* blocco dei periodi (dalla v2.3.2): assente o di lunghezza diversa = tutti sbloccati */
+  state.bloccatiQ = (Array.isArray(state.bloccatiQ) && state.bloccatiQ.length===state.secondiQ.length)
+    ? state.bloccatiQ.map(function(x){ return x===true; })
+    : state.secondiQ.map(function(){ return false; });
   syncMin();
   state.formato = fmtOk(state.formato);
   if(state.formato) allinea();
@@ -827,8 +935,6 @@ function boot(){
 
 /* elementi fissi delle funzioni spente */
 function nascondiSpente(){
-  var lb=$('fLingua').parentNode;
-  if(!FUNZIONI.multilingue){ lb.previousElementSibling.style.display='none'; lb.style.display='none'; }
   if(!FUNZIONI.triplaDoppia) $('bTD').style.display='none';
   if(!FUNZIONI.topMatch) $('fTop').style.display='none';
   if(!FUNZIONI.formatoGara) $('fFmt').parentNode.style.display='none';
@@ -896,16 +1002,16 @@ function buildPartita(){
   $('fMaglia').oninput=function(){ state.maglia=this.value;
     maglie[state.categoria]=this.value; save(K_MAG,maglie); saveState(); };
   $('bAddOT').onclick=function(){
-    state.secondiQ.push(null); syncMin(); state.parziali.push([null,null]);
+    state.secondiQ.push(null); state.bloccatiQ.push(false); syncMin(); state.parziali.push([null,null]);
     saveState(); renderPartita(); toast(tx('tOT'));
   };
   $('bDelOT').onclick=function(){
     var i=ultimoOT(); if(i<0) return;
     if(!confirm(tx('cfDelOT',periodLabel(i)))) return;
-    if(state.formato){ state.secondiQ.pop(); state.parziali.pop(); }
+    if(state.formato){ state.secondiQ.pop(); state.bloccatiQ.pop(); state.parziali.pop(); }
     else {
       /* senza formato: l'ultima riga oltre la quarta di ciascuna lista */
-      if(state.secondiQ.length>4) state.secondiQ.pop();
+      if(state.secondiQ.length>4){ state.secondiQ.pop(); state.bloccatiQ.pop(); }
       if(state.parziali.length>4) state.parziali.pop();
     }
     syncMin(); saveState(); renderPartita(); renderLive(); toast(tx('tOTDel'));
@@ -917,6 +1023,7 @@ function syncMin(){ state.minutiQ=state.secondiQ.map(function(v){return v==null?
 function allinea(){
   var L=Math.max(state.formato.periodi,state.secondiQ.length,state.parziali.length);
   while(state.secondiQ.length<L) state.secondiQ.push(null);
+  while(state.bloccatiQ.length<L) state.bloccatiQ.push(false);
   while(state.parziali.length<L) state.parziali.push([null,null]);
   syncMin();
 }
@@ -941,9 +1048,9 @@ function setPeriodi(np){
   if(np<1 || np>FMT_PMAX || np===f.periodi) return;
   if(np<f.periodi){
     for(i=np;i<f.periodi;i++) if(rigaPiena(i)){ toast(t('tFmtBloccoP')); return; }
-    state.secondiQ.splice(np,f.periodi-np); state.parziali.splice(np,f.periodi-np);
+    state.secondiQ.splice(np,f.periodi-np); state.bloccatiQ.splice(np,f.periodi-np); state.parziali.splice(np,f.periodi-np);
   } else {
-    for(i=f.periodi;i<np;i++){ state.secondiQ.splice(i,0,null); state.parziali.splice(i,0,[null,null]); }
+    for(i=f.periodi;i<np;i++){ state.secondiQ.splice(i,0,null); state.bloccatiQ.splice(i,0,false); state.parziali.splice(i,0,[null,null]); }
   }
   f.periodi=np; syncMin(); saveState(); renderPartita(); renderLive();
 }
@@ -957,19 +1064,22 @@ function setDurata(nd){
 function assegnaFormato(){
   var f=fmtProposta(), P=f.periodi;
   var rm=Math.min(state.secondiQ.length,4), rp=Math.min(state.parziali.length,4);
-  var om=state.secondiQ.slice(rm), op=state.parziali.slice(rp), i;
+  var om=state.secondiQ.slice(rm), op=state.parziali.slice(rp), ob=state.bloccatiQ.slice(rm), i;
   for(i=P;i<Math.max(rm,rp);i++){
     if((i<rm && state.secondiQ[i]!=null) ||
        (i<rp && (state.parziali[i][0]!=null || state.parziali[i][1]!=null))){ toast(t('tFmtBloccoP')); return; }
   }
   for(i=0;i<Math.min(rm,P);i++) if(state.secondiQ[i]!=null && state.secondiQ[i]>f.durata*60){ toast(t('tFmtBloccoD')); return; }
   var sq=state.secondiQ.slice(0,Math.min(rm,P)), pz=state.parziali.slice(0,Math.min(rp,P));
+  var bq=state.bloccatiQ.slice(0,Math.min(rm,P));
   while(sq.length<P) sq.push(null);
+  while(bq.length<P) bq.push(false);
   while(pz.length<P) pz.push([null,null]);
   var nOT=Math.max(om.length,op.length);
   while(om.length<nOT) om.push(null);
+  while(ob.length<nOT) ob.push(false);
   while(op.length<nOT) op.push([null,null]);
-  state.secondiQ=sq.concat(om); state.parziali=pz.concat(op); state.formato=f;
+  state.secondiQ=sq.concat(om); state.bloccatiQ=bq.concat(ob); state.parziali=pz.concat(op); state.formato=f;
   syncMin(); saveState(); renderPartita(); renderLive();
 }
 /* pulsanti etichette: salvate, eventuale etichetta della sola partita, "+" */
@@ -1065,29 +1175,49 @@ function renderFmt(){
   grp(t('fDurata'),f.durata+':00',function(d){ setDurata(f.durata+d); });
   c.appendChild(row);
 }
-/* contatore dei secondi: tocco = 1 s; pressione prolungata: dopo 0,4 s
-   1 s ogni 100 ms per i primi 3 s, poi 1 s ogni 25 ms */
+/* contatore dei secondi: tocco (dito sollevato senza spostarsi oltre 10 px) = 1 s al sollevamento;
+   dito fermo: dopo 0,4 s avanzamento continuo, 1 s ogni 83 ms fino a 3 s dal contatto, poi 1 s ogni 21 ms.
+   Spostamento oltre 10 px prima del sollevamento o dei 0,4 s = scorrimento della pagina, valore invariato */
 function contatore(b,i,dir,vEl){
-  var tm=null, t0=0;
-  function stop(){ clearTimeout(tm); tm=null; }
+  var tm=null, t0=0, x0=0, y0=0, id=null, lungo=false;
+  function stop(){ clearTimeout(tm); tm=null; id=null; }
   function passo(){
     var v=state.secondiQ[i], mx=secMax(i);
+    if(v==null) return;
     if(dir>0){ if(v<mx) v=v+1; }
     else { if(v>0) v=v-1; }
     if(v===state.secondiQ[i]) return;
     state.secondiQ[i]=v; aggiornaMin(i,vEl);
   }
-  function ciclo(){ passo(); tm=setTimeout(ciclo,(Date.now()-t0)<3000?100:25); }
-  b.addEventListener('pointerdown',function(e){
-    e.preventDefault(); stop();
-    try{ if(b.hasPointerCapture && b.hasPointerCapture(e.pointerId)) b.releasePointerCapture(e.pointerId); }catch(x){}
+  /* pressione separata: "?" -> 0:00 con "+", 0:00 -> "?" con "-"; nessun avanzamento */
+  function separato(){
     var v=state.secondiQ[i];
-    /* pressione separata: "?" -> 0:00 con "+", 0:00 -> "?" con "-"; nessuno scorrimento */
-    if(v==null){ if(dir>0){ state.secondiQ[i]=0; aggiornaMin(i,vEl); } return; }
-    if(dir<0 && v===0){ state.secondiQ[i]=null; aggiornaMin(i,vEl); return; }
-    t0=Date.now(); passo(); tm=setTimeout(ciclo,400);
+    if(v==null){ if(dir>0){ state.secondiQ[i]=0; aggiornaMin(i,vEl); } return true; }
+    if(dir<0 && v===0){ state.secondiQ[i]=null; aggiornaMin(i,vEl); return true; }
+    return false;
+  }
+  function ciclo(){ passo(); tm=setTimeout(ciclo,(Date.now()-t0)<3000?83:21); }
+  b.addEventListener('pointerdown',function(e){
+    if(b.disabled || (e.pointerType==='mouse' && e.button!==0)) return;
+    stop();
+    try{ if(b.hasPointerCapture && b.hasPointerCapture(e.pointerId)) b.releasePointerCapture(e.pointerId); }catch(x){}
+    id=e.pointerId; x0=e.clientX; y0=e.clientY; t0=Date.now(); lungo=false;
+    tm=setTimeout(function(){
+      tm=null; lungo=true;
+      if(separato()){ id=null; return; }
+      ciclo();
+    },400);
   });
-  b.addEventListener('pointerup',stop);
+  b.addEventListener('pointermove',function(e){
+    if(id===null || e.pointerId!==id || lungo) return;
+    var dx=e.clientX-x0, dy=e.clientY-y0;
+    if(dx*dx+dy*dy>100) stop();
+  });
+  b.addEventListener('pointerup',function(e){
+    if(id===null || e.pointerId!==id) return;
+    var tocco=!lungo; stop();
+    if(tocco && !b.disabled && !separato()) passo();
+  });
   b.addEventListener('pointerleave',stop);
   b.addEventListener('pointercancel',stop);
   b.addEventListener('contextmenu',function(e){ e.preventDefault(); });
@@ -1125,13 +1255,28 @@ function showParzErr(){
 function renderPartitaFields(){
   renderFmt();
   var mq=$('fMinQ'); mq.innerHTML='';
+  var h=el('div','qrow qh');
+  h.appendChild(el('div','qn','')); h.appendChild(el('div','mv',''));
+  h.appendChild(el('div','sp','')); h.appendChild(el('div','sp',''));
+  h.appendChild(el('div','finh',t('hFinito')));
+  mq.appendChild(h);
   secQ(state).forEach(function(v,i){
     var r=el('div','qrow');
     r.appendChild(el('div','qn',periodLabel(i)));
     var ve=el('div','mv',fsec(v));
     var m=el('button','ctrb m','−'), p=el('button','ctrb p','+');
     contatore(m,i,-1,ve); contatore(p,i,1,ve);
-    r.appendChild(ve); r.appendChild(m); r.appendChild(p);
+    /* colonna "Finito": un tocco blocca il periodo, un altro lo sblocca */
+    var f=el('button','fin'), fi=el('i');
+    f.appendChild(fi);
+    function mostra(){
+      var on=state.bloccatiQ[i]===true;
+      f.className='fin'+(on?' on':''); fi.textContent=on?'✓':'';
+      m.disabled=on; p.disabled=on;
+    }
+    f.onclick=function(){ state.bloccatiQ[i]=!(state.bloccatiQ[i]===true); saveState(); mostra(); };
+    mostra();
+    r.appendChild(ve); r.appendChild(m); r.appendChild(p); r.appendChild(f);
     mq.appendChild(r);
   });
   $('fMinTot').textContent=fsec(secTot(state));
@@ -1177,6 +1322,7 @@ function bindNote(){
   $('bImport').onclick=function(){ $('fFile').click(); };
   $('fFile').onchange=function(){ if(this.files&&this.files[0]) doImport(this.files[0]); this.value=''; };
   $('bCsv').onclick=doCsv;
+  $('fLingua').onchange=function(){ setLang(this.value); };
 }
 function doSave(){
   if(!state.avversario.trim()){ toast(t('tNoAvv')); go('partita'); return; }
@@ -1187,6 +1333,8 @@ function doSave(){
   var g=fromState(state);
   if(g.formato && FUNZIONI.formatoGara) save(K_FMT,g.formato);
   var r=mergeArc(archive,[g]); archive=r.list; saveArc(); renderArchivio();
+  /* salvataggio riuscito: tutti i periodi "Finito" */
+  state.bloccatiQ=state.secondiQ.map(function(){ return true; }); saveState(); renderPartitaFields();
   toast(r.added? t('tSalvata') : t('tAggiornata'));
 }
 function doReset(){
@@ -1198,8 +1346,11 @@ function doReset(){
   applyMaglia(); saveState(); renderAll(); go('live'); toast(t('tAzzerata'));
 }
 function doBackup(){
+  /* il blocco dei periodi resta solo nella partita in corso, non nel backup */
+  var live={},k;
+  for(k in state) if(state.hasOwnProperty(k) && k!=='bloccatiQ') live[k]=state[k];
   var payload={app:'giorgio-stats',version:3,exportedAt:new Date().toISOString(),
-               live:state,archive:archive,maglie:maglie,etichette:etichette};
+               live:live,archive:archive,maglie:maglie,etichette:etichette};
   var name='giorgio-stats-backup-'+todayISO()+'.json';
   var blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
   try{
@@ -1326,14 +1477,21 @@ function renderNote(){
   $('fStag').value=state.stagione||'';
   renderLingua();
 }
-/* selettore lingua: un pulsante per ogni dizionario */
+/* lingue attive: italiano sempre; inglese con multilingue; spagnolo con multilingue e spagnolo */
+function lingueAttive(){
+  var l=['it'];
+  if(FUNZIONI.multilingue){ l.push('en'); if(FUNZIONI.spagnolo) l.push('es'); }
+  return l;
+}
+/* selettore lingua: menù a tendina con le sole lingue attive, sempre visibile */
 function renderLingua(){
   var c=$('fLingua'); c.innerHTML='';
-  Object.keys(I18N).forEach(function(k){
-    var b=el('button','chip'+(k===lingua?' on':''),I18N[k]._nome);
-    b.onclick=function(){ setLang(k); };
-    c.appendChild(b);
+  lingueAttive().forEach(function(k){
+    var o=el('option',null,I18N[k]._nome); o.value=k;
+    if(k===lingua) o.selected=true;
+    c.appendChild(o);
   });
+  c.value=lingua;
 }
 /* testi fissi della pagina */
 function applyLang(){
@@ -1345,7 +1503,7 @@ function applyLang(){
 }
 /* cambio lingua: si ricostruisce l'interfaccia, lo stato non si tocca */
 function setLang(k){
-  if(!I18N.hasOwnProperty(k) || k===lingua) return;
+  if(lingueAttive().indexOf(k)<0 || k===lingua) return;
   lingua=k; save(K_LANG,k);
   applyLang(); buildLive(); buildPartita(); renderAll();
 }
@@ -1448,7 +1606,7 @@ function renderArchivio(){
 
   b.appendChild(el('h2',null,arcCareer?t('aTotCarr'):t('aTotStag')));
   var box=el('div','box'); box.appendChild(statTable(aggregate(list)));
-  if(wins+loss+drw) box.appendChild(el('div','hint',t('aBilancio')+wins+t('resV')+' '+loss+t('resP')+' '+(drw?drw+'= ':'')));
+  if(wins+loss+drw) box.appendChild(el('div','hint',t('aBilancio')+wins+t('resV')+' '+loss+t('resP')+' '+(drw?drw+t('resE')+' ':'')));
   var aggS=aggregate(list);
   if(aggS.ndN) box.appendChild(el('div','warn',t('aWarnStop',aggS.ndN,aggS.g)));
   if(!aggS.pitN) box.appendChild(el('div','warn',t('aWarnPit')));
@@ -1605,7 +1763,10 @@ function loadGame(g){
   state.formato=fmtOk(g.formato); mostraVuoti=false;
   state.secondiQ=secQ(g).length?secQ(g).map(secOk):[Math.round(g.minuti*60),null,null,null];
   state.parziali=(g.parziali&&g.parziali.length)?g.parziali.map(function(p){return [p[0],p[1]];}):[[null,null],[null,null],[null,null],[null,null]];
+  state.bloccatiQ=[];
   if(state.formato) allinea(); else syncMin();
+  /* partita caricata dall'archivio: tutti i periodi bloccati */
+  state.bloccatiQ=state.secondiQ.map(function(){ return true; });
   var pitS=g.p2sPit==null?g.p2s:g.p2sPit, pitT=g.p2tPit==null?g.p2t:g.p2tPit;
   state.p2PitS=pitS; state.p2PitX=pitT-pitS;
   state.p2FuoS=g.p2s-pitS; state.p2FuoX=(g.p2t-pitT)-(g.p2s-pitS);
