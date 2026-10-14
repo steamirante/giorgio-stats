@@ -250,7 +250,7 @@ td.k{color:var(--mute)}
       </div>
 
       <div class="box" style="margin-top:14px">
-        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.3.2 · build 2 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante con Claude</span></div>
+        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.3.3 · build 1 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante con Claude</span></div>
       </div>
     </div>
   </section>
@@ -273,22 +273,23 @@ td.k{color:var(--mute)}
 
 <script>
 /* =========================================================
-   GIORGIO STATS v2.3.2 · build 2 — ottobre 2026
+   GIORGIO STATS v2.3.3 · build 1 — ottobre 2026
    ========================================================= */
 (function(){
 'use strict';
 
 /* Numero di build della versione Giorgio, mostrato accanto alla versione nella scheda Note. Contatore della singola versione: riparte da 1 a ogni nuovo numero di versione e cresce di 1 a ogni nuova pubblicazione della stessa versione (la v2.3.2 pubblicata per prima è la build 1). */
-var BUILD=2;
+var BUILD=1;
 
-/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata). */
+/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento). */
 var FUNZIONI=Object.freeze({
   multilingue:true,
   spagnolo:true,
   triplaDoppia:true,
   topMatch:true,
   formatoGara:true,
-  eliminaSupplementare:true
+  eliminaSupplementare:true,
+  punteggioPeriodo:true
 });
 
 /* ---------- costanti ---------- */
@@ -368,7 +369,7 @@ it:{
   hStag:'STAGIONE', lStag:'Stagione attribuita alle nuove partite',
   hintStag:'Assegnata in automatico con taglio al 1° agosto. Modificala solo se serve.',
   hLingua:'LINGUA',
-  verRiga:'Giorgio Stats v2.3.2 · build {0} — ottobre 2026', creata:'Creata da Stefano Amirante con Claude',
+  verRiga:'Giorgio Stats v2.3.3 · build {0} — ottobre 2026', creata:'Creata da Stefano Amirante con Claude',
   tipo_Campionato:'Campionato', tipo_Torneo:'Torneo', tipo_Amichevole:'Amichevole', tipo_Playoff:'Playoff',
   sh_p2:'2 punti', sh_pit:'dal pitturato', sh_fuo:'fuori dal pitturato', sh_tl:'Tiri liberi', sh_p3:'3 punti',
   c_rimO:'Rimbalzi offensivi', c_rimD:'Rimbalzi difensivi',
@@ -376,7 +377,7 @@ it:{
   c_pr:'Palle recuperate', c_pp:'Palle perse', c_fc:'Falli commessi', c_ast:'Assist',
   c_stopD:'Stoppate date', c_stopS:'Stoppate subite',
   perQ:'Q', perT:'T', perTS:'TS', sepMin:'min', phNoi:'noi', phAvvP:'avv',
-  prog:'Progressivi: ', finale:'Finale: ', vittoria:'vittoria', sconfitta:'sconfitta', pareggio:'pareggio',
+  prog:'Progressivi: ', perPeriodo:'Per periodo: ', finale:'Finale: ', vittoria:'vittoria', sconfitta:'sconfitta', pareggio:'pareggio',
   resV:'V', resP:'P', resE:'=', hFinito:'Finito',
   tOT:'Tempo supplementare aggiunto',
   cfEti:'Cancellare l\'etichetta "{0}"?\nLe partite in archivio non vengono modificate.',
@@ -387,6 +388,7 @@ it:{
   tStag:'Stagione: {0}',
   tNoAvv:'Manca il nome dell\'avversario', tNoCat:'Manca l\'etichetta di squadra: creane o sceglierne una',
   tSalvata:'Partita salvata in archivio', tAggiornata:'Partita aggiornata in archivio',
+  cfDoppia:'Esiste già una partita con stessa data, avversario e squadra. Salvarla come nuova partita?', tNonSalvata:'Partita non salvata',
   cfReset:'Azzerare la partita in corso?\nL\'archivio non viene toccato.', tAzzerata:'Partita azzerata',
   shareBackup:'Backup Giorgio Stats', tBackupCond:'Backup condiviso', tScaricato:'File scaricato',
   tSalvato:'File salvato', tAnnullato:'Salvataggio annullato', tErrSalva:'Errore nel salvataggio',
@@ -462,7 +464,7 @@ en:{
   hStag:'SEASON', lStag:'Season assigned to new games',
   hintStag:'Assigned automatically with the cutoff on August 1. Change it only if needed.',
   hLingua:'LANGUAGE',
-  verRiga:'Giorgio Stats v2.3.2 · build {0} — October 2026', creata:'Created by Stefano Amirante with Claude',
+  verRiga:'Giorgio Stats v2.3.3 · build {0} — October 2026', creata:'Created by Stefano Amirante with Claude',
   tipo_Campionato:'League', tipo_Torneo:'Tournament', tipo_Amichevole:'Friendly', tipo_Playoff:'Playoff',
   sh_p2:'2 points', sh_pit:'in the paint', sh_fuo:'outside the paint', sh_tl:'Free throws', sh_p3:'3 points',
   c_rimO:'Offensive rebounds', c_rimD:'Defensive rebounds',
@@ -470,7 +472,7 @@ en:{
   c_pr:'Steals', c_pp:'Turnovers', c_fc:'Fouls committed', c_ast:'Assists',
   c_stopD:'Blocks', c_stopS:'Blocks received',
   perQ:'Q', perT:'P', perTS:'OT', sepMin:'min', phNoi:'us', phAvvP:'opp',
-  prog:'Running score: ', finale:'Final: ', vittoria:'win', sconfitta:'loss', pareggio:'tie',
+  prog:'Running score: ', perPeriodo:'By period: ', finale:'Final: ', vittoria:'win', sconfitta:'loss', pareggio:'tie',
   resV:'W', resP:'L', resE:'=', hFinito:'Finished',
   tOT:'Overtime added',
   cfEti:'Delete the label "{0}"?\nGames in the archive are not changed.',
@@ -481,6 +483,7 @@ en:{
   tStag:'Season: {0}',
   tNoAvv:'Opponent name is missing', tNoCat:'Team label is missing: create or choose one',
   tSalvata:'Game saved to archive', tAggiornata:'Game updated in archive',
+  cfDoppia:'A game with the same date, opponent and team already exists. Save it as a new game?', tNonSalvata:'Game not saved',
   cfReset:'Reset the current game?\nThe archive is not affected.', tAzzerata:'Game reset',
   shareBackup:'Giorgio Stats backup', tBackupCond:'Backup shared', tScaricato:'File downloaded',
   tSalvato:'File saved', tAnnullato:'Save cancelled', tErrSalva:'Save failed',
@@ -556,7 +559,7 @@ es:{
   hStag:'TEMPORADA', lStag:'Temporada asignada a los nuevos partidos',
   hintStag:'Asignada automáticamente con corte el 1 de agosto. Modifícala solo si es necesario.',
   hLingua:'IDIOMA',
-  verRiga:'Giorgio Stats v2.3.2 · build {0} — octubre 2026', creata:'Creada por Stefano Amirante con Claude',
+  verRiga:'Giorgio Stats v2.3.3 · build {0} — octubre 2026', creata:'Creada por Stefano Amirante con Claude',
   tipo_Campionato:'Liga', tipo_Torneo:'Torneo', tipo_Amichevole:'Amistoso', tipo_Playoff:'Playoff',
   sh_p2:'2 puntos', sh_pit:'desde la zona', sh_fuo:'fuera de la zona', sh_tl:'Tiros libres', sh_p3:'3 puntos',
   c_rimO:'Rebotes ofensivos', c_rimD:'Rebotes defensivos',
@@ -564,7 +567,7 @@ es:{
   c_pr:'Balones recuperados', c_pp:'Balones perdidos', c_fc:'Faltas cometidas', c_ast:'Asistencias',
   c_stopD:'Tapones a favor', c_stopS:'Tapones recibidos',
   perQ:'C', perT:'P', perTS:'PR', sepMin:'min', phNoi:'nos', phAvvP:'riv',
-  prog:'Acumulados: ', finale:'Final: ', vittoria:'victoria', sconfitta:'derrota', pareggio:'empate',
+  prog:'Acumulados: ', perPeriodo:'Por periodo: ', finale:'Final: ', vittoria:'victoria', sconfitta:'derrota', pareggio:'empate',
   resV:'G', resP:'P', resE:'E', hFinito:'Terminado',
   tOT:'Prórroga añadida',
   cfEti:'¿Borrar la etiqueta "{0}"?\nLos partidos del archivo no se modifican.',
@@ -575,6 +578,7 @@ es:{
   tStag:'Temporada: {0}',
   tNoAvv:'Falta el nombre del rival', tNoCat:'Falta la etiqueta de equipo: crea o elige una',
   tSalvata:'Partido guardado en el archivo', tAggiornata:'Partido actualizado en el archivo',
+  cfDoppia:'Ya existe un partido con la misma fecha, rival y equipo. ¿Guardarlo como partido nuevo?', tNonSalvata:'Partido no guardado',
   cfReset:'¿Reiniciar el partido en curso?\nEl archivo no se modifica.', tAzzerata:'Partido reiniciado',
   shareBackup:'Copia de seguridad Giorgio Stats', tBackupCond:'Copia de seguridad compartida', tScaricato:'Archivo descargado',
   tSalvato:'Archivo guardado', tAnnullato:'Guardado cancelado', tErrSalva:'Error al guardar',
@@ -815,10 +819,17 @@ function monotona(p){
 }
 /* secondi interi >= 0 oppure null */
 function secOk(v){ v=nzf(v); return v==null?null:Math.max(0,Math.round(v)); }
+/* identificativo di una partita nuova: "p" + istante in base 36 + 6 caratteri casuali in base 36 */
+function nuovoId(){
+  var r='',i,b=null;
+  try{ if(window.crypto && window.crypto.getRandomValues){ b=new Uint32Array(6); window.crypto.getRandomValues(b); } }catch(e){ b=null; }
+  for(i=0;i<6;i++) r+=((b?b[i]:Math.floor(Math.random()*4294967296))%36).toString(36);
+  return 'p'+Date.now().toString(36)+r;
+}
 function fromState(s){
   var t=totals(s), sc=scoreOf(s), sq=secQ(s).slice();
   return norm({
-    id:s.data+'|'+s.avversario+'|'+s.categoria,
+    id:s.id,
     data:s.data, avversario:s.avversario, categoria:s.categoria,
     tipoGara:s.tipoGara, maglia:s.maglia, stagione:s.stagione, topMatch:!!s.topMatch,
     minuti:minTot(s), minutiQ:sq.map(function(v){return v==null?null:v/60;}), secondiQ:sq,
@@ -932,6 +943,11 @@ function boot(){
   if(state.formato) allinea();
   if(stagManuale) state.stagione = stagManuale;
   state.topMatch = !!state.topMatch;
+  /* identificativo (dalla v2.3.3): partita in corso gia' salvata con la versione precedente */
+  if(!state.id){
+    var vId=state.data+'|'+state.avversario+'|'+state.categoria;
+    if(archive.some(function(x){ return x.id===vId; })){ state.id=vId; saveState(); }
+  }
 
   nascondiSpente();
   buildLive(); buildPartita(); bindNote();
@@ -1307,9 +1323,18 @@ function renderPartitaFields(){
 }
 function showProg(){
   var sc=scoreOf(state), run=[],i;
-  for(i=0;i<state.parziali.length;i++) run.push(fpair(state.parziali[i]));
+  var testa=t('prog');
+  if(FUNZIONI.punteggioPeriodo){
+    /* punti di ogni periodo, fino all'ultimo con almeno un valore inserito */
+    var qd=quartiDa(state.parziali), ult=-1;
+    for(i=0;i<state.parziali.length;i++) if(state.parziali[i][0]!=null || state.parziali[i][1]!=null) ult=i;
+    for(i=0;i<=ult;i++) run.push(periodLabel(i)+' '+qd[i]);
+    testa=t('perPeriodo');
+  } else {
+    for(i=0;i<state.parziali.length;i++) run.push(fpair(state.parziali[i]));
+  }
   $('fProg').innerHTML = sc.vuoto ? ''
-    : (t('prog')+run.join(' | ')+'<br>'+t('finale')+'<b>'+sc.noi+'-'+sc.avv+'</b> ('+
+    : (testa+run.join(' | ')+'<br>'+t('finale')+'<b>'+sc.noi+'-'+sc.avv+'</b> ('+
        (sc.esito==='V'?t('vittoria'):(sc.esito==='P'?t('sconfitta'):t('pareggio')))+')');
 }
 
@@ -1335,6 +1360,13 @@ function doSave(){
   if(!state.categoria){ toast(t('tNoCat')); go('partita'); return; }
   if(parzErr(state).some(function(x){return x;})){
     mostraVuoti=true; showParzErr(); toast(t('tParzErr')); go('partita'); return;
+  }
+  if(!state.id){
+    var doppia=archive.some(function(x){
+      return x.data===state.data && x.avversario===state.avversario && x.categoria===state.categoria;
+    });
+    if(doppia && !confirm(t('cfDoppia'))){ toast(t('tNonSalvata')); return; }
+    state.id=nuovoId(); saveState();
   }
   var g=fromState(state);
   if(g.formato && FUNZIONI.formatoGara) save(K_FMT,g.formato);
@@ -1784,6 +1816,7 @@ function showGame(g){
 }
 function loadGame(g){
   state=blank();
+  state.id=g.id;
   state.data=g.data; state.avversario=g.avversario; state.categoria=g.categoria;
   state.tipoGara=g.tipoGara; state.maglia=g.maglia; state.stagione=g.stagione;
   state.topMatch=!!g.topMatch;
