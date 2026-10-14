@@ -250,7 +250,7 @@ td.k{color:var(--mute)}
       </div>
 
       <div class="box" style="margin-top:14px">
-        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.3.3 · build 1 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante con Claude</span></div>
+        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.3.3 · build 2 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante con Claude</span></div>
       </div>
     </div>
   </section>
@@ -273,13 +273,13 @@ td.k{color:var(--mute)}
 
 <script>
 /* =========================================================
-   GIORGIO STATS v2.3.3 · build 1 — ottobre 2026
+   GIORGIO STATS v2.3.3 · build 2 — ottobre 2026
    ========================================================= */
 (function(){
 'use strict';
 
 /* Numero di build della versione Giorgio, mostrato accanto alla versione nella scheda Note. Contatore della singola versione: riparte da 1 a ogni nuovo numero di versione e cresce di 1 a ogni nuova pubblicazione della stessa versione (la v2.3.2 pubblicata per prima è la build 1). */
-var BUILD=1;
+var BUILD=2;
 
 /* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento). */
 var FUNZIONI=Object.freeze({
@@ -388,7 +388,7 @@ it:{
   tStag:'Stagione: {0}',
   tNoAvv:'Manca il nome dell\'avversario', tNoCat:'Manca l\'etichetta di squadra: creane o sceglierne una',
   tSalvata:'Partita salvata in archivio', tAggiornata:'Partita aggiornata in archivio',
-  cfDoppia:'Esiste già una partita con stessa data, avversario e squadra. Salvarla come nuova partita?', tNonSalvata:'Partita non salvata',
+  cfDoppia:'Esiste già una partita con stessa data, avversario ed etichetta. Salvarla come nuova partita?', tNonSalvata:'Partita non salvata',
   cfReset:'Azzerare la partita in corso?\nL\'archivio non viene toccato.', tAzzerata:'Partita azzerata',
   shareBackup:'Backup Giorgio Stats', tBackupCond:'Backup condiviso', tScaricato:'File scaricato',
   tSalvato:'File salvato', tAnnullato:'Salvataggio annullato', tErrSalva:'Errore nel salvataggio',
@@ -483,7 +483,7 @@ en:{
   tStag:'Season: {0}',
   tNoAvv:'Opponent name is missing', tNoCat:'Team label is missing: create or choose one',
   tSalvata:'Game saved to archive', tAggiornata:'Game updated in archive',
-  cfDoppia:'A game with the same date, opponent and team already exists. Save it as a new game?', tNonSalvata:'Game not saved',
+  cfDoppia:'A game with the same date, opponent and label already exists. Save it as a new game?', tNonSalvata:'Game not saved',
   cfReset:'Reset the current game?\nThe archive is not affected.', tAzzerata:'Game reset',
   shareBackup:'Giorgio Stats backup', tBackupCond:'Backup shared', tScaricato:'File downloaded',
   tSalvato:'File saved', tAnnullato:'Save cancelled', tErrSalva:'Save failed',
@@ -578,7 +578,7 @@ es:{
   tStag:'Temporada: {0}',
   tNoAvv:'Falta el nombre del rival', tNoCat:'Falta la etiqueta de equipo: crea o elige una',
   tSalvata:'Partido guardado en el archivo', tAggiornata:'Partido actualizado en el archivo',
-  cfDoppia:'Ya existe un partido con la misma fecha, rival y equipo. ¿Guardarlo como partido nuevo?', tNonSalvata:'Partido no guardado',
+  cfDoppia:'Ya existe un partido con la misma fecha, rival y etiqueta. ¿Guardarlo como partido nuevo?', tNonSalvata:'Partido no guardado',
   cfReset:'¿Reiniciar el partido en curso?\nEl archivo no se modifica.', tAzzerata:'Partido reiniciado',
   shareBackup:'Copia de seguridad Giorgio Stats', tBackupCond:'Copia de seguridad compartida', tScaricato:'Archivo descargado',
   tSalvato:'Archivo guardado', tAnnullato:'Guardado cancelado', tErrSalva:'Error al guardar',
