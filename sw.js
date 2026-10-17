@@ -1,11 +1,14 @@
-/* Giorgio Stats — service worker v2.3.3 (13/10/2026) */
-var CACHE = 'giorgio-stats-v2.3.3';
+/* Giorgio Stats — service worker v2.4.0 (17/10/2026) */
+var CACHE = 'giorgio-stats-v2.4.0';
 var ASSETS = [
   './',
   './index.html',
   './manifest.json',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './fonts/BigShouldersDisplay%5Bwght%5D.ttf',
+  './fonts/Anton-Regular.ttf',
+  './fonts/BarlowCondensed-SemiBold.ttf'
 ];
 
 self.addEventListener('install', function (e) {

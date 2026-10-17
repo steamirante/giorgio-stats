@@ -8,6 +8,8 @@ La pubblicazione del codice in questo repository non comporta la concessione di 
 
 L'uso dell'applicazione è riservato alle persone autorizzate dall'autore.
 
+I componenti di terzi eventualmente inclusi restano soggetti alle rispettive licenze, elencate nel file `THIRD_PARTY_NOTICES.md`.
+
 In caso di divergenza tra il testo italiano e il testo inglese, prevale il testo italiano.
 
 ---
@@ -21,5 +23,7 @@ This software ("Giorgio Stats"), including its source code, documentation and an
 Publication of the code in this repository does not grant any licence. No licence or other right in the software is granted, whether expressly or by implication, except for the rights that GitHub's Terms of Service grant to GitHub.com users over the content of public repositories, such as viewing the repository and forking it. Except as mandatorily provided by law, reproducing, modifying, adapting, translating, distributing, communicating to the public or otherwise using the software, in whole or in part, is prohibited without the author's written authorisation.
 
 Use of the application is reserved to persons authorised by the author.
+
+Any third-party components included remain subject to their respective licences, listed in the file `THIRD_PARTY_NOTICES.md`.
 
 In case of discrepancy between the Italian and English texts, the Italian text prevails.

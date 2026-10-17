@@ -3,16 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="theme-color" content="#0d0d0f">
+<meta name="theme-color" content="#141414">
 <title>Giorgio Stats</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
+/* caratteri tipografici: file locali in fonts/, licenza in fonts/OFL.txt */
+@font-face{font-family:'Big Shoulders Display';src:url('fonts/BigShouldersDisplay%5Bwght%5D.ttf') format('truetype');font-weight:100 900;font-display:swap}
+@font-face{font-family:'Anton';src:url('fonts/Anton-Regular.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:'Barlow Condensed';src:url('fonts/BarlowCondensed-SemiBold.ttf') format('truetype');font-weight:600;font-display:swap}
 :root{
-  --bg:#0d0d0f; --card:#17171b; --card2:#1e1e23; --line:#2a2a31;
-  --ink:#f2f2f4; --mute:#83838d; --acc:#ff7a18;
+  --bg:#141414; --card:#1C1C1F; --cardT:rgba(28,28,31,.8); --card2:#26262A; --line:#2a2a31;
+  --ink:#FFFFFF; --mute:#83838d; --acc:#E8701A; --crema:#F3E9D2; --barra:#0B0B0B;
   --ok:#34c759; --no:#ff3b30; --blu:#4a9eff;
   --r:12px;
+  --titoli:'Big Shoulders Display',"Segoe UI",system-ui,sans-serif;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;height:100%;overscroll-behavior:none}
@@ -26,16 +31,22 @@ button{font-family:inherit;color:inherit;border:0;background:none;cursor:pointer
 input,select,textarea{font-family:inherit;font-size:16px;color:var(--ink);
   background:var(--card2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%}
 input[type=number]{-moz-appearance:textfield}
+/* campo Data: icona del calendario in crema */
+input[type=date]{color-scheme:dark;cursor:pointer}
+input[type=date]::-webkit-calendar-picker-indicator{cursor:pointer;opacity:1;width:18px;height:18px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='none' stroke='%23F3E9D2' stroke-width='2'%3E%3Crect x='3' y='5' width='18' height='16' rx='2'/%3E%3Cpath d='M3 10h18M8 3v4M16 3v4'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat}
 input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 
 /* ---------- layout ---------- */
 main{flex:1;min-height:0;position:relative}
 .panel{position:absolute;inset:0;display:none;flex-direction:column}
 .panel.on{display:flex}
+/* campo FIBA nello sfondo delle schede Live e Archivio (immagine generata in campoSvg) */
+#live,#archivio{background-position:center;background-size:contain;background-repeat:no-repeat}
 .scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 10px 18px;flex:1;min-height:0}
 
 /* ---------- nav ---------- */
-nav{display:flex;background:#000;border-top:1px solid var(--line);
+nav{display:flex;background:var(--barra);border-top:1px solid var(--line);
   padding-bottom:env(safe-area-inset-bottom);flex:0 0 auto}
 nav button{flex:1;padding:9px 0 7px;font-size:10px;letter-spacing:.5px;color:var(--mute);
   display:flex;flex-direction:column;align-items:center;gap:3px}
@@ -44,22 +55,22 @@ nav button.on{color:var(--acc)}
 
 /* ---------- scoreboard ---------- */
 .board{flex:0 0 auto;display:flex;align-items:center;gap:8px;
-  padding:7px 10px;background:#000;border-bottom:1px solid var(--line)}
+  padding:7px 10px;background:var(--barra);border-bottom:1px solid var(--line)}
 .bcell{flex:1;text-align:center;min-width:0}
-.bcell b{display:block;font-size:clamp(20px,5.6dvh,30px);font-weight:800;line-height:1.05}
-.bcell span{display:block;font-size:9px;letter-spacing:1px;color:var(--mute);margin-top:1px}
-.bpt b{color:var(--acc)} .bval b{color:var(--ok)}
-.bdd{flex:0 0 auto;font-size:9px;font-weight:700;color:#000;background:var(--acc);
+.bcell b{display:block;font-family:'Anton',"Segoe UI",sans-serif;font-size:clamp(20px,5.6dvh,30px);font-weight:400;line-height:1.1}
+.bcell span{display:block;font-size:9px;letter-spacing:1px;color:var(--crema);margin-top:1px}
+.bpt b{color:var(--acc)} .bval b{color:var(--ok)} #bMin{color:var(--crema)}
+.bdd{flex:0 0 auto;font-size:9px;font-weight:700;color:#141414;background:var(--acc);
   border-radius:5px;padding:3px 5px;letter-spacing:.5px;visibility:hidden}
 .bdd.on{visibility:visible}
 
 /* ---------- live ---------- */
 #live .body{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;padding:6px 8px 8px;overflow:hidden}
 .shots{flex:0 0 auto;display:flex;flex-direction:column;gap:5px}
-.srow{display:flex;align-items:center;gap:6px;background:var(--card);border-radius:var(--r);
+.srow{display:flex;align-items:center;gap:6px;background:var(--cardT);border-radius:var(--r);
   padding:5px 7px;min-height:clamp(42px,7.2dvh,58px)}
 .sname{flex:1 1 0;min-width:0}
-.sname b{display:block;font-size:clamp(11px,1.7dvh,13px);font-weight:700;line-height:1.15}
+.sname b{display:block;font-size:clamp(11px,1.7dvh,13px);font-weight:700;line-height:1.15;color:var(--crema)}
 .sname span{display:block;font-size:clamp(9px,1.4dvh,11px);color:var(--acc);font-weight:600;margin-top:1px}
 .sbtns{flex:0 0 auto;display:flex;align-items:center;gap:5px}
 .pill{display:flex;align-items:center;background:var(--card2);border-radius:9px;overflow:hidden}
@@ -70,28 +81,29 @@ nav button.on{color:var(--acc)}
 .pill button.m{color:var(--mute);font-size:17px}
 
 .grid{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);gap:5px;overflow:hidden}
-.cnt{background:var(--card);border-radius:var(--r);display:flex;align-items:center;
+.cnt{background:var(--cardT);border-radius:var(--r);display:flex;align-items:center;
   gap:4px;padding:3px 5px;min-height:0}
 .cnt .lab{flex:1;min-width:0;font-size:clamp(9px,1.45dvh,11px);font-weight:600;
-  color:var(--mute);line-height:1.15}
+  color:var(--crema);line-height:1.15}
 .cnt .v{font-size:clamp(15px,2.5dvh,20px);font-weight:800;min-width:20px;text-align:center}
 .cnt button{flex:0 0 auto;width:clamp(28px,7.4vw,36px);height:min(clamp(30px,4.8dvh,48px),100%);
   font-size:18px;font-weight:700;background:var(--card2);border-radius:8px}
 .cnt button.p{color:var(--acc)} .cnt button.m{color:var(--mute)}
-.cnt.dim .lab{color:#5e5e66}
+.cnt.dim .lab{color:var(--crema);opacity:.5}
 
 /* ---------- generic ---------- */
-h2{font-size:12px;letter-spacing:.6px;color:var(--mute);margin:14px 0 7px;font-weight:700}
+h2{font-family:var(--titoli);font-size:17px;letter-spacing:.8px;color:var(--crema);margin:14px 0 7px;font-weight:900;line-height:1.1}
 h2:first-child{margin-top:2px}
 .box{background:var(--card);border-radius:var(--r);padding:11px}
 .box+.box{margin-top:8px}
+#archivio .box{background:var(--cardT)}
 .fld{margin-bottom:9px}
 .fld:last-child{margin-bottom:0}
-.fld label{display:block;font-size:11px;color:var(--mute);margin-bottom:4px;font-weight:600}
+.fld label{display:block;font-size:11px;color:var(--crema);margin-bottom:4px;font-weight:600}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chip{padding:8px 11px;border-radius:9px;background:var(--card2);border:1px solid var(--line);
   font-size:13px;font-weight:600}
-.chip.on{background:var(--acc);border-color:var(--acc);color:#000}
+.chip.on{background:var(--acc);border-color:var(--acc);color:#141414}
 .chip.sm{padding:7px 9px;font-size:12px}
 .chip.eti{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 .avvrow{display:flex;gap:6px;align-items:center}
@@ -100,12 +112,12 @@ h2:first-child{margin-top:2px}
 .star{color:var(--acc);margin-left:4px}
 .btn{display:block;width:100%;padding:13px;border-radius:10px;background:var(--card2);
   border:1px solid var(--line);font-size:14px;font-weight:700;margin-top:8px;text-align:center}
-.btn.acc{background:var(--acc);border-color:var(--acc);color:#000}
+.btn.acc{background:var(--acc);border-color:var(--acc);color:#141414}
 .btn.dgr{color:var(--no);border-color:#4a2020}
 .two{display:flex;gap:8px}
 .two .btn{margin-top:8px}
 .qrow{display:flex;align-items:center;gap:7px;margin-bottom:7px}
-.qrow .qn{flex:0 0 40px;font-size:12px;font-weight:700;color:var(--mute)}
+.qrow .qn{flex:0 0 40px;font-size:12px;font-weight:700;color:var(--crema)}
 .qrow input{text-align:center;padding:9px 4px}
 .qrow .sep{color:var(--mute);font-size:13px}
 .qrow .qn.err{color:var(--no)}
@@ -123,18 +135,18 @@ h2:first-child{margin-top:2px}
 .qrow .fin.on i{border-color:var(--acc)}
 .qh{margin-bottom:2px}
 .qh .sp{flex:0 0 52px}
-.qh .finh{flex:0 0 64px;text-align:center;font-size:10px;font-weight:700;color:var(--mute);letter-spacing:.3px}
+.qh .finh{flex:0 0 64px;text-align:center;font-size:10px;font-weight:700;color:var(--crema);letter-spacing:.3px}
 .fmtv{font-size:15px;font-weight:800;margin-bottom:7px}
 .fmtrow{display:flex;gap:8px;flex-wrap:wrap}
 .fmtg{flex:1 1 140px;display:flex;align-items:center;gap:6px}
-.fmtg span{flex:1;min-width:0;font-size:12px;color:var(--mute);font-weight:600}
+.fmtg span{flex:1;min-width:0;font-size:12px;color:var(--crema);font-weight:600}
 .fmtg .pill .v{min-width:44px}
 .btn:disabled{opacity:.35;cursor:default}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th,td{padding:6px 4px;text-align:right;border-bottom:1px solid var(--line)}
 th:first-child,td:first-child{text-align:left}
-th{color:var(--mute);font-size:10px;font-weight:700;letter-spacing:.3px}
-td.k{color:var(--mute)}
+th{color:var(--crema);font-size:10px;font-weight:700;letter-spacing:.3px}
+td.k{color:var(--crema)}
 .gm{display:flex;align-items:center;gap:8px;padding:9px 4px;border-bottom:1px solid var(--line)}
 .gm .d{flex:0 0 44px;font-size:10px;color:var(--mute);line-height:1.25}
 .gm .o{flex:1;min-width:0}
@@ -144,7 +156,7 @@ td.k{color:var(--mute)}
 .gm .s b{display:block;font-size:15px;color:var(--acc);font-weight:800}
 .tag{display:inline-block;font-size:9px;padding:1px 5px;border-radius:4px;background:var(--card2);
   color:var(--mute);margin-left:4px}
-.toast{position:fixed;left:50%;bottom:72px;transform:translateX(-50%);background:#000;
+.toast{position:fixed;left:50%;bottom:72px;transform:translateX(-50%);background:var(--barra);
   border:1px solid var(--acc);color:var(--ink);padding:10px 16px;border-radius:9px;
   font-size:13px;z-index:99;opacity:0;transition:opacity .22s;pointer-events:none;
   max-width:88vw;text-align:center}
@@ -156,6 +168,9 @@ td.k{color:var(--mute)}
   border-radius:16px 16px 0 0;padding:16px 14px calc(16px + env(safe-area-inset-bottom))}
 .hint{font-size:11px;color:var(--mute);line-height:1.45;margin-top:6px}
 .warn{font-size:11px;color:#d8a23a;line-height:1.45;margin-top:6px}
+/* immagini da condividere */
+.imgprev{display:block;margin:10px auto 0;max-width:100%;max-height:52dvh;width:auto;height:auto;border-radius:8px;background:#141414}
+.imgsel{margin-top:10px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -250,7 +265,7 @@ td.k{color:var(--mute)}
       </div>
 
       <div class="box" style="margin-top:14px">
-        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.3.3 · build 2 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante con Claude</span></div>
+        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.4.0 · build 1 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante con Claude</span></div>
       </div>
     </div>
   </section>
@@ -273,15 +288,15 @@ td.k{color:var(--mute)}
 
 <script>
 /* =========================================================
-   GIORGIO STATS v2.3.3 · build 2 — ottobre 2026
+   GIORGIO STATS v2.4.0 · build 1 — ottobre 2026
    ========================================================= */
 (function(){
 'use strict';
 
 /* Numero di build della versione Giorgio, mostrato accanto alla versione nella scheda Note. Contatore della singola versione: riparte da 1 a ogni nuovo numero di versione e cresce di 1 a ogni nuova pubblicazione della stessa versione (la v2.3.2 pubblicata per prima è la build 1). */
-var BUILD=2;
+var BUILD=1;
 
-/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento). */
+/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento), nuovo aspetto grafico con caratteri locali e campo nello sfondo (correzione grafica), apertura del calendario toccando tutto il campo Data (correzione). immaginiCondivise: pulsante "Condividi immagine" nel dettaglio di una partita dell'archivio, immagini PNG nei formati A, B e C. */
 var FUNZIONI=Object.freeze({
   multilingue:true,
   spagnolo:true,
@@ -289,7 +304,8 @@ var FUNZIONI=Object.freeze({
   topMatch:true,
   formatoGara:true,
   eliminaSupplementare:true,
-  punteggioPeriodo:true
+  punteggioPeriodo:true,
+  immaginiCondivise:true
 });
 
 /* ---------- costanti ---------- */
@@ -369,7 +385,7 @@ it:{
   hStag:'STAGIONE', lStag:'Stagione attribuita alle nuove partite',
   hintStag:'Assegnata in automatico con taglio al 1° agosto. Modificala solo se serve.',
   hLingua:'LINGUA',
-  verRiga:'Giorgio Stats v2.3.3 · build {0} — ottobre 2026', creata:'Creata da Stefano Amirante con Claude',
+  verRiga:'Giorgio Stats v2.4.0 · build {0} — ottobre 2026', creata:'Creata da Stefano Amirante con Claude',
   tipo_Campionato:'Campionato', tipo_Torneo:'Torneo', tipo_Amichevole:'Amichevole', tipo_Playoff:'Playoff',
   sh_p2:'2 punti', sh_pit:'dal pitturato', sh_fuo:'fuori dal pitturato', sh_tl:'Tiri liberi', sh_p3:'3 punti',
   c_rimO:'Rimbalzi offensivi', c_rimD:'Rimbalzi difensivi',
@@ -431,7 +447,18 @@ it:{
   gWPit:'tiri da due non divisi per zona',
   bCarica:'Carica come partita in corso', bElimina:'Elimina dall\'archivio',
   cfElimina:'Eliminare {0} del {1}?', tEliminata:'Partita eliminata', bChiudi:'Chiudi',
-  tCaricata:'Partita caricata'
+  tCaricata:'Partita caricata',
+  bCondImg:'Condividi immagine', hImg:'IMMAGINE DA CONDIVIDERE',
+  imgFmtA:'A · Tabellino', imgFmtB:'B · Dato in evidenza', imgFmtC:'C · Tabellino compatto',
+  lImgDato:'Dato in evidenza', bCondividi:'Condividi', bIndietro:'Indietro',
+  tImgCond:'Immagine condivisa', tImgErr:'Immagine non generata',
+  imgGiorni:['DOM','LUN','MAR','MER','GIO','VEN','SAB'],
+  imgMesi:['GEN','FEB','MAR','APR','MAG','GIU','LUG','AGO','SET','OTT','NOV','DIC'],
+  imgVs:'vs', imgVitt:'Vittoria', imgSconf:'Sconfitta', imgIn:'in',
+  imgDD:'DOPPIA DOPPIA', imgTD:'TRIPLA DOPPIA', imgTDvoce:'Tripla doppia',
+  imgMigliore:'MIGLIORE DELLA STAGIONE', imgMedia:'Media della stagione: {0}',
+  imgT2:'Tiri da 2', imgT3:'Tiri da 3', imgValAbbr:'VALUT.',
+  imgTL:'TL', img2p:'2pt', img3p:'3pt'
 },
 en:{
   _nome:'English',
@@ -464,7 +491,7 @@ en:{
   hStag:'SEASON', lStag:'Season assigned to new games',
   hintStag:'Assigned automatically with the cutoff on August 1. Change it only if needed.',
   hLingua:'LANGUAGE',
-  verRiga:'Giorgio Stats v2.3.3 · build {0} — October 2026', creata:'Created by Stefano Amirante with Claude',
+  verRiga:'Giorgio Stats v2.4.0 · build {0} — October 2026', creata:'Created by Stefano Amirante with Claude',
   tipo_Campionato:'League', tipo_Torneo:'Tournament', tipo_Amichevole:'Friendly', tipo_Playoff:'Playoff',
   sh_p2:'2 points', sh_pit:'in the paint', sh_fuo:'outside the paint', sh_tl:'Free throws', sh_p3:'3 points',
   c_rimO:'Offensive rebounds', c_rimD:'Defensive rebounds',
@@ -526,7 +553,18 @@ en:{
   gWPit:'two-point shots not split by zone',
   bCarica:'Load as current game', bElimina:'Delete from archive',
   cfElimina:'Delete {0} on {1}?', tEliminata:'Game deleted', bChiudi:'Close',
-  tCaricata:'Game loaded'
+  tCaricata:'Game loaded',
+  bCondImg:'Share image', hImg:'IMAGE TO SHARE',
+  imgFmtA:'A · Box score', imgFmtB:'B · Highlight stat', imgFmtC:'C · Compact box score',
+  lImgDato:'Highlight stat', bCondividi:'Share', bIndietro:'Back',
+  tImgCond:'Image shared', tImgErr:'Image not generated',
+  imgGiorni:['SUN','MON','TUE','WED','THU','FRI','SAT'],
+  imgMesi:['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'],
+  imgVs:'vs', imgVitt:'W', imgSconf:'L', imgIn:'in',
+  imgDD:'DOUBLE-DOUBLE', imgTD:'TRIPLE-DOUBLE', imgTDvoce:'Triple-double',
+  imgMigliore:'SEASON HIGH', imgMedia:'Season average: {0}',
+  imgT2:'2-point shots', imgT3:'3-point shots', imgValAbbr:'EFF.',
+  imgTL:'FT', img2p:'2P', img3p:'3P'
 },
 es:{
   _nome:'Español',
@@ -559,7 +597,7 @@ es:{
   hStag:'TEMPORADA', lStag:'Temporada asignada a los nuevos partidos',
   hintStag:'Asignada automáticamente con corte el 1 de agosto. Modifícala solo si es necesario.',
   hLingua:'IDIOMA',
-  verRiga:'Giorgio Stats v2.3.3 · build {0} — octubre 2026', creata:'Creada por Stefano Amirante con Claude',
+  verRiga:'Giorgio Stats v2.4.0 · build {0} — octubre 2026', creata:'Creada por Stefano Amirante con Claude',
   tipo_Campionato:'Liga', tipo_Torneo:'Torneo', tipo_Amichevole:'Amistoso', tipo_Playoff:'Playoff',
   sh_p2:'2 puntos', sh_pit:'desde la zona', sh_fuo:'fuera de la zona', sh_tl:'Tiros libres', sh_p3:'3 puntos',
   c_rimO:'Rebotes ofensivos', c_rimD:'Rebotes defensivos',
@@ -621,7 +659,18 @@ es:{
   gWPit:'tiros de dos no divididos por zona',
   bCarica:'Cargar como partido en curso', bElimina:'Eliminar del archivo',
   cfElimina:'¿Eliminar {0} del {1}?', tEliminata:'Partido eliminado', bChiudi:'Cerrar',
-  tCaricata:'Partido cargado'
+  tCaricata:'Partido cargado',
+  bCondImg:'Compartir imagen', hImg:'IMAGEN PARA COMPARTIR',
+  imgFmtA:'A · Estadísticas', imgFmtB:'B · Dato destacado', imgFmtC:'C · Estadísticas compactas',
+  lImgDato:'Dato destacado', bCondividi:'Compartir', bIndietro:'Atrás',
+  tImgCond:'Imagen compartida', tImgErr:'Imagen no generada',
+  imgGiorni:['DOM','LUN','MAR','MIÉ','JUE','VIE','SÁB'],
+  imgMesi:['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'],
+  imgVs:'vs', imgVitt:'Victoria', imgSconf:'Derrota', imgIn:'en',
+  imgDD:'DOBLE-DOBLE', imgTD:'TRIPLE-DOBLE', imgTDvoce:'Triple-doble',
+  imgMigliore:'MEJOR DE LA TEMPORADA', imgMedia:'Media de la temporada: {0}',
+  imgT2:'Tiros de 2', imgT3:'Tiros de 3', imgValAbbr:'VAL.',
+  imgTL:'TL', img2p:'2pt', img3p:'3pt'
 }
 };
 var lingua='it';
@@ -950,6 +999,7 @@ function boot(){
   }
 
   nascondiSpente();
+  applicaCampo();
   buildLive(); buildPartita(); bindNote();
   applyLang();
   renderAll();
@@ -1016,6 +1066,8 @@ function buildPartita(){
     b.onclick=function(){ state.difficolta=(state.difficolta===x?null:x); saveState(); renderPartita(); };
     b.dataset.v=String(x); d.appendChild(b);
   });
+  /* calendario aperto toccando qualunque punto del campo, dove il browser lo consente */
+  $('fData').onclick=function(){ try{ if(this.showPicker) this.showPicker(); }catch(e){} };
   $('fData').onchange=function(){ state.data=this.value;
     if(!stagManuale) state.stagione=seasonOf(state.data);
     saveState(); renderPartita(); };
@@ -1801,6 +1853,11 @@ function showGame(g){
     if(g.p2tPit==null) w.push(tx('gWPit'));
     s.appendChild(el('div','warn',tx('gRidotto',w.join('; '))));
   }
+  if(FUNZIONI.immaginiCondivise){
+    var bi=el('button','btn acc',tx('bCondImg'));
+    bi.onclick=function(){ showImg(g,'A'); };
+    s.appendChild(bi);
+  }
   var b1=el('button','btn',tx('bCarica'));
   b1.onclick=function(){ loadGame(g); closeModal(); };
   s.appendChild(b1);
@@ -1842,6 +1899,335 @@ function loadGame(g){
 function closeModal(){ $('modal').className='modal'; }
 $('modal').onclick=function(e){ if(e.target===this) closeModal(); };
 
+/* ---------- campo FIBA ---------- */
+/* campo 28 x 15 m in verticale, misure in metri: arco dei tre punti r 6,75 dal centro del canestro
+   (1,575 m dalla linea di fondo) con tratti dritti a 0,9 m dalle linee laterali; area 4,9 x 5,8; cerchi r 1,8.
+   meta=true: sola meta' superiore, per l'immagine quadrata */
+function campoPath(meta){
+  var W=15, L=28, c=W/2, yb=1.575, r3=6.75, x3=0.9, ka=4.9, kl=5.8, rc=1.8;
+  var y3=yb+Math.sqrt(r3*r3-(c-x3)*(c-x3));
+  function cerchio(x,y){ return 'M'+(x-rc)+','+y+'a'+rc+','+rc+' 0 1,0 '+(2*rc)+',0a'+rc+','+rc+' 0 1,0 '+(-2*rc)+',0'; }
+  var d='M'+x3+',0V'+y3+'A'+r3+','+r3+' 0 0,0 '+(W-x3)+','+y3+'V0'+
+        'M'+(c-ka/2)+',0V'+kl+'H'+(c+ka/2)+'V0'+cerchio(c,kl);
+  if(meta) return d+'M0,'+(L/2)+'V0H'+W+'V'+(L/2);
+  return d+'M0,0H'+W+'V'+L+'H0Z'+'M0,'+(L/2)+'H'+W+cerchio(c,L/2)+
+        'M'+x3+','+L+'V'+(L-y3)+'A'+r3+','+r3+' 0 0,1 '+(W-x3)+','+(L-y3)+'V'+L+
+        'M'+(c-ka/2)+','+L+'V'+(L-kl)+'H'+(c+ka/2)+'V'+L+cerchio(c,L-kl);
+}
+/* sfondo delle schede Live e Archivio: righe crema al 17%, 5 cm in scala */
+function campoSvg(){
+  return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.1 -0.1 15.2 28.2"><path d="'+campoPath(false)+
+    '" fill="none" stroke="#F3E9D2" stroke-opacity="0.17" stroke-width="0.05"/></svg>';
+}
+function applicaCampo(){
+  var u='url("data:image/svg+xml,'+encodeURIComponent(campoSvg())+'")';
+  $('live').style.backgroundImage=u; $('archivio').style.backgroundImage=u;
+}
+
+/* ---------- immagini da condividere ---------- */
+var IMG_ARANCIO='#E8701A', IMG_CREMA='#F3E9D2', IMG_FONDO='#141414', IMG_BARRA='#0B0B0B',
+    IMG_VERDE='#34C759', IMG_ROSSO='#FF3B30';
+var F_TIT='"Big Shoulders Display"', F_NUM='"Anton"', F_TXT='"Barlow Condensed"';
+/* tentativi minimi per mostrare una percentuale */
+var SOGLIE={tl:4,t2:3,t3:3};
+/* voci del formato B, nell'ordine dell'elenco */
+var VOCI_B=['val','pt','rim','ast','pr','tl','t2','t3'];
+function tiriVoce(g,k){ return k==='tl'?[g.tls,g.tlt]:(k==='t2'?[g.p2s,g.p2t]:[g.p3s,g.p3t]); }
+/* valore della voce; tiri: percentuale (0-1) solo con tentativi sufficienti, altrimenti null */
+function valoreVoce(g,k){
+  if(k==='val') return valOf(g);
+  if(k==='pt') return g.pt;
+  if(k==='rim') return g.rimO+g.rimD;
+  if(k==='ast') return g.ast;
+  if(k==='pr') return g.pr;
+  var x=tiriVoce(g,k);
+  return x[1]>=SOGLIE[k] ? x[0]/x[1] : null;
+}
+function etichettaVoce(k){
+  return {val:t('gVal'),pt:t('gPunti'),rim:t('gRimb'),ast:t('gAst'),pr:t('c_pr'),
+          tl:t('gTl'),t2:t('imgT2'),t3:t('imgT3'),td:t('imgTDvoce')}[k];
+}
+/* partite della stessa stagione con data anteriore */
+function precedenti(g,arc){
+  return arc.filter(function(x){ return x.stagione===g.stagione && x.data<g.data; });
+}
+/* confronto con la stagione: media delle partite precedenti valide (tiri: segnati totali / tentati totali
+   delle partite sopra la soglia, come nell'Archivio); migliore = strettamente sopra a ognuna,
+   con almeno 3 partite precedenti (per i tiri: almeno 3 sopra la soglia) */
+function confrontoVoce(g,k,prev){
+  var v=valoreVoce(g,k); if(v==null) return null;
+  var tiro=(k==='tl'||k==='t2'||k==='t3'), vals=[],i,x,m=null,s=0,ts=0,tt=0;
+  for(i=0;i<prev.length;i++){
+    x=valoreVoce(prev[i],k); if(x==null) continue;
+    vals.push(x); s+=x;
+    if(tiro){ ts+=tiriVoce(prev[i],k)[0]; tt+=tiriVoce(prev[i],k)[1]; }
+  }
+  if(vals.length) m=tiro ? ts/tt : s/vals.length;
+  var best=prev.length>=3 && vals.length>=3 && vals.every(function(y){ return v>y; });
+  return {v:v, media:m, best:best};
+}
+function tdImg(g){ return FUNZIONI.triplaDoppia && tdOf(g); }
+/* dato proposto per il formato B */
+function propostaB(g,arc){
+  if(tdImg(g)) return 'td';
+  var prev=precedenti(g,arc),i,c,q,r=1,best=null;
+  if(!prev.length) return 'val';
+  if(prev.length>=3){
+    for(i=0;i<VOCI_B.length;i++){ c=confrontoVoce(g,VOCI_B[i],prev); if(c && c.best) return VOCI_B[i]; }
+  }
+  for(i=0;i<VOCI_B.length;i++){
+    c=confrontoVoce(g,VOCI_B[i],prev);
+    if(!c || c.media==null || c.media<=0) continue;
+    q=c.v/c.media; if(q>r){ r=q; best=VOCI_B[i]; }
+  }
+  return best||'val';
+}
+function mediaTxt(k,m){
+  return (k==='tl'||k==='t2'||k==='t3') ? Math.round(m*100)+'%' : String(Math.round(m*10)/10);
+}
+/* "SAB 18 OTT" nella lingua attiva */
+function dataImg(iso){
+  var p=(iso||'').split('-'); if(p.length<3) return '';
+  var d=new Date(n(p[0]),n(p[1])-1,n(p[2]));
+  return t('imgGiorni')[d.getDay()]+' '+n(p[2])+' '+t('imgMesi')[n(p[1])-1];
+}
+/* esito: testo e colore; pareggio = solo punteggio; senza punteggio = nulla */
+function esitoImg(g){
+  var m=/^([VP=]) (.*)$/.exec(g.risultatoTesto||'');
+  if(!m) return null;
+  if(m[1]==='V') return {s:t('imgVitt')+' '+m[2], c:IMG_VERDE};
+  if(m[1]==='P') return {s:t('imgSconf')+' '+m[2], c:IMG_ROSSO};
+  return {s:m[2], c:IMG_CREMA};
+}
+function nomeImg(g){ return 'GIORGIO'+(String(g.maglia||'').trim()?' #'+String(g.maglia).trim():''); }
+function tiroTxt(g,k){
+  var x=tiriVoce(g,k);
+  return x[0]+'/'+x[1]+(x[1]>=SOGLIE[k]?' · '+Math.round(x[0]/x[1]*100)+'%':'');
+}
+/* voci da 10 in su della doppia e tripla doppia */
+function vociDieci(g){
+  return [{k:'pt',v:g.pt,l:t('gPunti')},{k:'rim',v:g.rimO+g.rimD,l:t('gRimb')},{k:'ast',v:g.ast,l:t('gAst')},
+          {k:'stopD',v:g.stopDate,l:t('c_stopD')},{k:'pr',v:g.pr,l:t('c_pr')}]
+    .filter(function(x){ return x.v>=10; });
+}
+function nomeFileImg(g,f){ return 'giorgio-stats-'+(g.data||todayISO())+'-'+f+'.png'; }
+
+/* testo su canvas; con maxW il corpo si riduce finche' il testo non entra */
+function scrivi(c,s,x,y,o){
+  var sz=o.size;
+  if('letterSpacing' in c) c.letterSpacing=(o.ls||0)+'px';
+  c.font=(o.w?o.w+' ':'')+sz+'px '+o.f;
+  if(o.max) while(sz>10 && c.measureText(s).width>o.max){ sz-=2; c.font=(o.w?o.w+' ':'')+sz+'px '+o.f; }
+  c.fillStyle=o.c; c.textAlign=o.a||'left'; c.textBaseline='alphabetic';
+  c.fillText(s,x,y);
+  var w=c.measureText(s).width;
+  if('letterSpacing' in c) c.letterSpacing='0px';
+  return w;
+}
+/* piu' pezzi di colore diverso sulla stessa riga, ridotti insieme se non entrano */
+function scriviPezzi(c,pz,x,y,o){
+  var sz=o.size,tot,i;
+  function misura(){ c.font=(o.w?o.w+' ':'')+sz+'px '+o.f; tot=0; for(i=0;i<pz.length;i++) tot+=c.measureText(pz[i].s).width; }
+  misura(); while(o.max && sz>10 && tot>o.max){ sz-=2; misura(); }
+  var xx=o.a==='right'?x-tot:(o.a==='center'?x-tot/2:x);
+  c.textAlign='left'; c.textBaseline='alphabetic';
+  for(i=0;i<pz.length;i++){ c.fillStyle=pz[i].c; c.fillText(pz[i].s,xx,y); xx+=c.measureText(pz[i].s).width; }
+  return tot;
+}
+function rettArr(c,x,y,w,h,r){
+  c.beginPath();
+  if(c.roundRect) c.roundRect(x,y,w,h,r); else c.rect(x,y,w,h);
+}
+function campoImg(c,W,meta){
+  var k=(W-80)/15, h=(meta?14:28)*k, oy=meta?80:(c.canvas.height-h)/2;
+  c.save(); c.translate(40,oy); c.scale(k,k);
+  c.strokeStyle='rgba(243,233,210,0.13)'; c.lineWidth=8/k;
+  c.stroke(new Path2D(campoPath(meta)));
+  c.restore();
+}
+function fasciaGiorgio(c,W,H,h,size){
+  c.fillStyle=IMG_BARRA; c.fillRect(0,H-h,W,h);
+  scriviPezzi(c,[{s:'GIORGIO ',c:IMG_CREMA},{s:'STATS',c:IMG_ARANCIO}],W>H?64:(W===H?64:80),H-h/2+size*0.36,{f:F_TIT,w:900,size:size});
+}
+function cornice(c,W,H){
+  c.strokeStyle=IMG_ARANCIO; c.lineWidth=16; rettArr(c,8,8,W-16,H-16,40); c.stroke();
+}
+function pastiglia(c,cx,y){
+  c.font='600 56px '+F_TXT;
+  var s=t('imgDD'), w=c.measureText(s).width+96;
+  c.fillStyle=IMG_ARANCIO; rettArr(c,cx==null?80:cx-w/2,y,w,104,52); c.fill();
+  scrivi(c,s,cx==null?80+w/2:cx,y+72,{f:F_TXT,w:600,size:56,c:IMG_FONDO,a:'center'});
+}
+/* intestazione dei formati verticali: data, nome, esito */
+function testata(c,g,fmt){
+  var e=esitoImg(g);
+  scrivi(c,dataImg(g.data)+' · '+(fmt==='A'?tipoTxt(g.tipoGara).toUpperCase():t('imgVs')+' '+g.avversario.toUpperCase()),
+    80,176,{f:F_TXT,w:600,size:52,ls:8,c:IMG_CREMA,max:920});
+  scrivi(c,nomeImg(g),80,320,{f:F_TIT,w:900,size:136,c:'#FFFFFF',max:920});
+  var pz=[];
+  if(fmt==='A') pz.push({s:t('imgVs')+' '+g.avversario+(e?' · ':''),c:IMG_CREMA});
+  if(e) pz.push({s:e.s,c:e.c});
+  if(pz.length) scriviPezzi(c,pz,80,416,{f:F_TXT,w:600,size:64,max:920});
+}
+function righe(c,rr,y0){
+  rr.forEach(function(r,i){
+    var y=y0+i*112;
+    var wv=scrivi(c,String(r[1]),1000,y,{f:F_TXT,w:600,size:68,c:'#FFFFFF',a:'right',max:560});
+    scrivi(c,r[0],80,y,{f:F_TXT,w:600,size:60,c:IMG_CREMA,max:920-wv-32});
+  });
+}
+/* voci della tripla doppia in colonne fra x0 e x1 */
+function colonne(c,vv,x0,x1,yv,yl,o){
+  var nn=vv.length,i,cw=(x1-x0)/nn;
+  for(i=0;i<nn;i++){
+    var x=x0+cw*(i+0.5);
+    scrivi(c,String(vv[i].v),x,yv,{f:F_NUM,size:o.nv,c:(o.cv?o.cv(i):IMG_FONDO),a:'center',max:cw-16});
+    scrivi(c,vv[i].l.toUpperCase(),x,yl,{f:o.fl,w:o.wl,size:o.nl,ls:o.lsl||0,c:o.cl,a:'center',max:cw-16});
+  }
+}
+function disegnaA(c,g){
+  var W=1080,H=1920,td=tdImg(g),dd=!td&&ddOf(g),v=valOf(g),rr=[];
+  testata(c,g,'A');
+  if(td){
+    var vv=vociDieci(g), inTD=vv.map(function(x){return x.k;});
+    c.fillStyle=IMG_ARANCIO; c.fillRect(0,488,W,368);
+    scrivi(c,t('imgTD'),W/2,640,{f:F_TIT,w:900,size:144,ls:8,c:IMG_FONDO,a:'center',max:1000});
+    colonne(c,vv,80,1000,784,832,{nv:104,nl:44,fl:F_TXT,wl:600,lsl:6,cl:IMG_FONDO});
+    if(g.minuti>0) rr.push([t('gMinuti'),fmin(g.minuti)]);
+    rr.push([t('gVal'),v]);
+    [['pt',t('gPunti'),g.pt],['rim',t('gRimb'),g.rimO+g.rimD],['ast',t('gAst'),g.ast],['pr',t('c_pr'),g.pr]].forEach(function(x){
+      if(inTD.indexOf(x[0])<0) rr.push([x[1],x[2]]);
+    });
+  } else {
+    var wp=scrivi(c,String(g.pt),80,784,{f:F_NUM,size:368,c:IMG_ARANCIO});
+    var xl=Math.max(496,80+wp+48);
+    scrivi(c,t('gPunti').toUpperCase(),xl,600,{f:F_TIT,w:900,size:80,c:IMG_CREMA,max:1000-xl});
+    if(g.minuti>0) scrivi(c,t('imgIn')+' '+fmin(g.minuti),xl,696,{f:F_TXT,w:600,size:60,c:IMG_CREMA,max:1000-xl});
+    scriviPezzi(c,[{s:t('gVal')+' ',c:IMG_CREMA},{s:String(v),c:'#FFFFFF'}],xl,784,{f:F_TXT,w:600,size:60,max:1000-xl});
+    c.fillStyle='rgba(243,233,210,0.25)'; c.fillRect(80,856,920,4);
+    rr.push([t('gRimb'),g.rimO+g.rimD],[t('gAst'),g.ast],[t('c_pr'),g.pr]);
+  }
+  rr.push([t('imgT2'),tiroTxt(g,'t2')],[t('imgT3'),tiroTxt(g,'t3')],[t('gTl'),tiroTxt(g,'tl')]);
+  righe(c,rr,976);
+  if(dd) pastiglia(c,null,1600);
+}
+function disegnaB(c,g,k,arc){
+  var W=1080,td=tdImg(g),dd=!td&&ddOf(g);
+  testata(c,g,'B');
+  if(k==='td'){
+    var vv=vociDieci(g);
+    c.fillStyle=IMG_ARANCIO; c.fillRect(0,600,W,224);
+    scrivi(c,t('imgTD'),W/2,760,{f:F_TIT,w:900,size:144,ls:8,c:IMG_FONDO,a:'center',max:1000});
+    colonne(c,vv,80,1000,1200,1304,{nv:248,nl:60,fl:F_TIT,wl:900,cl:IMG_CREMA,cv:function(i){ return i===0?IMG_ARANCIO:'#FFFFFF'; }});
+    scrivi(c,t('gVal')+' '+valOf(g)+(g.minuti>0?' · '+fmin(g.minuti)+' '+t('sepMin'):''),W/2,1488,{f:F_TXT,w:600,size:60,c:IMG_CREMA,a:'center',max:920});
+    return;
+  }
+  var tiro=(k==='tl'||k==='t2'||k==='t3'), c2=confrontoVoce(g,k,precedenti(g,arc)), y;
+  scrivi(c,etichettaVoce(k).toUpperCase(),W/2,680,{f:F_TIT,w:900,size:96,c:IMG_CREMA,a:'center',max:920});
+  if(tiro){
+    var x=tiriVoce(g,k);
+    scrivi(c,x[0]+'/'+x[1],W/2,1120,{f:F_NUM,size:416,c:IMG_ARANCIO,a:'center',max:920});
+    y=1120;
+    if(x[1]>=SOGLIE[k]){ y=1250; scrivi(c,Math.round(x[0]/x[1]*100)+'%',W/2,y,{f:F_TIT,w:900,size:120,c:'#FFFFFF',a:'center'}); }
+  } else {
+    scrivi(c,String(valoreVoce(g,k)),W/2,1120,{f:F_NUM,size:416,c:IMG_ARANCIO,a:'center',max:920});
+    y=1120;
+  }
+  if(c2 && c2.best){ y+=150; scrivi(c,t('imgMigliore'),W/2,y,{f:F_TIT,w:900,size:96,c:'#FFFFFF',a:'center',max:920}); }
+  if(c2 && c2.media!=null){ y+=(c2.best?110:140); scrivi(c,t('imgMedia',mediaTxt(k,c2.media)),W/2,y,{f:F_TXT,w:600,size:60,c:IMG_CREMA,a:'center',max:920}); }
+  if(dd) pastiglia(c,W/2,1560);
+  if(td){
+    c.fillStyle=IMG_ARANCIO; c.fillRect(0,1540,W,176);
+    scrivi(c,t('imgTD'),W/2,1622,{f:F_TIT,w:900,size:88,ls:6,c:IMG_FONDO,a:'center',max:1000});
+    scrivi(c,vociDieci(g).map(function(x){ return x.v+' '+x.l.toUpperCase(); }).join(' · '),W/2,1692,{f:F_TXT,w:600,size:52,c:IMG_FONDO,a:'center',max:1000});
+  }
+}
+function disegnaC(c,g){
+  var W=1080,td=tdImg(g),dd=!td&&ddOf(g),e=esitoImg(g);
+  scrivi(c,dataImg(g.data)+' · '+t('imgVs')+' '+g.avversario.toUpperCase(),72,160,{f:F_TXT,w:600,size:48,ls:8,c:IMG_CREMA,max:936});
+  var we=e?scrivi(c,e.s,1008,280,{f:F_TXT,w:600,size:60,c:e.c,a:'right',max:460}):0;
+  scrivi(c,nomeImg(g),72,280,{f:F_TIT,w:900,size:104,c:'#FFFFFF',max:936-we-(we?32:0)});
+  var cc=[{k:'pt',v:g.pt,l:t('gPunti')},{k:'val',v:valOf(g),l:t('imgValAbbr')},{k:'rim',v:g.rimO+g.rimD,l:t('gRimb')},{k:'ast',v:g.ast,l:t('gAst')}];
+  vociDieci(g).forEach(function(x){ if(x.k==='stopD'||x.k==='pr') cc.push(x); });
+  var s=Math.min(1,4/cc.length);
+  colonne(c,cc,72,1008,528,616,{nv:Math.round(160*s),nl:Math.round(52*s),fl:F_TIT,wl:900,cl:IMG_CREMA,cv:function(i){ return i===0?IMG_ARANCIO:'#FFFFFF'; }});
+  if(td){
+    c.fillStyle=IMG_ARANCIO; c.fillRect(0,688,W,136);
+    scrivi(c,t('imgTD'),W/2,788,{f:F_TIT,w:900,size:88,ls:8,c:IMG_FONDO,a:'center',max:1000});
+  } else if(dd) pastiglia(c,W/2,704);
+  var pz=[];
+  [['tl','imgTL'],['t2','img2p'],['t3','img3p']].forEach(function(x){ var tt=tiriVoce(g,x[0]); if(tt[1]>0) pz.push(t(x[1])+' '+tt[0]+'/'+tt[1]); });
+  if(g.minuti>0) pz.push(fmin(g.minuti)+' '+t('sepMin'));
+  if(pz.length) scrivi(c,pz.join(' · '),W/2,880,{f:F_TXT,w:600,size:52,c:IMG_CREMA,a:'center',max:936});
+}
+/* disegno completo su canvas: A e B 1080 x 1920, C 1080 x 1080 */
+function disegnaImg(cv,g,fmt,k,arc){
+  var W=1080,H=fmt==='C'?1080:1920;
+  cv.width=W; cv.height=H;
+  var c=cv.getContext('2d');
+  c.fillStyle=IMG_FONDO; c.fillRect(0,0,W,H);
+  campoImg(c,W,fmt==='C');
+  if(fmt==='A') disegnaA(c,g);
+  else if(fmt==='B') disegnaB(c,g,k,arc);
+  else disegnaC(c,g);
+  fasciaGiorgio(c,W,H,fmt==='C'?168:184,fmt==='C'?56:60);
+  if(tdImg(g)) cornice(c,W,H);
+}
+/* i caratteri devono essere caricati prima di disegnare */
+function fontPronti(){
+  try{
+    if(!document.fonts || !document.fonts.load) return Promise.resolve();
+    return Promise.all(['900 40px '+F_TIT,'40px '+F_NUM,'600 40px '+F_TXT].map(function(f){ return document.fonts.load(f); }))
+      .then(function(){},function(){});
+  }catch(e){ return Promise.resolve(); }
+}
+/* scheda: formato, dato in evidenza (B), anteprima, condivisione */
+function showImg(g,fmt,voce){
+  var s=$('sheet'); s.innerHTML='';
+  fmt=fmt||'A'; if(fmt==='B' && !voce) voce=propostaB(g,archive);
+  s.appendChild(el('h2',null,t('hImg')));
+  var ch=el('div','chips');
+  [['A','imgFmtA'],['B','imgFmtB'],['C','imgFmtC']].forEach(function(x){
+    var b=el('button','chip sm'+(x[0]===fmt?' on':''),t(x[1]));
+    b.onclick=function(){ showImg(g,x[0],x[0]==='B'?voce:null); };
+    ch.appendChild(b);
+  });
+  s.appendChild(ch);
+  if(fmt==='B'){
+    var f=el('div','fld imgsel'); f.appendChild(el('label',null,t('lImgDato')));
+    var sel=el('select');
+    (tdImg(g)?['td']:[]).concat(VOCI_B).forEach(function(k){ var o=el('option',null,etichettaVoce(k)); o.value=k; sel.appendChild(o); });
+    sel.value=voce;
+    sel.onchange=function(){ showImg(g,'B',this.value); };
+    f.appendChild(sel); s.appendChild(f);
+  }
+  var cv=el('canvas','imgprev'); s.appendChild(cv);
+  var blob=null, nome=nomeFileImg(g,fmt);
+  var bs=el('button','btn acc',t('bCondividi')); bs.disabled=true;
+  fontPronti().then(function(){
+    disegnaImg(cv,g,fmt,voce,archive);
+    cv.toBlob(function(b){ blob=b; bs.disabled=!b; if(!b) toast(t('tImgErr')); },'image/png');
+  });
+  /* condivisione nella stessa azione dell'utente: l'immagine e' gia' pronta */
+  bs.onclick=function(){
+    if(!blob) return;
+    try{
+      var fl=new File([blob],nome,{type:'image/png'});
+      if(navigator.canShare && navigator.canShare({files:[fl]})){
+        navigator.share({files:[fl]})
+          .then(function(){ toast(t('tImgCond')); })
+          .catch(function(e){ if(!e||e.name!=='AbortError') dl(blob,nome); });
+        return;
+      }
+    }catch(e){}
+    dl(blob,nome);
+  };
+  s.appendChild(bs);
+  var bi=el('button','btn',t('bIndietro')); bi.onclick=function(){ showGame(g); }; s.appendChild(bi);
+  var bc=el('button','btn',t('bChiudi')); bc.onclick=closeModal; s.appendChild(bc);
+  $('modal').className='modal on';
+}
+
 /* ---------- nav ---------- */
 function go(id){
   var ps=document.querySelectorAll('.panel'),bs=document.querySelectorAll('nav button'),i;
@@ -1866,6 +2252,8 @@ if(typeof window!=='undefined'){
   window.GS={ totals:totals, minTot:minTot, isDD:isDD, scoreOf:scoreOf, seasonOf:seasonOf,
               norm:norm, valOf:valOf, ddOf:ddOf, mergeArc:mergeArc, aggregate:aggregate,
               fromState:fromState, blank:blank,
+              propostaB:propostaB, confrontoVoce:confrontoVoce, precedenti:precedenti, disegnaImg:disegnaImg, fontPronti:fontPronti,
+              nomeFileImg:nomeFileImg, campoPath:campoPath, setLang:setLang, showGame:showGame,
               _get:function(){return {state:state,archive:archive};} };
 }
 
