@@ -13,7 +13,7 @@
 @font-face{font-family:'Anton';src:url('fonts/Anton-Regular.ttf') format('truetype');font-weight:400;font-display:swap}
 @font-face{font-family:'Barlow Condensed';src:url('fonts/BarlowCondensed-SemiBold.ttf') format('truetype');font-weight:600;font-display:swap}
 :root{
-  --bg:#141414; --card:#1C1C1F; --cardT:rgba(28,28,31,.8); --card2:#26262A; --line:#2a2a31;
+  --bg:#141414; --card:#1C1C1F; --cardT:rgba(28,28,31,.6); --card2:#26262A; --line:#2a2a31;
   --ink:#FFFFFF; --mute:#83838d; --acc:#E8701A; --crema:#F3E9D2; --barra:#0B0B0B;
   --ok:#34c759; --no:#ff3b30; --blu:#4a9eff;
   --r:12px;
@@ -294,7 +294,7 @@ td.k{color:var(--crema)}
 'use strict';
 
 /* Numero di build della versione Giorgio, mostrato accanto alla versione nella scheda Note. Contatore della singola versione: riparte da 1 a ogni nuovo numero di versione e cresce di 1 a ogni nuova pubblicazione della stessa versione (la v2.3.2 pubblicata per prima è la build 1). */
-var BUILD=1;
+var BUILD=2;
 
 /* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento), nuovo aspetto grafico con caratteri locali e campo nello sfondo (correzione grafica), apertura del calendario toccando tutto il campo Data (correzione). immaginiCondivise: pulsante "Condividi immagine" nel dettaglio di una partita dell'archivio, immagini PNG nei formati A, B e C. */
 var FUNZIONI=Object.freeze({
@@ -1914,10 +1914,10 @@ function campoPath(meta){
         'M'+x3+','+L+'V'+(L-y3)+'A'+r3+','+r3+' 0 0,1 '+(W-x3)+','+(L-y3)+'V'+L+
         'M'+(c-ka/2)+','+L+'V'+(L-kl)+'H'+(c+ka/2)+'V'+L+cerchio(c,L-kl);
 }
-/* sfondo delle schede Live e Archivio: righe crema al 17%, 5 cm in scala */
+/* sfondo delle schede Live e Archivio: righe crema al 30%, 5 cm in scala */
 function campoSvg(){
   return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-0.1 -0.1 15.2 28.2"><path d="'+campoPath(false)+
-    '" fill="none" stroke="#F3E9D2" stroke-opacity="0.17" stroke-width="0.05"/></svg>';
+    '" fill="none" stroke="#F3E9D2" stroke-opacity="0.30" stroke-width="0.05"/></svg>';
 }
 function applicaCampo(){
   var u='url("data:image/svg+xml,'+encodeURIComponent(campoSvg())+'")';
