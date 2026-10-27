@@ -447,8 +447,8 @@ it:{
   navLive:'LIVE', navPartita:'PARTITA', navOpzioni:'OPZIONI', navArchivio:'ARCHIVIO',
   navStats:'STATS',
   sCorso:'Stagione in corso', sCarriera:'Carriera', sUlt5:'Ultime 5', sPers:'Personalizza',
-  sDal:'Dal', sAl:'Al', sUltN:'Ultime N partite', sRiep:'{0} partite · {1} tiri tentati',
-  sPiccolo:'Campione piccolo: dati poco indicativi', sEscl:'{0} partite escluse: dato mancante',
+  sDal:'Dal', sAl:'Al', sUltN:'Ultime N partite', sPartN:'{0} partite', sPart1:'1 partita', sTiriN:'{0} tiri tentati', sTiri1:'1 tiro tentato',
+  sPiccolo:'Campione piccolo: dati poco indicativi', sEscl:'{0} partite escluse: dato mancante', sEscl1:'1 partita esclusa: dato mancante',
   sVuota:'Nessuna partita per questa selezione', sConfr:'Confronta selezioni', sSelA:'Selezione A', sSelB:'Selezione B',
   sBest:'Migliore partita', sPari:'a pari merito', bStatPart:'Statistiche della partita', sMedia:'Media', sTot:'Totale',
   g1:'TIRO', g2:'POSSESSI E GESTIONE DELLA PALLA', g3:'INDICI SINTETICI', g4:'RAPPORTATI AL TEMPO',
@@ -572,8 +572,8 @@ en:{
   navLive:'LIVE', navPartita:'GAME', navOpzioni:'SETTINGS', navArchivio:'ARCHIVE',
   navStats:'STATS',
   sCorso:'Current season', sCarriera:'Career', sUlt5:'Last 5', sPers:'Customize',
-  sDal:'From', sAl:'To', sUltN:'Last N games', sRiep:'{0} games · {1} shots attempted',
-  sPiccolo:'Small sample: data not very indicative', sEscl:'{0} games excluded: missing data',
+  sDal:'From', sAl:'To', sUltN:'Last N games', sPartN:'{0} games', sPart1:'1 game', sTiriN:'{0} shots attempted', sTiri1:'1 shot attempted',
+  sPiccolo:'Small sample: data not very indicative', sEscl:'{0} games excluded: missing data', sEscl1:'1 game excluded: missing data',
   sVuota:'No games for this selection', sConfr:'Compare selections', sSelA:'Selection A', sSelB:'Selection B',
   sBest:'Best game', sPari:'tied', bStatPart:'Game stats', sMedia:'Average', sTot:'Total',
   g1:'SHOOTING', g2:'POSSESSIONS AND BALL HANDLING', g3:'COMPOSITE RATINGS', g4:'PER MINUTES',
@@ -697,8 +697,8 @@ es:{
   navLive:'EN VIVO', navPartita:'PARTIDO', navOpzioni:'AJUSTES', navArchivio:'ARCHIVO',
   navStats:'STATS',
   sCorso:'Temporada actual', sCarriera:'Carrera', sUlt5:'Últimos 5', sPers:'Personalizar',
-  sDal:'Desde', sAl:'Hasta', sUltN:'Últimos N partidos', sRiep:'{0} partidos · {1} tiros intentados',
-  sPiccolo:'Muestra pequeña: datos poco indicativos', sEscl:'{0} partidos excluidos: dato ausente',
+  sDal:'Desde', sAl:'Hasta', sUltN:'Últimos N partidos', sPartN:'{0} partidos', sPart1:'1 partido', sTiriN:'{0} tiros intentados', sTiri1:'1 tiro intentado',
+  sPiccolo:'Muestra pequeña: datos poco indicativos', sEscl:'{0} partidos excluidos: dato ausente', sEscl1:'1 partido excluido: dato ausente',
   sVuota:'Ningún partido para esta selección', sConfr:'Comparar selecciones', sSelA:'Selección A', sSelB:'Selección B',
   sBest:'Mejor partido', sPari:'empatados', bStatPart:'Estadísticas del partido', sMedia:'Media', sTot:'Total',
   g1:'TIRO', g2:'POSESIONES Y MANEJO DEL BALÓN', g3:'ÍNDICES SINTÉTICOS', g4:'POR MINUTOS',
@@ -1147,6 +1147,9 @@ function t(k){
 }
 /* alias per le funzioni in cui t e' una variabile locale */
 var tx=t;
+/* riga delle partite e dei tiri tentati e partite escluse, con il singolare */
+function riepTxt(n,a){ return (n===1?t('sPart1'):t('sPartN',n))+' · '+(a===1?t('sTiri1'):t('sTiriN',a)); }
+function esclTxt(n){ return n===1?t('sEscl1'):t('sEscl',n); }
 function tipoTxt(x){ var v=t('tipo_'+x); return v==null?x:v; }
 /* risultato salvato "V 50-40": si traduce solo la lettera dell'esito ("=" per il pareggio) */
 function resTxt(r){
@@ -3040,7 +3043,7 @@ function modello(G,list,C,o){
   else if(G==='G6') perPeriodo(list,C,es).forEach(function(x){ it.push(x); });
   else if(G==='G7'){ var sb=C.M[o.best]||C.M.S1; segna(sb); it.push({k:'best',st:sb,res:migliore(sb,list)}); }
   var ne=Object.keys(es).length;
-  if(ne) it.push({k:'nota',s:t('sEscl',ne)});
+  if(ne) it.push({k:'nota',s:esclTxt(ne)});
   return it;
 }
 /* S14: tiri da 2 dal pitturato e fuori, tiri da 3, falli subiti con tiri liberi, assist, palle perse */
@@ -3186,7 +3189,7 @@ function apriStagione(s){ arcSeason=s; arcCareer=false; arcCompare=false; closeM
 function riepilogo(list){
   var d=el('div','box'), a=0;
   list.forEach(function(g){ a+=fgaG(g); });
-  var ri=el('div','stri',t('sRiep',list.length,a)); addQ(ri,'G0'); d.appendChild(ri);
+  var ri=el('div','stri',riepTxt(list.length,a)); addQ(ri,'G0'); d.appendChild(ri);
   if(list.length && list.length<3) d.appendChild(el('div','warn',t('sPiccolo')));
   return d;
 }
@@ -3318,9 +3321,9 @@ function showDetail(st){
   s.appendChild(el('div','hint',descSel(stSel)));
   s.appendChild(el('div','stbig',fv.v+(fv.tot!=null?' · '+fv.tot:'')));
   if(fv.tot!=null) s.appendChild(el('div','hint',t('sMedia')+' · '+t('sTot')));
-  s.appendChild(el('div','hint',t('sRiep',r.n,st.tiri?r.att:r.fga)));
+  s.appendChild(el('div','hint',riepTxt(r.n,st.tiri?r.att:r.fga)));
   if(r.n && (r.n<3 || r.small)) s.appendChild(el('div','warn',t('sPiccolo')));
-  if(r.ex) s.appendChild(el('div','hint',t('sEscl',r.ex)));
+  if(r.ex) s.appendChild(el('div','hint',esclTxt(r.ex)));
   s.appendChild(d ? grafSvg(st,d) : el('div','hint','—'));
   s.appendChild(bestDom(st,res));
   var bc=el('button','btn',t('sConfr'));
@@ -3330,7 +3333,7 @@ function showDetail(st){
   bi.onclick=function(){
     var bl=[{k:'titolo',s:st.nm()}];
     if(st.reg) bl.push({k:'nota',s:st.reg()});
-    bl.push({k:'riga',l:t('sRiep',r.n,st.tiri?r.att:r.fga),v:fv.v+(fv.tot!=null?' · '+fv.tot:'')});
+    bl.push({k:'riga',l:riepTxt(r.n,st.tiri?r.att:r.fga),v:fv.v+(fv.tot!=null?' · '+fv.tot:'')});
     if(d) bl.push({k:'graf',st:st,d:d});
     bl=bl.concat(blocchiImg([{k:'best',st:st,res:res,solo:1}]));
     showImgStats(descSel(stSel),nomeImg({maglia:magliaComune(list)}),bl,'stats-'+st.id,function(){ showDetail(st); });
@@ -3368,7 +3371,7 @@ function showConfronto(st){
       f.appendChild(selettore(x[1],disegna));
       f.appendChild(el('div','hint',descSel(x[1])));
       f.appendChild(el('div','stbig',fv.v+(fv.tot!=null?' · '+fv.tot:'')));
-      f.appendChild(el('div','hint',t('sRiep',r.n,st.tiri?r.att:r.fga)));
+      f.appendChild(el('div','hint',riepTxt(r.n,st.tiri?r.att:r.fga)));
       if(r.n && (r.n<3 || r.small)) f.appendChild(el('div','warn',t('sPiccolo')));
       s.appendChild(f);
       return r;
