@@ -63,6 +63,11 @@ nav button.on{color:var(--acc)}
 .bdd{flex:0 0 auto;font-size:9px;font-weight:700;color:#141414;background:var(--acc);
   border-radius:5px;padding:3px 5px;letter-spacing:.5px;visibility:hidden}
 .bdd.on{visibility:visible}
+/* colonna a destra delle celle: periodo in corso (tocco = chiusura del periodo), sotto DD e TD affiancati */
+.bside{flex:0 0 auto;display:flex;flex-direction:column;gap:4px}
+.bddr{display:flex;gap:4px}
+.bper{min-height:24px;font-family:'Barlow Condensed',"Segoe UI",sans-serif;font-size:12px;font-weight:700;line-height:1.1;
+  color:var(--crema);border:1px solid var(--acc);border-radius:5px;padding:2px 4px;text-align:center}
 
 /* ---------- live ---------- */
 #live .body{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;padding:6px 8px 8px;overflow:hidden}
@@ -183,8 +188,10 @@ td.k{color:var(--crema)}
       <div class="bcell bpt"><b id="bPt">0</b><span data-i18n="bPunti">PUNTI</span></div>
       <div class="bcell bval"><b id="bVal">0</b><span data-i18n="bVal">VALUTAZIONE</span></div>
       <div class="bcell"><b id="bMin">0</b><span data-i18n="bMin">MINUTI</span></div>
-      <div class="bdd" id="bDD">DD</div>
-      <div class="bdd" id="bTD">TD</div>
+      <div class="bside">
+        <button class="bper" id="bPer">Q1</button>
+        <div class="bddr"><div class="bdd" id="bDD">DD</div><div class="bdd" id="bTD">TD</div></div>
+      </div>
     </div>
     <div class="body">
       <div class="shots" id="shots"></div>
@@ -224,12 +231,7 @@ td.k{color:var(--crema)}
         <div class="chips" id="fDiff"></div>
         <div class="hint" id="fDiffTxt">Da assegnare a fine partita, rispetto al livello attuale di Giorgio.</div>
       </div>
-    </div>
-  </section>
 
-  <!-- ============ NOTE ============ -->
-  <section class="panel" id="note">
-    <div class="scroll">
       <h2 data-i18n="hNota">NOTA DELLA PARTITA</h2>
       <div class="box">
         <textarea id="fNota" rows="7" placeholder="Contesto, avversario, episodi, osservazioni tecniche." data-i18n-ph="phNota"></textarea>
@@ -239,6 +241,15 @@ td.k{color:var(--crema)}
       <div class="box">
         <button class="btn acc" id="bSave" data-i18n="bSave">Salva partita in archivio</button>
         <div class="hint" data-i18n="hintSave">Risalvare la stessa partita la aggiorna, non la duplica.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ OPZIONI ============ -->
+  <section class="panel" id="opzioni">
+    <div class="scroll">
+      <h2 data-i18n="hPartCorso">PARTITA IN CORSO</h2>
+      <div class="box">
         <button class="btn dgr" id="bReset" data-i18n="bReset">Azzera partita in corso</button>
         <div class="hint" data-i18n="hintReset">Non tocca l'archivio.</div>
       </div>
@@ -265,7 +276,7 @@ td.k{color:var(--crema)}
       </div>
 
       <div class="box" style="margin-top:14px">
-        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v2.4.0 · build 4 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante</span></div>
+        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v3.0.0 · build 1 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante</span></div>
       </div>
     </div>
   </section>
@@ -279,8 +290,8 @@ td.k{color:var(--crema)}
 <nav>
   <button class="on" data-go="live"><i>●</i><span data-i18n="navLive">LIVE</span></button>
   <button data-go="partita"><i>▣</i><span data-i18n="navPartita">PARTITA</span></button>
-  <button data-go="note"><i>✎</i><span data-i18n="navNote">NOTE</span></button>
   <button data-go="archivio"><i>▤</i><span data-i18n="navArchivio">ARCHIVIO</span></button>
+  <button data-go="opzioni"><i>⚙</i><span data-i18n="navOpzioni">OPZIONI</span></button>
 </nav>
 
 <div class="toast" id="toast"></div>
@@ -288,15 +299,15 @@ td.k{color:var(--crema)}
 
 <script>
 /* =========================================================
-   GIORGIO STATS v2.4.0 · build 1 — ottobre 2026
+   GIORGIO STATS v3.0.0 · build 1 — ottobre 2026
    ========================================================= */
 (function(){
 'use strict';
 
-/* Numero di build della versione Giorgio, mostrato accanto alla versione nella scheda Note. Contatore della singola versione: riparte da 1 a ogni nuovo numero di versione e cresce di 1 a ogni nuova pubblicazione della stessa versione (la v2.3.2 pubblicata per prima è la build 1). */
-var BUILD=4;
+/* Numero di build della versione Giorgio, mostrato accanto alla versione nella scheda Opzioni. Contatore della singola versione: riparte da 1 a ogni nuovo numero di versione e cresce di 1 a ogni nuova pubblicazione della stessa versione (la v2.3.2 pubblicata per prima è la build 1). */
+var BUILD=1;
 
-/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento), nuovo aspetto grafico con caratteri locali e campo nello sfondo (correzione grafica), apertura del calendario toccando tutto il campo Data (correzione). immaginiCondivise: pulsante "Condividi immagine" nel dettaglio di una partita dell'archivio, immagini PNG nei formati A, B e C. */
+/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento), nuovo aspetto grafico con caratteri locali e campo nello sfondo (correzione grafica), apertura del calendario toccando tutto il campo Data (correzione), riordino delle schede (barra Live, Partita, Archivio, Opzioni; la scheda Note diventa Opzioni; nota e salvataggio in archivio nella scheda Partita; azzeramento della partita in corso nella scheda Opzioni). immaginiCondivise: pulsante "Condividi immagine" nel dettaglio di una partita dell'archivio, immagini PNG nei formati A, B e C. periodoAzioni: conteggi delle azioni per periodo nella partita in corso e nell'archivio, indicatore del periodo in corso nella scheda Live (tocco = chiusura del periodo), "+" e "−" bloccati a partita conclusa, azioni comprese nell'eliminazione del supplementare e nel blocco della riduzione dei periodi. */
 var FUNZIONI=Object.freeze({
   multilingue:true,
   spagnolo:true,
@@ -305,7 +316,8 @@ var FUNZIONI=Object.freeze({
   formatoGara:true,
   eliminaSupplementare:true,
   punteggioPeriodo:true,
-  immaginiCondivise:true
+  immaginiCondivise:true,
+  periodoAzioni:true
 });
 
 /* ---------- costanti ---------- */
@@ -350,6 +362,14 @@ var CNTS = [
   {k:'stopS', dim:1}
 ];
 
+/* chiavi dei conteggi per periodo: le stesse che "+" e "−" della scheda Live modificano con bump() */
+var AZ_KEYS=(function(){
+  var a=[],i;
+  for(i=0;i<SHOTS.length;i++) a.push(SHOTS[i].k+'S',SHOTS[i].k+'X');
+  for(i=0;i<CNTS.length;i++) a.push(CNTS[i].k);
+  return a;
+})();
+
 /* ---------- lingua ---------- */
 /* una lingua = un dizionario; le chiavi mancanti ricadono sull'italiano */
 var K_LANG='gs2.lingua';
@@ -357,7 +377,7 @@ var I18N = {
 it:{
   _nome:'Italiano',
   bPunti:'PUNTI', bVal:'VALUTAZIONE', bMin:'MINUTI',
-  navLive:'LIVE', navPartita:'PARTITA', navNote:'NOTE', navArchivio:'ARCHIVIO',
+  navLive:'LIVE', navPartita:'PARTITA', navOpzioni:'OPZIONI', navArchivio:'ARCHIVIO',
   hGara:'GARA', lData:'Data', lAvv:'Avversario', phAvv:'Nome squadra',
   lCat:'Squadra e categoria', lTipo:'Tipo gara', lMaglia:'Numero di maglia',
   hMinuti:'MINUTI GIOCATI', totCalc:'Totale calcolato:', totMinuti:'minuti.',
@@ -365,8 +385,10 @@ it:{
   lFormato:'Formato della gara', fPeriodi:'Periodi', fDurata:'Durata', fmtNo:'formato non indicato',
   bFmtAssegna:'Assegna formato',
   tFmtBloccoP:'Modifica bloccata: i periodi da eliminare contengono minuti o punteggi',
+  tFmtBloccoPAz:'Modifica bloccata: i periodi da eliminare contengono minuti, punteggi o azioni',
   tFmtBloccoD:'Modifica bloccata: un periodo ha più minuti della nuova durata',
   cfDelOT:'Eliminare l\'ultimo tempo supplementare ({0}) con i suoi minuti e i suoi punteggi?',
+  cfDelOTAz:'Eliminare l\'ultimo tempo supplementare ({0}) con i suoi minuti, i suoi punteggi e le sue azioni?',
   tOTDel:'Tempo supplementare eliminato',
   eParzVuoto:'Inserisci entrambi i progressivi', eParzCala:'Progressivo inferiore al periodo precedente',
   tParzErr:'Punteggi progressivi da correggere: salvataggio bloccato',
@@ -379,13 +401,13 @@ it:{
   hNota:'NOTA DELLA PARTITA', phNota:'Contesto, avversario, episodi, osservazioni tecniche.',
   hArchiv:'ARCHIVIAZIONE', bSave:'Salva partita in archivio',
   hintSave:'Risalvare la stessa partita la aggiorna, non la duplica.',
-  bReset:'Azzera partita in corso', hintReset:'Non tocca l\'archivio.',
+  hPartCorso:'PARTITA IN CORSO', bReset:'Azzera partita in corso', hintReset:'Non tocca l\'archivio.',
   hDati:'DATI', bBackup:'Backup (condividi o scarica)', bImport:'Importa backup',
   bCsv:'Esporta CSV per Excel', hintCsv:'Il CSV si apre in Excel con doppio clic: punto e virgola, UTF-8.',
   hStag:'STAGIONE', lStag:'Stagione attribuita alle nuove partite',
   hintStag:'Assegnata in automatico con taglio al 1° agosto. Modificala solo se serve.',
   hLingua:'LINGUA',
-  verRiga:'Giorgio Stats v2.4.0 · build {0} — ottobre 2026', creata:'Creata da Stefano Amirante',
+  verRiga:'Giorgio Stats v3.0.0 · build {0} — ottobre 2026', creata:'Creata da Stefano Amirante',
   tipo_Campionato:'Campionato', tipo_Torneo:'Torneo', tipo_Amichevole:'Amichevole', tipo_Playoff:'Playoff',
   sh_p2:'2 punti', sh_pit:'dal pitturato', sh_fuo:'fuori dal pitturato', sh_tl:'Tiri liberi', sh_p3:'3 punti',
   c_rimO:'Rimbalzi offensivi', c_rimD:'Rimbalzi difensivi',
@@ -396,6 +418,8 @@ it:{
   prog:'Progressivi: ', perPeriodo:'Per periodo: ', finale:'Finale: ', vittoria:'vittoria', sconfitta:'sconfitta', pareggio:'pareggio',
   resV:'V', resP:'P', resE:'=', hFinito:'Finito',
   tOT:'Tempo supplementare aggiunto',
+  perFine:'FINE', cfChiudi:'Chiudere {0} e passare a {1}?', cfChiudiFine:'Chiudere {0} e concludere la partita?',
+  tConclusa:'Partita conclusa: per aggiungere dati riapri un periodo o aggiungi un supplementare nella scheda Partita',
   cfEti:'Cancellare l\'etichetta "{0}"?\nLe partite in archivio non vengono modificate.',
   tEtiCanc:'Etichetta cancellata', tEtiMax:'Massimo {0} etichette: cancellane una per crearne una nuova',
   hNuovaEti:'NUOVA ETICHETTA DI SQUADRA', phEti:'Max {0} caratteri', bSalva:'Salva',
@@ -463,7 +487,7 @@ it:{
 en:{
   _nome:'English',
   bPunti:'POINTS', bVal:'EFFICIENCY', bMin:'MINUTES',
-  navLive:'LIVE', navPartita:'GAME', navNote:'NOTES', navArchivio:'ARCHIVE',
+  navLive:'LIVE', navPartita:'GAME', navOpzioni:'SETTINGS', navArchivio:'ARCHIVE',
   hGara:'GAME', lData:'Date', lAvv:'Opponent', phAvv:'Team name',
   lCat:'Team and category', lTipo:'Game type', lMaglia:'Jersey number',
   hMinuti:'MINUTES PLAYED', totCalc:'Calculated total:', totMinuti:'minutes.',
@@ -471,8 +495,10 @@ en:{
   lFormato:'Game format', fPeriodi:'Periods', fDurata:'Duration', fmtNo:'format not specified',
   bFmtAssegna:'Assign format',
   tFmtBloccoP:'Change blocked: the periods to be removed contain minutes or scores',
+  tFmtBloccoPAz:'Change blocked: the periods to be removed contain minutes, scores or actions',
   tFmtBloccoD:'Change blocked: a period has more minutes than the new duration',
   cfDelOT:'Delete the last overtime ({0}) with its minutes and its scores?',
+  cfDelOTAz:'Delete the last overtime ({0}) with its minutes, its scores and its actions?',
   tOTDel:'Overtime deleted',
   eParzVuoto:'Enter both running scores', eParzCala:'Running score lower than the previous period',
   tParzErr:'Running scores to be corrected: save blocked',
@@ -485,13 +511,13 @@ en:{
   hNota:'GAME NOTE', phNota:'Context, opponent, key moments, technical observations.',
   hArchiv:'ARCHIVING', bSave:'Save game to archive',
   hintSave:'Saving the same game again updates it, it does not duplicate it.',
-  bReset:'Reset current game', hintReset:'Does not affect the archive.',
+  hPartCorso:'CURRENT GAME', bReset:'Reset current game', hintReset:'Does not affect the archive.',
   hDati:'DATA', bBackup:'Backup (share or download)', bImport:'Import backup',
   bCsv:'Export CSV for Excel', hintCsv:'The CSV opens in Excel with a double click: semicolon, UTF-8.',
   hStag:'SEASON', lStag:'Season assigned to new games',
   hintStag:'Assigned automatically with the cutoff on August 1. Change it only if needed.',
   hLingua:'LANGUAGE',
-  verRiga:'Giorgio Stats v2.4.0 · build {0} — October 2026', creata:'Created by Stefano Amirante',
+  verRiga:'Giorgio Stats v3.0.0 · build {0} — October 2026', creata:'Created by Stefano Amirante',
   tipo_Campionato:'League', tipo_Torneo:'Tournament', tipo_Amichevole:'Friendly', tipo_Playoff:'Playoff',
   sh_p2:'2 points', sh_pit:'in the paint', sh_fuo:'outside the paint', sh_tl:'Free throws', sh_p3:'3 points',
   c_rimO:'Offensive rebounds', c_rimD:'Defensive rebounds',
@@ -502,6 +528,8 @@ en:{
   prog:'Running score: ', perPeriodo:'By period: ', finale:'Final: ', vittoria:'win', sconfitta:'loss', pareggio:'tie',
   resV:'W', resP:'L', resE:'=', hFinito:'Finished',
   tOT:'Overtime added',
+  perFine:'END', cfChiudi:'Close {0} and move to {1}?', cfChiudiFine:'Close {0} and finish the game?',
+  tConclusa:'Game finished: to add data, reopen a period or add an overtime in the Game tab',
   cfEti:'Delete the label "{0}"?\nGames in the archive are not changed.',
   tEtiCanc:'Label deleted', tEtiMax:'Maximum {0} labels: delete one to create a new one',
   hNuovaEti:'NEW TEAM LABEL', phEti:'Max {0} characters', bSalva:'Save',
@@ -569,7 +597,7 @@ en:{
 es:{
   _nome:'Español',
   bPunti:'PUNTOS', bVal:'VALORACIÓN', bMin:'MINUTOS',
-  navLive:'EN VIVO', navPartita:'PARTIDO', navNote:'NOTAS', navArchivio:'ARCHIVO',
+  navLive:'EN VIVO', navPartita:'PARTIDO', navOpzioni:'AJUSTES', navArchivio:'ARCHIVO',
   hGara:'PARTIDO', lData:'Fecha', lAvv:'Rival', phAvv:'Nombre del equipo',
   lCat:'Equipo y categoría', lTipo:'Tipo de partido', lMaglia:'Número de camiseta',
   hMinuti:'MINUTOS JUGADOS', totCalc:'Total calculado:', totMinuti:'minutos.',
@@ -577,8 +605,10 @@ es:{
   lFormato:'Formato del partido', fPeriodi:'Periodos', fDurata:'Duración', fmtNo:'formato no indicado',
   bFmtAssegna:'Asignar formato',
   tFmtBloccoP:'Cambio bloqueado: los periodos que se van a eliminar contienen minutos o puntuaciones',
+  tFmtBloccoPAz:'Cambio bloqueado: los periodos que se van a eliminar contienen minutos, puntuaciones o acciones',
   tFmtBloccoD:'Cambio bloqueado: un periodo tiene más minutos que la nueva duración',
   cfDelOT:'¿Eliminar la última prórroga ({0}) con sus minutos y sus puntuaciones?',
+  cfDelOTAz:'¿Eliminar la última prórroga ({0}) con sus minutos, sus puntuaciones y sus acciones?',
   tOTDel:'Prórroga eliminada',
   eParzVuoto:'Introduce ambos acumulados', eParzCala:'Acumulado inferior al del periodo anterior',
   tParzErr:'Puntuaciones acumuladas por corregir: guardado bloqueado',
@@ -591,13 +621,13 @@ es:{
   hNota:'NOTA DEL PARTIDO', phNota:'Contexto, rival, episodios, observaciones técnicas.',
   hArchiv:'ARCHIVO', bSave:'Guardar partido en el archivo',
   hintSave:'Volver a guardar el mismo partido lo actualiza, no lo duplica.',
-  bReset:'Reiniciar partido en curso', hintReset:'No afecta al archivo.',
+  hPartCorso:'PARTIDO EN CURSO', bReset:'Reiniciar partido en curso', hintReset:'No afecta al archivo.',
   hDati:'DATOS', bBackup:'Copia de seguridad (compartir o descargar)', bImport:'Importar copia de seguridad',
   bCsv:'Exportar CSV para Excel', hintCsv:'El CSV se abre en Excel con doble clic: punto y coma, UTF-8.',
   hStag:'TEMPORADA', lStag:'Temporada asignada a los nuevos partidos',
   hintStag:'Asignada automáticamente con corte el 1 de agosto. Modifícala solo si es necesario.',
   hLingua:'IDIOMA',
-  verRiga:'Giorgio Stats v2.4.0 · build {0} — octubre 2026', creata:'Creada por Stefano Amirante',
+  verRiga:'Giorgio Stats v3.0.0 · build {0} — octubre 2026', creata:'Creada por Stefano Amirante',
   tipo_Campionato:'Liga', tipo_Torneo:'Torneo', tipo_Amichevole:'Amistoso', tipo_Playoff:'Playoff',
   sh_p2:'2 puntos', sh_pit:'desde la zona', sh_fuo:'fuera de la zona', sh_tl:'Tiros libres', sh_p3:'3 puntos',
   c_rimO:'Rebotes ofensivos', c_rimD:'Rebotes defensivos',
@@ -608,6 +638,8 @@ es:{
   prog:'Acumulados: ', perPeriodo:'Por periodo: ', finale:'Final: ', vittoria:'victoria', sconfitta:'derrota', pareggio:'empate',
   resV:'G', resP:'P', resE:'E', hFinito:'Terminado',
   tOT:'Prórroga añadida',
+  perFine:'FIN', cfChiudi:'¿Cerrar {0} y pasar a {1}?', cfChiudiFine:'¿Cerrar {0} y terminar el partido?',
+  tConclusa:'Partido terminado: para añadir datos, reabre un periodo o añade una prórroga en la pestaña Partido',
   cfEti:'¿Borrar la etiqueta "{0}"?\nLos partidos del archivo no se modifican.',
   tEtiCanc:'Etiqueta borrada', tEtiMax:'Máximo {0} etiquetas: borra una para crear una nueva',
   hNuovaEti:'NUEVA ETIQUETA DE EQUIPO', phEti:'Máx. {0} caracteres', bSalva:'Guardar',
@@ -767,9 +799,38 @@ function blank(){
   for(i=0;i<(f?f.periodi:4);i++){ s.minutiQ.push(null); s.secondiQ.push(null); s.bloccatiQ.push(false); s.parziali.push([null,null]); }
   for(i=0;i<SHOTS.length;i++){ s[SHOTS[i].k+'S']=0; s[SHOTS[i].k+'X']=0; }
   for(i=0;i<CNTS.length;i++){ s[CNTS[i].k]=0; }
+  if(FUNZIONI.periodoAzioni) s.azioniQ=s.secondiQ.map(function(){ return azVuote(); });
   s.stagione = seasonOf(s.data);
   return s;
 }
+/* conteggi delle azioni per periodo (azioniQ, dalla v3.0.0): un oggetto per periodo, stessa lunghezza di secondiQ,
+   con i conteggi delle chiavi AZ_KEYS. Si aggiungono ai totali, che restano la fonte per visualizzazioni, CSV e archivio.
+   Regola: i dati per periodo di una partita sono validi solo se, per ogni chiave, la somma dei periodi e' uguale al totale
+   (le partite iniziate prima della funzione non la rispettano). Nessun indicatore salvato */
+function azVuote(){ var o={},i; for(i=0;i<AZ_KEYS.length;i++) o[AZ_KEYS[i]]=0; return o; }
+/* conteggi ripuliti: interi >= 0 per ogni chiave */
+function azOk(x){ var o={},i; for(i=0;i<AZ_KEYS.length;i++) o[AZ_KEYS[i]]=Math.max(0,n(x&&x[AZ_KEYS[i]])); return o; }
+/* azioni registrate nel periodo i della partita in corso */
+function azioniIn(i){
+  var a=FUNZIONI.periodoAzioni && state.azioniQ && state.azioniQ[i], j;
+  if(!a) return false;
+  for(j=0;j<AZ_KEYS.length;j++) if(a[AZ_KEYS[j]]>0) return true;
+  return false;
+}
+/* azioniQ della partita in corso con la stessa lunghezza di secondiQ */
+function allineaAz(){
+  if(!FUNZIONI.periodoAzioni) return;
+  var a=Array.isArray(state.azioniQ)?state.azioniQ.map(azOk):[];
+  while(a.length<state.secondiQ.length) a.push(azVuote());
+  state.azioniQ=a.slice(0,state.secondiQ.length);
+}
+/* periodo in corso: il primo non "Finito"; -1 = tutti "Finito", partita conclusa */
+function periodoCorrente(){
+  for(var i=0;i<state.secondiQ.length;i++) if(state.bloccatiQ[i]!==true) return i;
+  return -1;
+}
+/* messaggio del blocco della riduzione dei periodi */
+function chiaveBloccoP(){ return FUNZIONI.periodoAzioni?'tFmtBloccoPAz':'tFmtBloccoP'; }
 var state, archive=[], maglie={}, stagManuale=null, etichette=[];
 
 function load(k,d){ try{var v=localStorage.getItem(k); return v?JSON.parse(v):d;}catch(e){return d;} }
@@ -845,6 +906,8 @@ function norm(g){
   o.pt = o.p2s*2 + o.p3s*3 + o.tls;
   /* campi v2.3.0: aggiunti solo se presenti, i record precedenti restano identici */
   if(Array.isArray(g.secondiQ)) o.secondiQ = g.secondiQ.map(secOk);
+  /* campo v3.0.0: conteggi delle azioni per periodo, aggiunto solo se presente */
+  if(Array.isArray(g.azioniQ)) o.azioniQ = g.azioniQ.map(azOk);
   var fo=fmtOk(g.formato); if(fo) o.formato=fo;
   if(o.parziali && o.parziali.length){
     if(MIG3_CUMUL_IDS.indexOf(o.id)>=0 && !monotona(o.parziali)){
@@ -883,6 +946,7 @@ function fromState(s){
     tipoGara:s.tipoGara, maglia:s.maglia, stagione:s.stagione, topMatch:!!s.topMatch,
     minuti:minTot(s), minutiQ:sq.map(function(v){return v==null?null:v/60;}), secondiQ:sq,
     formato:fmtOk(s.formato),
+    azioniQ:(FUNZIONI.periodoAzioni && Array.isArray(s.azioniQ)) ? s.azioniQ : null,
     rimO:n(s.rimO), rimD:n(s.rimD), ast:n(s.ast), pp:n(s.pp), pr:n(s.pr),
     stopDate:n(s.stopD), stopSubite:n(s.stopS),
     fs:t.fs, fsTiri:n(s.fsTiri), fc:n(s.fc),
@@ -990,6 +1054,8 @@ function boot(){
   syncMin();
   state.formato = fmtOk(state.formato);
   if(state.formato) allinea();
+  /* conteggi per periodo (dalla v3.0.0): assenti = tutti a zero */
+  allineaAz();
   if(stagManuale) state.stagione = stagManuale;
   state.topMatch = !!state.topMatch;
   /* identificativo (dalla v2.3.3): partita in corso gia' salvata con la versione precedente */
@@ -1011,10 +1077,12 @@ function nascondiSpente(){
   if(!FUNZIONI.topMatch) $('fTop').style.display='none';
   if(!FUNZIONI.formatoGara) $('fFmt').parentNode.style.display='none';
   if(!FUNZIONI.eliminaSupplementare) $('bDelOT').style.display='none';
+  if(!FUNZIONI.periodoAzioni) $('bPer').style.display='none';
 }
 
 /* ---------- costruzione LIVE ---------- */
 function buildLive(){
+  $('bPer').onclick=chiudiPeriodo;
   var sh=$('shots'); sh.innerHTML='';
   SHOTS.forEach(function(c){
     var row=el('div','srow');
@@ -1048,8 +1116,32 @@ function pillFor(key,cls){
   return w;
 }
 function bump(k,d){
+  if(FUNZIONI.periodoAzioni){ azione(k,d); return; }
   state[k]=Math.max(0,n(state[k])+d);
   saveState(); renderLive();
+}
+/* "+" e "−" con i conteggi per periodo. "+": totale e periodo in corso. "−": se il totale e' zero nulla; altrimenti
+   totale e periodo in corso, o il periodo precedente piu' vicino con conteggio maggiore di zero, o solo il totale.
+   Partita conclusa: nessuna modifica, messaggio */
+function azione(k,d){
+  var q=periodoCorrente(), a=state.azioniQ, j;
+  if(q<0){ toast(t('tConclusa')); return; }
+  if(d>0){ state[k]=n(state[k])+1; a[q][k]++; }
+  else {
+    if(n(state[k])<=0) return;
+    state[k]=n(state[k])-1;
+    for(j=q;j>=0;j--) if(a[j][k]>0){ a[j][k]--; break; }
+  }
+  saveState(); renderLive();
+}
+/* indicatore del periodo: tocco = conferma, poi il periodo in corso diventa "Finito"; partita conclusa: messaggio */
+function chiudiPeriodo(){
+  var q=periodoCorrente(), nx=-1, i;
+  if(q<0){ toast(t('tConclusa')); return; }
+  for(i=q+1;i<state.bloccatiQ.length;i++) if(state.bloccatiQ[i]!==true){ nx=i; break; }
+  if(!confirm(nx<0 ? t('cfChiudiFine',periodLabel(q)) : t('cfChiudi',periodLabel(q),periodLabel(nx)))) return;
+  state.bloccatiQ[q]=true;
+  saveState(); renderLive(); renderPartitaFields();
 }
 
 /* ---------- costruzione PARTITA ---------- */
@@ -1077,19 +1169,26 @@ function buildPartita(){
     maglie[state.categoria]=this.value; save(K_MAG,maglie); saveState(); };
   $('bAddOT').onclick=function(){
     state.secondiQ.push(null); state.bloccatiQ.push(false); syncMin(); state.parziali.push([null,null]);
-    saveState(); renderPartita(); toast(tx('tOT'));
+    if(FUNZIONI.periodoAzioni) state.azioniQ.push(azVuote());
+    saveState(); renderPartita(); renderLive(); toast(tx('tOT'));
   };
   $('bDelOT').onclick=function(){
     var i=ultimoOT(); if(i<0) return;
-    if(!confirm(tx('cfDelOT',periodLabel(i)))) return;
-    if(state.formato){ state.secondiQ.pop(); state.bloccatiQ.pop(); state.parziali.pop(); }
+    if(!confirm(tx(FUNZIONI.periodoAzioni?'cfDelOTAz':'cfDelOT',periodLabel(i)))) return;
+    if(state.formato){ state.secondiQ.pop(); state.bloccatiQ.pop(); togliAz(); state.parziali.pop(); }
     else {
       /* senza formato: l'ultima riga oltre la quarta di ciascuna lista */
-      if(state.secondiQ.length>4){ state.secondiQ.pop(); state.bloccatiQ.pop(); }
+      if(state.secondiQ.length>4){ state.secondiQ.pop(); state.bloccatiQ.pop(); togliAz(); }
       if(state.parziali.length>4) state.parziali.pop();
     }
     syncMin(); saveState(); renderPartita(); renderLive(); toast(tx('tOTDel'));
   };
+}
+/* supplementare eliminato: le sue azioni escono anche dai totali */
+function togliAz(){
+  if(!FUNZIONI.periodoAzioni) return;
+  var a=state.azioniQ.pop(), j, k;
+  if(a) for(j=0;j<AZ_KEYS.length;j++){ k=AZ_KEYS[j]; state[k]=Math.max(0,n(state[k])-n(a[k])); }
 }
 /* minuti per periodo allineati ai secondi */
 function syncMin(){ state.minutiQ=state.secondiQ.map(function(v){return v==null?null:v/60;}); }
@@ -1121,10 +1220,12 @@ function setPeriodi(np){
   var f=state.formato, i;
   if(np<1 || np>FMT_PMAX || np===f.periodi) return;
   if(np<f.periodi){
-    for(i=np;i<f.periodi;i++) if(rigaPiena(i)){ toast(t('tFmtBloccoP')); return; }
+    for(i=np;i<f.periodi;i++) if(rigaPiena(i) || azioniIn(i)){ toast(t(chiaveBloccoP())); return; }
     state.secondiQ.splice(np,f.periodi-np); state.bloccatiQ.splice(np,f.periodi-np); state.parziali.splice(np,f.periodi-np);
+    if(FUNZIONI.periodoAzioni) state.azioniQ.splice(np,f.periodi-np);
   } else {
-    for(i=f.periodi;i<np;i++){ state.secondiQ.splice(i,0,null); state.bloccatiQ.splice(i,0,false); state.parziali.splice(i,0,[null,null]); }
+    for(i=f.periodi;i<np;i++){ state.secondiQ.splice(i,0,null); state.bloccatiQ.splice(i,0,false); state.parziali.splice(i,0,[null,null]);
+      if(FUNZIONI.periodoAzioni) state.azioniQ.splice(i,0,azVuote()); }
   }
   f.periodi=np; syncMin(); saveState(); renderPartita(); renderLive();
 }
@@ -1140,8 +1241,8 @@ function assegnaFormato(){
   var rm=Math.min(state.secondiQ.length,4), rp=Math.min(state.parziali.length,4);
   var om=state.secondiQ.slice(rm), op=state.parziali.slice(rp), ob=state.bloccatiQ.slice(rm), i;
   for(i=P;i<Math.max(rm,rp);i++){
-    if((i<rm && state.secondiQ[i]!=null) ||
-       (i<rp && (state.parziali[i][0]!=null || state.parziali[i][1]!=null))){ toast(t('tFmtBloccoP')); return; }
+    if((i<rm && (state.secondiQ[i]!=null || azioniIn(i))) ||
+       (i<rp && (state.parziali[i][0]!=null || state.parziali[i][1]!=null))){ toast(t(chiaveBloccoP())); return; }
   }
   for(i=0;i<Math.min(rm,P);i++) if(state.secondiQ[i]!=null && state.secondiQ[i]>f.durata*60){ toast(t('tFmtBloccoD')); return; }
   var sq=state.secondiQ.slice(0,Math.min(rm,P)), pz=state.parziali.slice(0,Math.min(rp,P));
@@ -1153,6 +1254,12 @@ function assegnaFormato(){
   while(om.length<nOT) om.push(null);
   while(ob.length<nOT) ob.push(false);
   while(op.length<nOT) op.push([null,null]);
+  if(FUNZIONI.periodoAzioni){
+    var aq=state.azioniQ.slice(0,Math.min(rm,P)), oa=state.azioniQ.slice(rm);
+    while(aq.length<P) aq.push(azVuote());
+    while(oa.length<nOT) oa.push(azVuote());
+    state.azioniQ=aq.concat(oa);
+  }
   state.secondiQ=sq.concat(om); state.bloccatiQ=bq.concat(ob); state.parziali=pz.concat(op); state.formato=f;
   syncMin(); saveState(); renderPartita(); renderLive();
 }
@@ -1348,7 +1455,7 @@ function renderPartitaFields(){
       f.className='fin'+(on?' on':''); fi.textContent=on?'✓':'';
       m.disabled=on; p.disabled=on;
     }
-    f.onclick=function(){ state.bloccatiQ[i]=!(state.bloccatiQ[i]===true); saveState(); mostra(); };
+    f.onclick=function(){ state.bloccatiQ[i]=!(state.bloccatiQ[i]===true); saveState(); mostra(); renderLive(); };
     mostra();
     r.appendChild(ve); r.appendChild(m); r.appendChild(p); r.appendChild(f);
     mq.appendChild(r);
@@ -1424,7 +1531,7 @@ function doSave(){
   if(g.formato && FUNZIONI.formatoGara) save(K_FMT,g.formato);
   var r=mergeArc(archive,[g]); archive=r.list; saveArc(); renderArchivio();
   /* salvataggio riuscito: tutti i periodi "Finito" */
-  state.bloccatiQ=state.secondiQ.map(function(){ return true; }); saveState(); renderPartitaFields();
+  state.bloccatiQ=state.secondiQ.map(function(){ return true; }); saveState(); renderPartitaFields(); renderLive();
   toast(r.added? t('tSalvata') : t('tAggiornata'));
 }
 function doReset(){
@@ -1555,6 +1662,7 @@ function renderLive(){
   $('bMin').textContent=fmin(minTot(state));
   $('bDD').className='bdd'+(isDD(state)?' on':'');
   $('bTD').className='bdd'+(isTD(state)?' on':'');
+  if(FUNZIONI.periodoAzioni){ var q=periodoCorrente(); $('bPer').textContent=q<0?tx('perFine'):periodLabel(q); }
   for(i=0;i<SHOTS.length;i++){
     var k=SHOTS[i].k;
     $('v_'+k+'S').textContent=n(state[k+'S']);
@@ -1883,6 +1991,7 @@ function loadGame(g){
   state.parziali=(g.parziali&&g.parziali.length)?g.parziali.map(function(p){return [p[0],p[1]];}):[[null,null],[null,null],[null,null],[null,null]];
   state.bloccatiQ=[];
   if(state.formato) allinea(); else syncMin();
+  if(FUNZIONI.periodoAzioni){ state.azioniQ=Array.isArray(g.azioniQ)?g.azioniQ.map(azOk):[]; allineaAz(); }
   /* partita caricata dall'archivio: tutti i periodi bloccati */
   state.bloccatiQ=state.secondiQ.map(function(){ return true; });
   var pitS=g.p2sPit==null?g.p2s:g.p2sPit, pitT=g.p2tPit==null?g.p2t:g.p2tPit;
