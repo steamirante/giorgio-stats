@@ -331,7 +331,7 @@ td.k{color:var(--crema)}
       </div>
 
       <div class="box" style="margin-top:14px">
-        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v3.0.0 · build 1 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante</span></div>
+        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v3.0.0 · build 2 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante</span></div>
       </div>
     </div>
   </section>
@@ -368,7 +368,7 @@ td.k{color:var(--crema)}
 'use strict';
 
 /* Numero di build della versione Giorgio, mostrato accanto alla versione nella scheda Opzioni. Contatore della singola versione: riparte da 1 a ogni nuovo numero di versione e cresce di 1 a ogni nuova pubblicazione della stessa versione (la v2.3.2 pubblicata per prima è la build 1). */
-var BUILD=1;
+var BUILD=2;
 
 /* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento), nuovo aspetto grafico con caratteri locali e campo nello sfondo (correzione grafica), apertura del calendario toccando tutto il campo Data (correzione), riordino delle schede (barra Live, Partita, Archivio, Opzioni; la scheda Note diventa Opzioni; nota e salvataggio in archivio nella scheda Partita; azzeramento della partita in corso nella scheda Opzioni). immaginiCondivise: pulsante "Condividi immagine" nel dettaglio di una partita dell'archivio, immagini PNG nei formati A, B e C. periodoAzioni: conteggi delle azioni per periodo nella partita in corso e nell'archivio, indicatore del periodo in corso nella scheda Live (tocco = chiusura del periodo), "+" e "−" bloccati a partita conclusa, azioni comprese nell'eliminazione del supplementare e nel blocco della riduzione dei periodi. schedaStats: scheda STATS nella barra (viste pronte, filtri, gruppi G1–G7, dettaglio di una statistica con grafico, Migliore partita e Confronta selezioni, immagini PNG della sezione aperta e del dettaglio), pulsante "Statistiche della partita" nel dettaglio di una partita dell'archivio; ultima selezione nella chiave K_STATS, fuori dal backup. guida: riquadro "Tutorial e guida" in cima alla scheda Opzioni, guida a tutta pagina con le sezioni Tutorial, Guida, Uso dell'app e Fonti (ogni scheda si apre e si chiude con un tocco sul titolo), icona "?" accanto alle voci della scheda STATS e della finestra "Statistiche della partita" dell'Archivio, che apre la scheda della guida di quella voce; testi nel dizionario GUIDA. */
 var FUNZIONI=Object.freeze({
