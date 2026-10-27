@@ -204,6 +204,24 @@ td.k{color:var(--crema)}
 .stleg span{flex:1;min-width:0;color:var(--crema)}
 .stleg b{flex:0 0 auto;font-weight:700}
 .sttab td.tap{color:var(--acc);cursor:pointer}
+/* guida */
+.guida{position:fixed;inset:0;z-index:101;background:var(--bg);display:none;flex-direction:column;
+  padding-top:env(safe-area-inset-top)}
+.guida.on{display:flex}
+.gbar{padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:var(--barra);border-top:1px solid var(--line)}
+.gv+.gv{border-top:1px solid var(--line)}
+.gvt{display:flex;align-items:flex-start;gap:8px;width:100%;padding:10px 2px;text-align:left;
+  font-size:14px;font-weight:700;color:var(--crema);line-height:1.25}
+.gvi{flex:0 0 12px;color:var(--acc)}
+.gvn{flex:1;min-width:0}
+.gvx{display:none;font-size:13px;color:var(--ink);line-height:1.5;padding:0 2px 12px 22px}
+.gv.on .gvx{display:block}
+.gfonti{font-size:12px;color:var(--mute);line-height:1.5}
+.gqx{font-size:13px;color:var(--ink);line-height:1.5;margin:4px 0 6px}
+#guidaQ{z-index:102}
+.qg{position:relative;display:inline-block;width:18px;height:18px;margin-left:6px;padding:0;border:1px solid var(--acc);
+  border-radius:50%;color:var(--acc);font-size:11px;font-weight:800;line-height:16px;text-align:center;vertical-align:1px}
+.qg::before{content:'';position:absolute;inset:-7px}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -276,6 +294,12 @@ td.k{color:var(--crema)}
   <!-- ============ OPZIONI ============ -->
   <section class="panel" id="opzioni">
     <div class="scroll">
+      <div id="boxGuida">
+        <h2 data-i18n="hGuida">TUTORIAL E GUIDA</h2>
+        <div class="box">
+          <button class="btn acc" id="bGuida" data-i18n="bGuida">Tutorial e guida</button>
+        </div>
+      </div>
       <h2 data-i18n="hPartCorso">PARTITA IN CORSO</h2>
       <div class="box">
         <button class="btn dgr" id="bReset" data-i18n="bReset">Azzera partita in corso</button>
@@ -330,6 +354,8 @@ td.k{color:var(--crema)}
 
 <div class="toast" id="toast"></div>
 <div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<div class="guida" id="guida"><div class="scroll" id="guidaBody"></div><div class="gbar"><button class="btn" id="bGuidaChiudi" data-i18n="bChiudi">Chiudi</button></div></div>
+<div class="modal" id="guidaQ"><div class="sheet" id="guidaQs"></div></div>
 
 <script>
 /* =========================================================
@@ -341,7 +367,7 @@ td.k{color:var(--crema)}
 /* Numero di build della versione Giorgio, mostrato accanto alla versione nella scheda Opzioni. Contatore della singola versione: riparte da 1 a ogni nuovo numero di versione e cresce di 1 a ogni nuova pubblicazione della stessa versione (la v2.3.2 pubblicata per prima è la build 1). */
 var BUILD=1;
 
-/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento), nuovo aspetto grafico con caratteri locali e campo nello sfondo (correzione grafica), apertura del calendario toccando tutto il campo Data (correzione), riordino delle schede (barra Live, Partita, Archivio, Opzioni; la scheda Note diventa Opzioni; nota e salvataggio in archivio nella scheda Partita; azzeramento della partita in corso nella scheda Opzioni). immaginiCondivise: pulsante "Condividi immagine" nel dettaglio di una partita dell'archivio, immagini PNG nei formati A, B e C. periodoAzioni: conteggi delle azioni per periodo nella partita in corso e nell'archivio, indicatore del periodo in corso nella scheda Live (tocco = chiusura del periodo), "+" e "−" bloccati a partita conclusa, azioni comprese nell'eliminazione del supplementare e nel blocco della riduzione dei periodi. schedaStats: scheda STATS nella barra (viste pronte, filtri, gruppi G1–G7, dettaglio di una statistica con grafico, Migliore partita e Confronta selezioni, immagini PNG della sezione aperta e del dettaglio), pulsante "Statistiche della partita" nel dettaglio di una partita dell'archivio; ultima selezione nella chiave K_STATS, fuori dal backup. */
+/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento), nuovo aspetto grafico con caratteri locali e campo nello sfondo (correzione grafica), apertura del calendario toccando tutto il campo Data (correzione), riordino delle schede (barra Live, Partita, Archivio, Opzioni; la scheda Note diventa Opzioni; nota e salvataggio in archivio nella scheda Partita; azzeramento della partita in corso nella scheda Opzioni). immaginiCondivise: pulsante "Condividi immagine" nel dettaglio di una partita dell'archivio, immagini PNG nei formati A, B e C. periodoAzioni: conteggi delle azioni per periodo nella partita in corso e nell'archivio, indicatore del periodo in corso nella scheda Live (tocco = chiusura del periodo), "+" e "−" bloccati a partita conclusa, azioni comprese nell'eliminazione del supplementare e nel blocco della riduzione dei periodi. schedaStats: scheda STATS nella barra (viste pronte, filtri, gruppi G1–G7, dettaglio di una statistica con grafico, Migliore partita e Confronta selezioni, immagini PNG della sezione aperta e del dettaglio), pulsante "Statistiche della partita" nel dettaglio di una partita dell'archivio; ultima selezione nella chiave K_STATS, fuori dal backup. guida: riquadro "Tutorial e guida" in cima alla scheda Opzioni, guida a tutta pagina con le sezioni Tutorial, Guida, Uso dell'app e Fonti (ogni scheda si apre e si chiude con un tocco sul titolo), icona "?" accanto alle voci della scheda STATS e della finestra "Statistiche della partita" dell'Archivio, che apre la scheda della guida di quella voce; testi nel dizionario GUIDA. */
 var FUNZIONI=Object.freeze({
   multilingue:true,
   spagnolo:true,
@@ -352,7 +378,8 @@ var FUNZIONI=Object.freeze({
   punteggioPeriodo:true,
   immaginiCondivise:true,
   periodoAzioni:true,
-  schedaStats:true
+  schedaStats:true,
+  guida:true
 });
 
 /* ---------- costanti ---------- */
@@ -522,7 +549,7 @@ it:{
   gRidotto:'Tracciamento ridotto: {0}.', gWStop:'stoppate subite non rilevate, conteggiate come 0',
   gWPit:'tiri da due non divisi per zona',
   bCarica:'Carica come partita in corso', bElimina:'Elimina dall\'archivio',
-  cfElimina:'Eliminare {0} del {1}?', tEliminata:'Partita eliminata', bChiudi:'Chiudi',
+  cfElimina:'Eliminare {0} del {1}?', tEliminata:'Partita eliminata', bChiudi:'Chiudi', hGuida:'TUTORIAL E GUIDA', bGuida:'Tutorial e guida',
   tCaricata:'Partita caricata',
   bCondImg:'Condividi immagine', hImg:'IMMAGINE DA CONDIVIDERE',
   imgFmtA:'A · Tabellino', imgFmtB:'B · Dato in evidenza', imgFmtC:'C · Tabellino compatto',
@@ -647,7 +674,7 @@ en:{
   gRidotto:'Reduced tracking: {0}.', gWStop:'blocks received not recorded, counted as 0',
   gWPit:'two-point shots not split by zone',
   bCarica:'Load as current game', bElimina:'Delete from archive',
-  cfElimina:'Delete {0} on {1}?', tEliminata:'Game deleted', bChiudi:'Close',
+  cfElimina:'Delete {0} on {1}?', tEliminata:'Game deleted', bChiudi:'Close', hGuida:'TUTORIAL AND GUIDE', bGuida:'Tutorial and guide',
   tCaricata:'Game loaded',
   bCondImg:'Share image', hImg:'IMAGE TO SHARE',
   imgFmtA:'A · Box score', imgFmtB:'B · Highlight stat', imgFmtC:'C · Compact box score',
@@ -772,7 +799,7 @@ es:{
   gRidotto:'Registro reducido: {0}.', gWStop:'tapones recibidos no registrados, contados como 0',
   gWPit:'tiros de dos no divididos por zona',
   bCarica:'Cargar como partido en curso', bElimina:'Eliminar del archivo',
-  cfElimina:'¿Eliminar {0} del {1}?', tEliminata:'Partido eliminado', bChiudi:'Cerrar',
+  cfElimina:'¿Eliminar {0} del {1}?', tEliminata:'Partido eliminado', bChiudi:'Cerrar', hGuida:'TUTORIAL Y GUÍA', bGuida:'Tutorial y guía',
   tCaricata:'Partido cargado',
   bCondImg:'Compartir imagen', hImg:'IMAGEN PARA COMPARTIR',
   imgFmtA:'A · Estadísticas', imgFmtB:'B · Dato destacado', imgFmtC:'C · Estadísticas compactas',
@@ -789,6 +816,327 @@ es:{
 };
 var lingua='it';
 /* lettura di un testo; {0}, {1}... sostituiti dagli argomenti */
+/* ---------- guida ---------- */
+/* una lingua = un elenco di sezioni nell'ordine mostrato; ogni scheda [codice, titolo, testo]; Fonti: testo semplice.
+   Le lingue mancanti ricadono sull'italiano */
+var GUIDA = {
+it:[
+  {h:'TUTORIAL', v:[
+    ['T0','Come usare il tutorial',
+     'Le statistiche valgono quanto la cura con cui raccogli i dati. Le regole che seguono sono quelle del manuale statistico FIBA. Quando la NBA usa una definizione diversa, è indicato.'],
+    ['T1','Tiri da 2 e da 3',
+     'Il contatore verde segna il tiro segnato, quello rosso il tiro sbagliato. Il tiro vale 3 punti solo se il giocatore tocca il suolo fuori dalla linea dei tre punti: con un piede sulla linea il tiro vale 2. La regola è uguale in FIBA e NBA.'],
+    ['T2','Dal pitturato o da fuori',
+     'Il tiro da 2 è dal pitturato quando, al momento del tiro, il giocatore ha uno o entrambi i piedi dentro l\'area colorata sotto canestro o sulla sua linea. Le linee fanno parte dell\'area. In tutti gli altri casi è da fuori. Attenzione ai nomi: la FIBA chiama quest\'area «restricted area», la NBA la chiama «lane». Per la NBA la «restricted area» è il semicerchio vicino al canestro.'],
+    ['T3','Tiro stoppato e tiro con fallo',
+     'Un tiro stoppato conta come tiro tentato e sbagliato. Un tiro su cui il giocatore subisce fallo non conta come tentato, salvo se entra: in quel caso segna il canestro, il fallo subito con tiri liberi e i liberi.'],
+    ['T4','Tiri liberi',
+     'Segna ogni tiro libero, segnato o sbagliato. Non si segna il libero sbagliato quando la ripetizione è dovuta a una violazione della difesa.'],
+    ['T5','Rimbalzi',
+     'Il rimbalzo è offensivo se la palla resta alla squadra che ha tirato, difensivo se passa all\'altra squadra. Non c\'è rimbalzo dopo un libero sbagliato che non è l\'ultimo, né quando suona la fine del periodo prima che qualcuno prenda la palla. Se la palla esce o c\'è un fallo prima che qualcuno la controlli, il rimbalzo va alla squadra, non al giocatore.'],
+    ['T6','Assist',
+     'L\'assist è il passaggio che porta direttamente a un canestro di un compagno. Vale solo l\'ultimo passaggio. Se chi riceve tira senza palleggiare, è sempre assist. Se palleggia, è assist solo se non deve superare il suo difensore. Per la FIBA c\'è assist anche quando chi riceve subisce fallo al tiro e segna almeno un libero. Il glossario NBA parla solo di canestri segnati.'],
+    ['T7','Palle perse',
+     'È palla persa ogni errore che fa passare la palla alla difesa: palla persa in palleggio, passaggio sbagliato, passi, uscita dal campo, infrazioni di tempo, fallo in attacco. Sul passaggio sbagliato la palla persa è di chi passa, salvo che il pallone fosse da prendere: in quel caso è di chi riceve.'],
+    ['T8','Palle recuperate',
+     'Il recupero va al difensore che, toccando la palla, provoca la palla persa dell\'avversario: anticipo, deviazione, palla tolta dal palleggio, palla vagante raccolta. Ogni recupero corrisponde a una palla persa dell\'altra squadra, ma non ogni palla persa ha un recupero.'],
+    ['T9','Stoppate date e subite',
+     'La stoppata va al difensore che tocca il tiro e ne cambia in modo evidente la traiettoria, se il tiro non entra. Non c\'è stoppata dopo che la palla ha toccato il ferro. La stoppata subita si segna al giocatore il cui tiro viene stoppato. Quel tiro va segnato anche come tentato e sbagliato.'],
+    ['T10','Falli commessi',
+     'Segna ogni fallo fischiato al giocatore: personale, tecnico, antisportivo o da espulsione. Dal 1° ottobre 2026 il regolamento FIBA introduce anche i falli «disruptive» e «flagrant».'],
+    ['T11','Falli subiti',
+     'Segna il fallo subito ogni volta che il giocatore è vittima di fallo: «Fallo subito con tiri liberi» se il fallo dà i liberi, «Fallo subito senza tiri» se si riprende con una rimessa.'],
+    ['T12','Minuti',
+     'Il manuale FIBA ricava i minuti dalle sostituzioni. Nell\'app li inserisci tu, periodo per periodo, nella scheda Partita. «?» indica un dato non inserito, che resta fuori dai calcoli. 0:00 vuol dire che il giocatore non ha giocato.'],
+    ['T13','Parziali',
+     'Inserisci il punteggio come lo leggi sul tabellone alla fine di ogni periodo, progressivo. L\'app calcola i punti del singolo periodo e il risultato.'],
+    ['T14','Periodo in corso',
+     'L\'indicatore in alto nella scheda Live mostra il periodo a cui vanno le azioni. A fine periodo toccalo e conferma: il periodo diventa «Finito» e le azioni successive vanno al periodo dopo. Puoi anche togliere «Finito» nella scheda Partita. Le statistiche per periodo valgono solo per le partite registrate così.']
+  ]},
+  {h:'GUIDA', v:[
+    ['G0','Come leggere le statistiche',
+     'Le percentuali su più partite sono il totale dei segnati diviso il totale dei tentati. Le altre voci sono la media per partita, con il totale accanto. «Campione piccolo: dati poco indicativi» compare con meno di 3 partite, oppure quando i tentativi sono sotto la soglia: 4 liberi, 3 tiri da 2, 3 tiri da 3, 3 tiri per le voci sul totale dei tiri, 3 possessi. Una partita senza un dato è esclusa solo dalle statistiche che usano quel dato.'],
+    ['S1','% dal campo',
+     'Canestri segnati diviso tiri tentati, da 2 e da 3, esclusi i liberi. Stessa formula in FIBA e NBA (FG%).'],
+    ['S2','% da 2, dal pitturato e da fuori',
+     'Tiri da 2 segnati diviso tentati, in totale e divisi per zona secondo la regola del pitturato (T2).'],
+    ['S3','% da 3',
+     'Tiri da 3 segnati diviso tentati.'],
+    ['S4','% ai liberi',
+     'Liberi segnati diviso liberi tentati.'],
+    ['S5','eFG%, percentuale effettiva',
+     'È la % dal campo che tiene conto del valore in più del tiro da 3: (canestri + 0,5 × tiri da 3 segnati) / tiri tentati. Formula del glossario NBA, uguale a quella di Basketball-Reference.'],
+    ['S6','TS%, tiro reale',
+     'Misura il rendimento al tiro compresi i liberi: punti / (2 × (tiri tentati + 0,44 × liberi tentati)). Il coefficiente 0,44 stima quanti liberi valgono un possesso ed è calcolato sul basket NBA. Formula del glossario NBA.'],
+    ['S7','Quota di tiri da 3',
+     'Parte dei tiri tentati presi da 3: tiri da 3 tentati / tiri tentati.'],
+    ['S8','Quota di tiri dal pitturato',
+     'Parte dei tiri tentati presi dal pitturato: tiri da 2 dal pitturato / tiri tentati.'],
+    ['S9','Liberi per tiro',
+     'Quanti liberi il giocatore guadagna per ogni tiro tentato: liberi tentati / tiri tentati.'],
+    ['S10','Punti per tiro',
+     'Punti segnati, liberi compresi, per ogni tiro tentato: punti / tiri tentati.'],
+    ['S11','Possessi conclusi',
+     'Stima delle azioni chiuse dal giocatore con un tiro, con i liberi o con una palla persa: tiri tentati + 0,44 × liberi tentati + palle perse. Formula di Basketball-Reference.'],
+    ['S12','TOV%',
+     'Percentuale dei possessi conclusi che finisce con una palla persa: 100 × palle perse / possessi conclusi. Il glossario NBA ne dà solo la definizione; la formula è di Basketball-Reference.'],
+    ['S13','Assist / palle perse',
+     'Assist diviso palle perse: più è alto, meglio il giocatore gestisce la palla. Voce presente anche nel glossario NBA.'],
+    ['S14','Distribuzione delle azioni',
+     'Come il giocatore conclude le sue azioni: tiri da 2 dal pitturato, da 2 da fuori, da 3, falli subiti con tiri liberi, assist e palle perse, ciascuno con la sua quota.'],
+    ['S15','Valutazione (PIR)',
+     'Punti + rimbalzi + assist + recuperi + stoppate date + falli subiti, meno tiri e liberi sbagliati, palle perse, stoppate subite e falli commessi. È l\'indice usato dall\'EuroLeague.'],
+    ['S16','Efficienza FIBA/NBA (EFF)',
+     'Punti + rimbalzi + assist + recuperi + stoppate, meno tiri sbagliati, liberi sbagliati e palle perse. È la formula raccomandata dal manuale statistico FIBA e coincide con l\'EFF usata nella NBA. Rispetto al PIR non conta falli e stoppate subite.'],
+    ['S17','Game Score',
+     'Indice di John Hollinger che pesa ogni voce: punti + 0,4 × canestri − 0,7 × tiri tentati − 0,4 × liberi sbagliati + 0,7 × rimbalzi offensivi + 0,3 × difensivi + recuperi + 0,7 × assist + 0,7 × stoppate − 0,4 × falli − palle perse. Formula di Basketball-Reference.'],
+    ['S18','Doppie doppie e triple doppie',
+     'Partite con almeno 10 in due voci (doppia doppia) o in tre voci (tripla doppia) tra punti, rimbalzi, assist, recuperi e stoppate.'],
+    ['S19','Per 36′ (NBA) e per 40′ (FIBA)',
+     'Le voci riportate a un tempo fisso: totale / minuti giocati × 36 oppure × 40. Il 36 è la convenzione delle statistiche NBA (Basketball-Reference); il 40 è la durata di una gara FIBA (4 × 10′; nella NBA 4 × 12′). Si calcola solo sulle partite con i minuti.'],
+    ['S20','Quota dei punti di squadra',
+     'Parte dei punti della squadra segnata dal giocatore. Solo partite con il punteggio.'],
+    ['S21','Nelle vittorie e nelle sconfitte',
+     'Punti, Valutazione e % dal campo separati tra vittorie e sconfitte.'],
+    ['S22','Scarto medio',
+     'Media della differenza tra punti della squadra e degli avversari.'],
+    ['S23','Miglior periodo',
+     'Il periodo con la media di punti più alta. Solo partite registrate con il periodo delle azioni (T14).'],
+    ['S24','Prima e seconda metà',
+     'Confronto tra i primi e gli ultimi periodi, supplementari esclusi.']
+  ]},
+  {h:'USO DELL\'APP', v:[
+    ['U1','Live',
+     'Si usa durante la partita: un tocco su «+» per ogni azione, «−» per correggere. In alto ci sono punti, Valutazione, minuti, periodo in corso, DD e TD.'],
+    ['U2','Partita',
+     'Contiene i dati della gara: data, avversario, Top Match, squadra e categoria, tipo, formato, maglia, minuti, parziali, difficoltà, nota. In fondo c\'è «Salva partita in archivio». Risalvare la stessa partita la aggiorna.'],
+    ['U3','Archivio',
+     'Contiene le partite salvate per stagione e in carriera, il confronto tra stagioni, il dettaglio di ogni partita con le sue statistiche e le immagini da condividere. Da qui una partita si carica per modificarla.'],
+    ['U4','STATS',
+     'Contiene le statistiche di qualunque selezione di partite: viste pronte o filtri personalizzati, sette gruppi di statistiche, grafici, migliore partita e confronto tra due selezioni. La «?» accanto a una voce apre la sua spiegazione.'],
+    ['U5','Opzioni',
+     'Contiene l\'azzeramento della partita in corso, backup, importazione, CSV, stagione, lingua e le informazioni sull\'app.'],
+    ['U6','Backup',
+     'I dati restano solo sul tuo telefono. Fai un backup regolarmente e conservalo fuori dal telefono: è l\'unico modo per non perdere l\'archivio se cambi telefono o disinstalli l\'app.'],
+    ['U7','CSV',
+     'Esporta le partite in un file che si apre con Excel, con il punto e virgola come separatore.'],
+    ['U8','Immagini',
+     'Dal dettaglio di una partita, o da una sezione della scheda STATS, «Condividi immagine» crea un\'immagine da inviare o salvare.']
+  ]},
+  {h:'FONTI', x:'FIBA Statisticians\' Manual 2024 · FIBA Official Basketball Rules 2024 e modifiche 2026 · NBA.com, Stat Glossary · NBA Official Rulebook · Basketball-Reference, Glossary.'}
+],
+en:[
+  {h:'TUTORIAL', v:[
+    ['T0','How to use the tutorial',
+     'Your stats are only as good as the care you put into collecting the data. The rules below are those of the FIBA Statisticians\' Manual. Where the NBA uses a different definition, it is indicated.'],
+    ['T1','2- and 3-point shots',
+     'The green counter records a made shot, the red counter a missed shot. A shot is worth 3 points only if the player is touching the floor outside the three-point line: with a foot on the line the shot is worth 2. The rule is the same in FIBA and the NBA.'],
+    ['T2','In the paint or outside',
+     'A 2-point shot is in the paint when, at the moment of the shot, the player has one or both feet inside the painted area under the basket or on its line. The lines are part of the area. In all other cases it is outside. Mind the names: FIBA calls this area the «restricted area», the NBA calls it the «lane». For the NBA, the «restricted area» is the semicircle near the basket.'],
+    ['T3','Blocked shots and fouled shots',
+     'A blocked shot counts as an attempted and missed shot. A shot on which the player is fouled does not count as attempted unless it goes in: in that case record the basket, the foul drawn with free throws and the free throws.'],
+    ['T4','Free throws',
+     'Record every free throw, made or missed. Do not record a missed free throw that is retaken because of a defensive violation.'],
+    ['T5','Rebounds',
+     'A rebound is offensive if the ball stays with the team that shot, defensive if it goes to the other team. There is no rebound after a missed free throw that is not the last one, or when the end of the period sounds before anyone gets the ball. If the ball goes out or there is a foul before anyone controls it, the rebound goes to the team, not to the player.'],
+    ['T6','Assists',
+     'An assist is the pass that leads directly to a teammate\'s basket. Only the last pass counts. If the receiver shoots without dribbling, it is always an assist. If they dribble, it is an assist only if they do not have to beat their defender. For FIBA there is also an assist when the receiver is fouled in the act of shooting and makes at least one free throw. The NBA glossary refers only to made baskets.'],
+    ['T7','Turnovers',
+     'A turnover is any mistake that gives the ball to the defense: losing the ball while dribbling, a bad pass, travelling, stepping out of bounds, time violations, an offensive foul. On a bad pass the turnover goes to the passer, unless the ball should have been caught: in that case it goes to the receiver.'],
+    ['T8','Steals',
+     'The steal goes to the defender who, by touching the ball, causes the opponent\'s turnover: an interception, a deflection, the ball taken from a dribbler, a loose ball picked up. Every steal matches a turnover by the other team, but not every turnover has a steal.'],
+    ['T9','Blocks and blocks received',
+     'A block goes to the defender who touches the shot and clearly changes its flight, if the shot does not go in. There is no block once the ball has hit the rim. A block received is recorded for the player whose shot is blocked. That shot is also recorded as attempted and missed.'],
+    ['T10','Fouls committed',
+     'Record every foul called on the player: personal, technical, unsportsmanlike or disqualifying. From 1 October 2026 the FIBA rules also introduce «disruptive» and «flagrant» fouls.'],
+    ['T11','Fouls drawn',
+     'Record a foul drawn every time the player is fouled: «Foul drawn with free throws» if the foul gives free throws, «Foul drawn without free throws» if play resumes with a throw-in.'],
+    ['T12','Minutes',
+     'The FIBA manual calculates minutes from substitutions. In the app you enter them yourself, period by period, in the Game tab. «?» means data not entered, which stays out of the calculations. 0:00 means the player did not play.'],
+    ['T13','Period scores',
+     'Enter the score as you read it on the scoreboard at the end of each period, as a running score. The app calculates the points of each period and the result.'],
+    ['T14','Current period',
+     'The indicator at the top of the Live tab shows the period the actions go to. At the end of a period, tap it and confirm: the period becomes «Finished» and the following actions go to the next period. You can also remove «Finished» in the Game tab. Stats by period apply only to games recorded this way.']
+  ]},
+  {h:'GUIDE', v:[
+    ['G0','How to read the stats',
+     'Percentages over several games are total made divided by total attempted. The other items are the average per game, with the total next to it. «Small sample: data not very indicative» appears with fewer than 3 games, or when attempts are below the threshold: 4 free throws, 3 two-point shots, 3 three-point shots, 3 shots for items based on total shots, 3 possessions. A game missing a piece of data is excluded only from the stats that use it.'],
+    ['S1','FG%',
+     'Field goals made divided by shots attempted, 2- and 3-point, free throws excluded. Same formula in FIBA and the NBA (FG%).'],
+    ['S2','2P%, in the paint and outside the paint',
+     '2-point shots made divided by attempted, in total and split by area according to the paint rule (T2).'],
+    ['S3','3P%',
+     '3-point shots made divided by attempted.'],
+    ['S4','FT%',
+     'Free throws made divided by free throws attempted.'],
+    ['S5','eFG%, effective FG%',
+     'FG% adjusted for the extra value of the 3-point shot: (field goals made + 0.5 × 3-pointers made) / shots attempted. NBA glossary formula, the same as Basketball-Reference.'],
+    ['S6','TS%, true shooting',
+     'Shooting efficiency including free throws: points / (2 × (shots attempted + 0.44 × free throws attempted)). The 0.44 coefficient estimates how many free throws make up a possession and is calibrated on NBA basketball. NBA glossary formula.'],
+    ['S7','3-point attempt share',
+     'Share of shots attempted from 3: 3-point attempts / shots attempted.'],
+    ['S8','Paint attempt share',
+     'Share of shots attempted in the paint: 2-point attempts in the paint / shots attempted.'],
+    ['S9','Free throws per shot',
+     'How many free throws the player earns per shot attempted: free throws attempted / shots attempted.'],
+    ['S10','Points per shot',
+     'Points scored, free throws included, per shot attempted: points / shots attempted.'],
+    ['S11','Possessions used',
+     'Estimate of the plays the player ends with a shot, free throws or a turnover: shots attempted + 0.44 × free throws attempted + turnovers. Basketball-Reference formula.'],
+    ['S12','TOV%',
+     'Percentage of possessions used that end in a turnover: 100 × turnovers / possessions used. The NBA glossary gives only the definition; the formula is from Basketball-Reference.'],
+    ['S13','Assist-to-turnover ratio',
+     'Assists divided by turnovers: the higher it is, the better the player handles the ball. Also in the NBA glossary.'],
+    ['S14','Action distribution',
+     'How the player ends their plays: 2-point shots in the paint, 2-point shots outside, 3-point shots, fouls drawn with free throws, assists and turnovers, each with its share.'],
+    ['S15','Efficiency (PIR)',
+     'Points + rebounds + assists + steals + blocks + fouls drawn, minus missed shots and free throws, turnovers, blocks received and fouls committed. It is the rating used by the EuroLeague.'],
+    ['S16','FIBA/NBA efficiency (EFF)',
+     'Points + rebounds + assists + steals + blocks, minus missed shots, missed free throws and turnovers. It is the formula recommended by the FIBA Statisticians\' Manual and matches the EFF used in the NBA. Unlike PIR, it does not count fouls and blocks received.'],
+    ['S17','Game Score',
+     'John Hollinger\'s rating, which weighs each item: points + 0.4 × field goals made − 0.7 × shots attempted − 0.4 × missed free throws + 0.7 × offensive rebounds + 0.3 × defensive rebounds + steals + 0.7 × assists + 0.7 × blocks − 0.4 × fouls − turnovers. Basketball-Reference formula.'],
+    ['S18','Double-doubles and triple-doubles',
+     'Games with at least 10 in two items (double-double) or in three items (triple-double) among points, rebounds, assists, steals and blocks.'],
+    ['S19','Per 36 min (NBA) and per 40 min (FIBA)',
+     'Items scaled to a fixed time: total / minutes played × 36 or × 40. 36 is the convention of NBA stats (Basketball-Reference); 40 is the length of a FIBA game (4 × 10 min; in the NBA 4 × 12 min). Calculated only on games with minutes.'],
+    ['S20','Share of team points',
+     'Share of the team\'s points scored by the player. Only games with the score.'],
+    ['S21','In wins and in losses',
+     'Points, Efficiency and FG% split between wins and losses.'],
+    ['S22','Average margin',
+     'Average difference between the team\'s points and the opponents\' points.'],
+    ['S23','Best period',
+     'The period with the highest average points. Only games recorded with the period of each action (T14).'],
+    ['S24','First half and second half',
+     'Comparison between the first and the last periods, overtimes excluded.']
+  ]},
+  {h:'USING THE APP', v:[
+    ['U1','Live',
+     'Used during the game: tap «+» for each action, «−» to correct. At the top: points, Efficiency, minutes, current period, DD and TD.'],
+    ['U2','Game',
+     'Holds the game data: date, opponent, Top Match, team and category, type, format, jersey number, minutes, period scores, difficulty, note. At the bottom: «Save game to archive». Saving the same game again updates it.'],
+    ['U3','Archive',
+     'Holds the saved games by season and for the career, the comparison between seasons, the detail of each game with its stats, and the images to share. From here a game can be loaded to edit it.'],
+    ['U4','STATS',
+     'Holds the stats of any selection of games: ready-made views or custom filters, seven groups of stats, charts, best game and comparison between two selections. The «?» next to an item opens its explanation.'],
+    ['U5','Settings',
+     'Holds the reset of the current game, backup, import, CSV, season, language and information about the app.'],
+    ['U6','Backup',
+     'Your data stays only on your phone. Back up regularly and keep the backup off the phone: it is the only way not to lose the archive if you change phone or uninstall the app.'],
+    ['U7','CSV',
+     'Exports the games to a file that opens in Excel, with a semicolon as separator.'],
+    ['U8','Images',
+     'From the detail of a game, or from a section of the STATS tab, «Share image» creates an image to send or save.']
+  ]},
+  {h:'SOURCES', x:'FIBA Statisticians\' Manual 2024 · FIBA Official Basketball Rules 2024 and 2026 changes · NBA.com, Stat Glossary · NBA Official Rulebook · Basketball-Reference, Glossary.'}
+],
+es:[
+  {h:'TUTORIAL', v:[
+    ['T0','Cómo usar el tutorial',
+     'Las estadísticas valen lo que vale el cuidado con que recoges los datos. Las reglas que siguen son las del manual estadístico de la FIBA. Cuando la NBA usa una definición distinta, se indica.'],
+    ['T1','Tiros de 2 y de 3',
+     'El contador verde registra el tiro anotado, el rojo el tiro fallado. El tiro vale 3 puntos solo si el jugador toca el suelo fuera de la línea de tres: con un pie sobre la línea el tiro vale 2. La regla es igual en la FIBA y en la NBA.'],
+    ['T2','Desde la zona o fuera de la zona',
+     'El tiro de 2 es desde la zona cuando, en el momento del tiro, el jugador tiene uno o los dos pies dentro del área pintada bajo la canasta o sobre su línea. Las líneas forman parte del área. En todos los demás casos es fuera de la zona. Atención a los nombres: la FIBA llama a esta área «restricted area», la NBA la llama «lane». Para la NBA, la «restricted area» es el semicírculo cerca de la canasta.'],
+    ['T3','Tiro taponado y tiro con falta',
+     'Un tiro taponado cuenta como tiro intentado y fallado. Un tiro en el que el jugador recibe falta no cuenta como intentado, salvo si entra: en ese caso registra la canasta, la falta recibida con tiros libres y los tiros libres.'],
+    ['T4','Tiros libres',
+     'Registra cada tiro libre, anotado o fallado. No se registra el libre fallado cuando se repite por una violación de la defensa.'],
+    ['T5','Rebotes',
+     'El rebote es ofensivo si el balón se queda con el equipo que tiró, defensivo si pasa al otro equipo. No hay rebote tras un libre fallado que no es el último, ni cuando suena el final del periodo antes de que alguien coja el balón. Si el balón sale o hay una falta antes de que alguien lo controle, el rebote es del equipo, no del jugador.'],
+    ['T6','Asistencias',
+     'La asistencia es el pase que lleva directamente a una canasta de un compañero. Solo cuenta el último pase. Si quien recibe tira sin botar, siempre es asistencia. Si bota, es asistencia solo si no tiene que superar a su defensor. Para la FIBA también hay asistencia cuando quien recibe sufre falta en el tiro y anota al menos un libre. El glosario de la NBA habla solo de canastas anotadas.'],
+    ['T7','Balones perdidos',
+     'Es balón perdido cualquier error que da el balón a la defensa: pérdida en el bote, pase malo, pasos, salir del campo, violaciones de tiempo, falta en ataque. En el pase malo la pérdida es de quien pasa, salvo que el balón se pudiera coger: en ese caso es de quien recibe.'],
+    ['T8','Balones recuperados',
+     'El robo es del defensor que, tocando el balón, provoca la pérdida del rival: anticipación, desvío, balón quitado en el bote, balón suelto recogido. Cada robo corresponde a una pérdida del otro equipo, pero no toda pérdida tiene un robo.'],
+    ['T9','Tapones a favor y recibidos',
+     'El tapón es del defensor que toca el tiro y cambia claramente su trayectoria, si el tiro no entra. No hay tapón cuando el balón ya ha tocado el aro. El tapón recibido se registra al jugador cuyo tiro es taponado. Ese tiro se registra también como intentado y fallado.'],
+    ['T10','Faltas cometidas',
+     'Registra cada falta pitada al jugador: personal, técnica, antideportiva o descalificante. Desde el 1 de octubre de 2026 el reglamento FIBA introduce también las faltas «disruptive» y «flagrant».'],
+    ['T11','Faltas recibidas',
+     'Registra la falta recibida cada vez que el jugador sufre una falta: «Falta recibida con tiros libres» si la falta da tiros libres, «Falta recibida sin tiros» si se reanuda con un saque.'],
+    ['T12','Minutos',
+     'El manual FIBA calcula los minutos a partir de los cambios. En la app los introduces tú, periodo por periodo, en la pestaña Partido. «?» indica un dato no introducido, que queda fuera de los cálculos. 0:00 significa que el jugador no ha jugado.'],
+    ['T13','Parciales',
+     'Introduce el marcador tal como lo lees en el marcador al final de cada periodo, acumulado. La app calcula los puntos de cada periodo y el resultado.'],
+    ['T14','Periodo en curso',
+     'El indicador arriba en la pestaña En vivo muestra el periodo al que van las acciones. Al final del periodo tócalo y confirma: el periodo pasa a «Terminado» y las acciones siguientes van al periodo siguiente. También puedes quitar «Terminado» en la pestaña Partido. Las estadísticas por periodo valen solo para los partidos registrados así.']
+  ]},
+  {h:'GUÍA', v:[
+    ['G0','Cómo leer las estadísticas',
+     'Los porcentajes sobre varios partidos son el total de anotados dividido entre el total de intentados. Las demás estadísticas son la media por partido, con el total al lado. «Muestra pequeña: datos poco indicativos» aparece con menos de 3 partidos, o cuando los intentos están por debajo del umbral: 4 libres, 3 tiros de 2, 3 tiros de 3, 3 tiros para las estadísticas sobre el total de tiros, 3 posesiones. Un partido sin un dato se excluye solo de las estadísticas que usan ese dato.'],
+    ['S1','% de campo',
+     'Canastas anotadas divididas entre tiros intentados, de 2 y de 3, sin los libres. Misma fórmula en la FIBA y en la NBA (FG%).'],
+    ['S2','% de 2, desde la zona y fuera de la zona',
+     'Tiros de 2 anotados divididos entre intentados, en total y por zona según la regla de la zona (T2).'],
+    ['S3','% de 3',
+     'Tiros de 3 anotados divididos entre intentados.'],
+    ['S4','% de tiros libres',
+     'Libres anotados divididos entre libres intentados.'],
+    ['S5','eFG%, porcentaje efectivo',
+     'Es el % de campo que tiene en cuenta el valor extra del tiro de 3: (canastas + 0,5 × triples anotados) / tiros intentados. Fórmula del glosario de la NBA, igual a la de Basketball-Reference.'],
+    ['S6','TS%, tiro verdadero',
+     'Mide el rendimiento en el tiro incluidos los libres: puntos / (2 × (tiros intentados + 0,44 × libres intentados)). El coeficiente 0,44 estima cuántos libres equivalen a una posesión y está calculado sobre el baloncesto NBA. Fórmula del glosario de la NBA.'],
+    ['S7','Proporción de tiros de 3',
+     'Parte de los tiros intentados desde 3: triples intentados / tiros intentados.'],
+    ['S8','Proporción de tiros desde la zona',
+     'Parte de los tiros intentados desde la zona: tiros de 2 desde la zona / tiros intentados.'],
+    ['S9','Tiros libres por tiro',
+     'Cuántos libres gana el jugador por cada tiro intentado: libres intentados / tiros intentados.'],
+    ['S10','Puntos por tiro',
+     'Puntos anotados, libres incluidos, por cada tiro intentado: puntos / tiros intentados.'],
+    ['S11','Posesiones usadas',
+     'Estimación de las jugadas que el jugador termina con un tiro, con libres o con una pérdida: tiros intentados + 0,44 × libres intentados + balones perdidos. Fórmula de Basketball-Reference.'],
+    ['S12','TOV%',
+     'Porcentaje de las posesiones usadas que termina en pérdida: 100 × balones perdidos / posesiones usadas. El glosario de la NBA da solo la definición; la fórmula es de Basketball-Reference.'],
+    ['S13','Asistencias / pérdidas',
+     'Asistencias divididas entre balones perdidos: cuanto más alto, mejor maneja el balón el jugador. También en el glosario de la NBA.'],
+    ['S14','Distribución de acciones',
+     'Cómo termina el jugador sus acciones: tiros de 2 desde la zona, de 2 fuera de la zona, de 3, faltas recibidas con tiros libres, asistencias y balones perdidos, cada uno con su proporción.'],
+    ['S15','Valoración (PIR)',
+     'Puntos + rebotes + asistencias + robos + tapones a favor + faltas recibidas, menos tiros y libres fallados, balones perdidos, tapones recibidos y faltas cometidas. Es el índice que usa la EuroLeague.'],
+    ['S16','Eficiencia FIBA/NBA (EFF)',
+     'Puntos + rebotes + asistencias + robos + tapones, menos tiros fallados, libres fallados y balones perdidos. Es la fórmula recomendada por el manual estadístico de la FIBA y coincide con la EFF que se usa en la NBA. A diferencia del PIR, no cuenta las faltas ni los tapones recibidos.'],
+    ['S17','Game Score',
+     'Índice de John Hollinger que pondera cada estadística: puntos + 0,4 × canastas − 0,7 × tiros intentados − 0,4 × libres fallados + 0,7 × rebotes ofensivos + 0,3 × defensivos + robos + 0,7 × asistencias + 0,7 × tapones − 0,4 × faltas − balones perdidos. Fórmula de Basketball-Reference.'],
+    ['S18','Dobles-dobles y triples-dobles',
+     'Partidos con al menos 10 en dos estadísticas (doble-doble) o en tres (triple-doble) entre puntos, rebotes, asistencias, robos y tapones.'],
+    ['S19','Por 36 min (NBA) y por 40 min (FIBA)',
+     'Las estadísticas llevadas a un tiempo fijo: total / minutos jugados × 36 o × 40. El 36 es la convención de las estadísticas NBA (Basketball-Reference); el 40 es la duración de un partido FIBA (4 × 10 min; en la NBA 4 × 12 min). Se calcula solo sobre los partidos con minutos.'],
+    ['S20','Porcentaje de puntos del equipo',
+     'Parte de los puntos del equipo anotada por el jugador. Solo partidos con el marcador.'],
+    ['S21','En victorias y en derrotas',
+     'Puntos, Valoración y % de campo separados entre victorias y derrotas.'],
+    ['S22','Diferencia media',
+     'Media de la diferencia entre los puntos del equipo y los del rival.'],
+    ['S23','Mejor periodo',
+     'El periodo con la media de puntos más alta. Solo partidos registrados con el periodo de las acciones (T14).'],
+    ['S24','Primera y segunda mitad',
+     'Comparación entre los primeros y los últimos periodos, sin las prórrogas.']
+  ]},
+  {h:'USO DE LA APP', v:[
+    ['U1','En vivo',
+     'Se usa durante el partido: un toque en «+» por cada acción, «−» para corregir. Arriba: puntos, Valoración, minutos, periodo en curso, DD y TD.'],
+    ['U2','Partido',
+     'Contiene los datos del partido: fecha, rival, Top Match, equipo y categoría, tipo, formato, número de camiseta, minutos, parciales, dificultad, nota. Abajo: «Guardar partido en el archivo». Volver a guardar el mismo partido lo actualiza.'],
+    ['U3','Archivo',
+     'Contiene los partidos guardados por temporada y en la carrera, la comparación entre temporadas, el detalle de cada partido con sus estadísticas y las imágenes para compartir. Desde aquí un partido se carga para modificarlo.'],
+    ['U4','STATS',
+     'Contiene las estadísticas de cualquier selección de partidos: vistas listas o filtros personalizados, siete grupos de estadísticas, gráficos, mejor partido y comparación entre dos selecciones. La «?» junto a una estadística abre su explicación.'],
+    ['U5','Ajustes',
+     'Contiene el reinicio del partido en curso, copia de seguridad, importación, CSV, temporada, idioma y la información de la app.'],
+    ['U6','Copia de seguridad',
+     'Tus datos están solo en tu teléfono. Haz una copia de seguridad con regularidad y guárdala fuera del teléfono: es la única forma de no perder el archivo si cambias de teléfono o desinstalas la app.'],
+    ['U7','CSV',
+     'Exporta los partidos a un archivo que se abre con Excel, con punto y coma como separador.'],
+    ['U8','Imágenes',
+     'Desde el detalle de un partido, o desde una sección de la pestaña STATS, «Compartir imagen» crea una imagen para enviar o guardar.']
+  ]},
+  {h:'FUENTES', x:'FIBA Statisticians\' Manual 2024 · FIBA Official Basketball Rules 2024 y cambios 2026 · NBA.com, Stat Glossary · NBA Official Rulebook · Basketball-Reference, Glossary.'}
+]
+};
+
 function t(k){
   var d=I18N[lingua]||I18N.it, v=(d[k]!=null)?d[k]:I18N.it[k], a=arguments;
   if(typeof v!=='string') return v;
@@ -1161,6 +1509,7 @@ function nascondiSpente(){
   if(!FUNZIONI.eliminaSupplementare) $('bDelOT').style.display='none';
   if(!FUNZIONI.periodoAzioni) $('bPer').style.display='none';
   if(!FUNZIONI.schedaStats) document.querySelector('nav [data-go="stats"]').style.display='none';
+  if(!FUNZIONI.guida) $('boxGuida').style.display='none';
 }
 
 /* ---------- costruzione LIVE ---------- */
@@ -2713,7 +3062,7 @@ function vittSconf(list,es){
       pt+=g.pt; m+=fgmG(g); a+=fgaG(g);
       if(g.ndStop) es[g.id]=1; else { val+=valOf(g); nv++; }
     });
-    return {k:'riga',l:t(x[1]),v:'',extra:t('cPartite')+' '+gg.length+(gg.length?' · '+t('gPunti')+' '+fmtNum(pt/gg.length)+' · '+
+    return {k:'riga',g:'S21',l:t(x[1]),v:'',extra:t('cPartite')+' '+gg.length+(gg.length?' · '+t('gPunti')+' '+fmtNum(pt/gg.length)+' · '+
       t('gVal')+' '+(nv?fmtNum(val/nv):'—')+' · '+t('s1')+' '+fpct(m,a):'')};
   });
 }
@@ -2722,16 +3071,16 @@ function perPeriodo(list,C,es){
   var it=[], ks=chiaviPer(list), hdr=['',t('gPunti'),t('gRimb'),t('gAst'),t('gVal')], b=null, bk=[];
   list.forEach(function(g){ if(!azValide(g) || g.ndStop) es[g.id]=1; });
   function celle(pre){ return VOCI_G6.map(function(x){ var st=C.M[pre+x[0]]; return {s:st?fmtVal(st,calc(st,list)).v:'—',st:st}; }); }
-  if(!ks.length){ it.push({k:'riga',l:t('s23'),v:'—'}); return it; }
-  it.push({k:'tab',hdr:hdr,rows:ks.map(function(k){ return {l:etiChiave(k),c:celle('G6.'+k+'.')}; })});
+  if(!ks.length){ it.push({k:'riga',g:'S23',l:t('s23'),v:'—'}); return it; }
+  it.push({k:'tab',g:'S23',hdr:hdr,rows:ks.map(function(k){ return {l:etiChiave(k),c:celle('G6.'+k+'.')}; })});
   ks.forEach(function(k){
     var st=C.M['G6.'+k+'.pt'], r=st?calc(st,list):{v:null};
     if(r.v==null) return;
     if(b===null || r.v>b+1e-9){ b=r.v; bk=[k]; } else if(Math.abs(r.v-b)<=1e-9) bk.push(k);
   });
-  it.push({k:'riga',l:t('s23'),v:b==null?'—':bk.map(etiChiave).join(', ')+' · '+fmtNum(b)});
+  it.push({k:'riga',g:'S23',l:t('s23'),v:b==null?'—':bk.map(etiChiave).join(', ')+' · '+fmtNum(b)});
   if(calc(C.M['S24.1.pt'],list).n)
-    it.push({k:'tab',hdr:hdr,rows:[{l:t('s24a'),c:celle('S24.1.')},{l:t('s24b'),c:celle('S24.2.')}]});
+    it.push({k:'tab',g:'S24',hdr:hdr,rows:[{l:t('s24a'),c:celle('S24.1.')},{l:t('s24b'),c:celle('S24.2.')}]});
   return it;
 }
 
@@ -2743,7 +3092,7 @@ function domVoci(it,o){
     if(x.k==='nota'){ box.appendChild(el('div','hint',x.s)); return; }
     if(x.k==='riga'){
       var d=el('div','str'+(x.sub?' sub':'')), a=el('div','stn'), v=el('div','stv');
-      a.appendChild(el('b',null,x.l));
+      var nb=el('b',null,x.l); addQ(nb,x.g||(x.st?guidaCod(x.st.id):null)); a.appendChild(nb);
       if(x.reg) a.appendChild(el('span',null,x.reg));
       if(x.extra) a.appendChild(el('span',null,x.extra));
       v.appendChild(el('b',null,x.v)); if(x.tot!=null) v.appendChild(el('span',null,x.tot));
@@ -2752,10 +3101,10 @@ function domVoci(it,o){
       if(x.w) box.appendChild(el('div','warn stw',t('sPiccolo')));
       return;
     }
-    if(x.k==='torta'){ box.appendChild(tortaDom(x)); return; }
+    if(x.k==='torta'){ var tt=tortaDom(x); addQ(tt.querySelector('.stbh'),'S14'); box.appendChild(tt); return; }
     if(x.k==='tab'){
       var tb=el('table','sttab'), hr=el('tr');
-      x.hdr.forEach(function(h){ hr.appendChild(el('th',null,h)); }); tb.appendChild(hr);
+      x.hdr.forEach(function(h){ hr.appendChild(el('th',null,h)); }); addQ(hr.firstChild,x.g); tb.appendChild(hr);
       x.rows.forEach(function(r){
         var tr=el('tr'); tr.appendChild(el('td','k',r.l));
         r.c.forEach(function(c){
@@ -2777,7 +3126,7 @@ function domVoci(it,o){
       sel.value=x.st.id;
       sel.onchange=function(){ stBest=this.value; renderStats(); };
       f.appendChild(sel); box.appendChild(f);
-      box.appendChild(bestDom(x.st,x.res));
+      var bd=bestDom(x.st,x.res); addQ(bd.querySelector('.stbh'),'G0'); box.appendChild(bd);
     }
   });
   return box;
@@ -2834,7 +3183,7 @@ function apriStagione(s){ arcSeason=s; arcCareer=false; arcCompare=false; closeM
 function riepilogo(list){
   var d=el('div','box'), a=0;
   list.forEach(function(g){ a+=fgaG(g); });
-  d.appendChild(el('div','stri',t('sRiep',list.length,a)));
+  var ri=el('div','stri',t('sRiep',list.length,a)); addQ(ri,'G0'); d.appendChild(ri);
   if(list.length && list.length<3) d.appendChild(el('div','warn',t('sPiccolo')));
   return d;
 }
@@ -3165,6 +3514,62 @@ function showImgStats(desc,nome,bl,f,indietro){
   $('modal').className='modal on'; s.scrollTop=0;
 }
 
+/* ---------- guida: pagina e "?" delle voci ---------- */
+function guidaSez(){ return GUIDA[lingua]||GUIDA.it; }
+function guidaVoce(c){
+  var r=null;
+  guidaSez().forEach(function(s){ (s.v||[]).forEach(function(x){ if(x[0]===c) r=x; }); });
+  return r;
+}
+/* scheda della guida di una statistica: S2a e S2b in S2, S18a e S18b in S18, G4 in S19, tabella per periodo in S23, metà in S24 */
+function guidaCod(id){
+  var m=/^(S\d+)[ab]?$/.exec(id);
+  if(m) return m[1];
+  if(/^S19\./.test(id)) return 'S19';
+  if(/^G6\./.test(id)) return 'S23';
+  if(/^S24\./.test(id)) return 'S24';
+  return null;
+}
+/* icona "?" in coda al nodo: il tocco apre la scheda della guida, non il dettaglio */
+function addQ(nodo,c){
+  if(!FUNZIONI.guida || !nodo || !c || !guidaVoce(c)) return;
+  var b=el('button','qg','?');
+  b.setAttribute('data-g',c);
+  b.onclick=function(e){ e.stopPropagation(); showVoceGuida(c); };
+  nodo.appendChild(b);
+}
+function showVoceGuida(c){
+  var x=guidaVoce(c), s=$('guidaQs'); if(!x) return;
+  s.innerHTML='';
+  s.appendChild(el('h2',null,x[1]));
+  s.appendChild(el('div','gqx',x[2]));
+  var bx=el('button','btn',t('bChiudi')); bx.onclick=closeVoceGuida; s.appendChild(bx);
+  $('guidaQ').className='modal on'; s.scrollTop=0;
+}
+function closeVoceGuida(){ $('guidaQ').className='modal'; }
+$('guidaQ').onclick=function(e){ if(e.target===this) closeVoceGuida(); };
+function renderGuida(){
+  var b=$('guidaBody'); b.innerHTML='';
+  guidaSez().forEach(function(s){
+    b.appendChild(el('h2',null,s.h));
+    if(!s.v){ b.appendChild(el('div','box gfonti',s.x)); return; }
+    var box=el('div','box');
+    s.v.forEach(function(x){
+      var w=el('div','gv'), h=el('button','gvt'), ic=el('span','gvi','▸');
+      w.setAttribute('data-g',x[0]);
+      h.appendChild(ic); h.appendChild(el('span','gvn',x[1]));
+      h.onclick=function(){ var on=w.className!=='gv on'; w.className=on?'gv on':'gv'; ic.textContent=on?'▾':'▸'; };
+      w.appendChild(h); w.appendChild(el('div','gvx',x[2]));
+      box.appendChild(w);
+    });
+    b.appendChild(box);
+  });
+}
+function showGuida(){ renderGuida(); $('guida').className='guida on'; $('guidaBody').scrollTop=0; }
+function closeGuida(){ $('guida').className='guida'; }
+$('bGuida').onclick=showGuida;
+$('bGuidaChiudi').onclick=closeGuida;
+
 /* ---------- nav ---------- */
 function go(id){
   var ps=document.querySelectorAll('.panel'),bs=document.querySelectorAll('nav button'),i;
@@ -3195,7 +3600,7 @@ if(typeof window!=='undefined'){
               applicaSel:applicaSel, selOk:selOk, descSel:descSel, catalogo:catalogo, calc:calc, valGara:valGara, fmtVal:fmtVal,
               migliore:migliore, modello:modello, azValide:azValide, periodiG:periodiG, metaG:metaG, grafDati:grafDati,
               renderStats:renderStats, showDetail:showDetail, showConfronto:showConfronto, showStatPartita:showStatPartita,
-              disegnaStats:disegnaStats, go:go,
+              disegnaStats:disegnaStats, go:go, showGuida:showGuida, guidaCod:guidaCod,
               _get:function(){return {state:state,archive:archive};} };
 }
 
