@@ -206,6 +206,8 @@ td.k{color:var(--crema)}
 .sttab td.tap{color:var(--acc);cursor:pointer}
 /* tabelle STATS strette (320 px): margini ridotti e intestazioni che vanno a capo */
 .sttab th,.sttab td{padding-left:2px;padding-right:2px}
+.sttab td span{display:block;font-size:10px;font-weight:400;color:var(--mute);line-height:1.25}
+.sttab td.k .qg{margin-left:4px}
 .sttab th{letter-spacing:0;overflow-wrap:anywhere}
 /* guida */
 .guida{position:fixed;inset:0;z-index:101;background:var(--bg);display:none;flex-direction:column;
@@ -331,7 +333,7 @@ td.k{color:var(--crema)}
       </div>
 
       <div class="box" style="margin-top:14px">
-        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v3.0.0 · build 2 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante</span></div>
+        <div class="hint"><span data-i18n="verRiga">Giorgio Stats v3.0.0 · build 3 — ottobre 2026</span><br><span data-i18n="creata">Creata da Stefano Amirante</span></div>
       </div>
     </div>
   </section>
@@ -368,9 +370,9 @@ td.k{color:var(--crema)}
 'use strict';
 
 /* Numero di build della versione Giorgio, mostrato accanto alla versione nella scheda Opzioni. Contatore della singola versione: riparte da 1 a ogni nuovo numero di versione e cresce di 1 a ogni nuova pubblicazione della stessa versione (la v2.3.2 pubblicata per prima è la build 1). */
-var BUILD=2;
+var BUILD=3;
 
-/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento), nuovo aspetto grafico con caratteri locali e campo nello sfondo (correzione grafica), apertura del calendario toccando tutto il campo Data (correzione), riordino delle schede (barra Live, Partita, Archivio, Opzioni; la scheda Note diventa Opzioni; nota e salvataggio in archivio nella scheda Partita; azzeramento della partita in corso nella scheda Opzioni). immaginiCondivise: pulsante "Condividi immagine" nel dettaglio di una partita dell'archivio, immagini PNG nei formati A, B e C. periodoAzioni: conteggi delle azioni per periodo nella partita in corso e nell'archivio, indicatore del periodo in corso nella scheda Live (tocco = chiusura del periodo), "+" e "−" bloccati a partita conclusa, azioni comprese nell'eliminazione del supplementare e nel blocco della riduzione dei periodi. schedaStats: scheda STATS nella barra (viste pronte, filtri, gruppi G1–G7, dettaglio di una statistica con grafico, Migliore partita e Confronta selezioni, immagini PNG della sezione aperta e del dettaglio), pulsante "Statistiche della partita" nel dettaglio di una partita dell'archivio; ultima selezione nella chiave K_STATS, fuori dal backup. guida: riquadro "Tutorial e guida" in cima alla scheda Opzioni, guida a tutta pagina con le sezioni Tutorial, Guida, Uso dell'app e Fonti (ogni scheda si apre e si chiude con un tocco sul titolo), icona "?" accanto alle voci della scheda STATS e della finestra "Statistiche della partita" dell'Archivio, che apre la scheda della guida di quella voce; testi nel dizionario GUIDA. */
+/* Interruttori delle funzioni. Valori fissi nel codice, non modificabili dall'utente. Nella versione Giorgio sono tutti accesi; nella versione commerciale Billo sono spenti solo quelli delle funzioni non rilasciate, e l'elenco indica a ogni rilascio le funzioni disattivate. Il codice delle funzioni è identico nelle due versioni. Ogni nuova funzione riceve un interruttore quando viene introdotta. Una funzione che sostituisce un comportamento precedente si può disattivare solo se il comportamento alternativo è nel codice comune; per questo non hanno interruttore: etichette di squadra create dall'utente (hanno sostituito l'elenco fisso), contatore minuti:secondi, formato m:ss dei minuti, colonne CSV di minuti e secondi, menù a tendina delle lingue (ha sostituito i pulsanti delle lingue), colonna "Finito" del tempo giocato (fa parte della correzione del contatore minuti:secondi), salvataggio nativo dell'esportazione nel pacchetto Android (correzione di una funzione già rilasciata), identificativo stabile delle partite (correzione di funzionamento), nuovo aspetto grafico con caratteri locali e campo nello sfondo (correzione grafica), apertura del calendario toccando tutto il campo Data (correzione), riordino delle schede (barra Live, Partita, Archivio, Opzioni; la scheda Note diventa Opzioni; nota e salvataggio in archivio nella scheda Partita; azzeramento della partita in corso nella scheda Opzioni). immaginiCondivise: pulsante "Condividi immagine" nel dettaglio di una partita dell'archivio, immagini PNG nei formati A, B e C. periodoAzioni: conteggi delle azioni per periodo nella partita in corso e nell'archivio, indicatore del periodo in corso nella scheda Live (tocco = chiusura del periodo), "+" e "−" bloccati a partita conclusa, azioni comprese nell'eliminazione del supplementare e nel blocco della riduzione dei periodi. schedaStats: scheda STATS nella barra (viste pronte, filtri, statistiche di base e gruppi G1–G7, dettaglio di una statistica con grafico, Migliore partita e Confronta selezioni, immagini PNG della sezione aperta e del dettaglio), pulsante "Statistiche della partita" nel dettaglio di una partita dell'archivio; ultima selezione nella chiave K_STATS, fuori dal backup. guida: riquadro "Tutorial e guida" in cima alla scheda Opzioni, guida a tutta pagina con le sezioni Tutorial, Guida, Uso dell'app e Fonti (ogni scheda si apre e si chiude con un tocco sul titolo), icona "?" accanto alle voci della scheda STATS e della finestra "Statistiche della partita" dell'Archivio, che apre la scheda della guida di quella voce; testi nel dizionario GUIDA. */
 var FUNZIONI=Object.freeze({
   multilingue:true,
   spagnolo:true,
@@ -447,7 +449,7 @@ it:{
   navLive:'LIVE', navPartita:'PARTITA', navOpzioni:'OPZIONI', navArchivio:'ARCHIVIO',
   navStats:'STATS',
   sCorso:'Stagione in corso', sCarriera:'Carriera', sUlt5:'Ultime 5', sPers:'Personalizza',
-  sDal:'Dal', sAl:'Al', sUltN:'Ultime N partite', sPartN:'{0} partite', sPart1:'1 partita', sTiriN:'{0} tiri tentati', sTiri1:'1 tiro tentato',
+  sDal:'Dal', sAl:'Al', sUltN:'Ultime N partite', sPartN:'{0} partite', sPart1:'1 partita', sTiriN:'{0} tiri dal campo tentati', sTiri1:'1 tiro dal campo tentato',
   sPiccolo:'Campione piccolo: dati poco indicativi', sEscl:'{0} partite escluse: dato mancante', sEscl1:'1 partita esclusa: dato mancante',
   sVuota:'Nessuna partita per questa selezione', sConfr:'Confronta selezioni', sSelA:'Selezione A', sSelB:'Selezione B',
   sBest:'Migliore partita', sPari:'a pari merito', bStatPart:'Statistiche della partita', sMedia:'Media', sTot:'Totale',
@@ -460,6 +462,13 @@ it:{
   s17:'Game Score', s18a:'Doppie doppie', s18b:'Triple doppie', s19a:'per 36′ (NBA)', s19b:'per 40′ (FIBA)',
   s20:'Quota dei punti di squadra', s21a:'Nelle vittorie', s21b:'Nelle sconfitte', s22:'Scarto medio',
   s23:'Miglior periodo', s24a:'Prima metà', s24b:'Seconda metà',
+  gB:'STATISTICHE DI BASE', sMax:'Massimo', bFg:'Tiri dal campo', bTot:'Tiri totali',
+  sTotTN:'{0} tiri totali', sTotT1:'1 tiro totale', sSuN:'su {0} partite', sSu1:'su 1 partita',
+  sfS:'{0} segnati', sfA:'{0} tentati',
+  xTl:'Tiri liberi sbagliati', xT2:'Tiri da 2 sbagliati', xT3:'Tiri da 3 sbagliati', xFg:'Tiri dal campo sbagliati',
+  ptTl:'Punti dai liberi', ptT2p:'Punti da 2 dal pitturato', ptT2f:'Punti da 2 fuori dal pitturato', ptT3:'Punti da 3',
+  sQpt:'Quota dei punti', s25q:'Quota di rimbalzi offensivi', s28:'Quota di falli subiti con tiri liberi',
+  s29:'Quota di tiri stoppati', s30:'Palle recuperate / palle perse', s31:'Assist ratio',
   hGara:'GARA', lData:'Data', lAvv:'Avversario', phAvv:'Nome squadra',
   lCat:'Squadra e categoria', lTipo:'Tipo gara', lMaglia:'Numero di maglia',
   hMinuti:'MINUTI GIOCATI', totCalc:'Totale calcolato:', totMinuti:'minuti.',
@@ -572,7 +581,7 @@ en:{
   navLive:'LIVE', navPartita:'GAME', navOpzioni:'SETTINGS', navArchivio:'ARCHIVE',
   navStats:'STATS',
   sCorso:'Current season', sCarriera:'Career', sUlt5:'Last 5', sPers:'Customize',
-  sDal:'From', sAl:'To', sUltN:'Last N games', sPartN:'{0} games', sPart1:'1 game', sTiriN:'{0} shots attempted', sTiri1:'1 shot attempted',
+  sDal:'From', sAl:'To', sUltN:'Last N games', sPartN:'{0} games', sPart1:'1 game', sTiriN:'{0} field goals attempted', sTiri1:'1 field goal attempted',
   sPiccolo:'Small sample: data not very indicative', sEscl:'{0} games excluded: missing data', sEscl1:'1 game excluded: missing data',
   sVuota:'No games for this selection', sConfr:'Compare selections', sSelA:'Selection A', sSelB:'Selection B',
   sBest:'Best game', sPari:'tied', bStatPart:'Game stats', sMedia:'Average', sTot:'Total',
@@ -585,6 +594,13 @@ en:{
   s17:'Game Score', s18a:'Double-doubles', s18b:'Triple-doubles', s19a:'per 36 min (NBA)', s19b:'per 40 min (FIBA)',
   s20:'Share of team points', s21a:'In wins', s21b:'In losses', s22:'Average margin',
   s23:'Best period', s24a:'First half', s24b:'Second half',
+  gB:'BASIC STATS', sMax:'Max', bFg:'Field goals', bTot:'Total shots',
+  sTotTN:'{0} total shots', sTotT1:'1 total shot', sSuN:'on {0} games', sSu1:'on 1 game',
+  sfS:'{0} made', sfA:'{0} attempted',
+  xTl:'Missed free throws', xT2:'Missed 2-pointers', xT3:'Missed 3-pointers', xFg:'Missed field goals',
+  ptTl:'Points from free throws', ptT2p:'Points from 2 in the paint', ptT2f:'Points from 2 outside the paint', ptT3:'Points from 3',
+  sQpt:'Share of points', s25q:'Offensive rebound share', s28:'Share of fouls drawn with free throws',
+  s29:'Share of shots blocked', s30:'Steals / turnovers', s31:'Assist ratio',
   hGara:'GAME', lData:'Date', lAvv:'Opponent', phAvv:'Team name',
   lCat:'Team and category', lTipo:'Game type', lMaglia:'Jersey number',
   hMinuti:'MINUTES PLAYED', totCalc:'Calculated total:', totMinuti:'minutes.',
@@ -697,7 +713,7 @@ es:{
   navLive:'EN VIVO', navPartita:'PARTIDO', navOpzioni:'AJUSTES', navArchivio:'ARCHIVO',
   navStats:'STATS',
   sCorso:'Temporada actual', sCarriera:'Carrera', sUlt5:'Últimos 5', sPers:'Personalizar',
-  sDal:'Desde', sAl:'Hasta', sUltN:'Últimos N partidos', sPartN:'{0} partidos', sPart1:'1 partido', sTiriN:'{0} tiros intentados', sTiri1:'1 tiro intentado',
+  sDal:'Desde', sAl:'Hasta', sUltN:'Últimos N partidos', sPartN:'{0} partidos', sPart1:'1 partido', sTiriN:'{0} tiros de campo intentados', sTiri1:'1 tiro de campo intentado',
   sPiccolo:'Muestra pequeña: datos poco indicativos', sEscl:'{0} partidos excluidos: dato ausente', sEscl1:'1 partido excluido: dato ausente',
   sVuota:'Ningún partido para esta selección', sConfr:'Comparar selecciones', sSelA:'Selección A', sSelB:'Selección B',
   sBest:'Mejor partido', sPari:'empatados', bStatPart:'Estadísticas del partido', sMedia:'Media', sTot:'Total',
@@ -710,6 +726,13 @@ es:{
   s17:'Game Score', s18a:'Dobles-dobles', s18b:'Triples-dobles', s19a:'por 36 min (NBA)', s19b:'por 40 min (FIBA)',
   s20:'Porcentaje de puntos del equipo', s21a:'En victorias', s21b:'En derrotas', s22:'Diferencia media',
   s23:'Mejor periodo', s24a:'Primera mitad', s24b:'Segunda mitad',
+  gB:'ESTADÍSTICAS BÁSICAS', sMax:'Máximo', bFg:'Tiros de campo', bTot:'Tiros totales',
+  sTotTN:'{0} tiros totales', sTotT1:'1 tiro total', sSuN:'en {0} partidos', sSu1:'en 1 partido',
+  sfS:'{0} anotados', sfA:'{0} intentados',
+  xTl:'Tiros libres fallados', xT2:'Tiros de 2 fallados', xT3:'Tiros de 3 fallados', xFg:'Tiros de campo fallados',
+  ptTl:'Puntos de tiros libres', ptT2p:'Puntos de 2 desde la zona', ptT2f:'Puntos de 2 fuera de la zona', ptT3:'Puntos de 3',
+  sQpt:'Proporción de puntos', s25q:'Proporción de rebotes ofensivos', s28:'Proporción de faltas recibidas con tiros libres',
+  s29:'Proporción de tiros taponados', s30:'Recuperados / perdidos', s31:'Assist ratio',
   hGara:'PARTIDO', lData:'Fecha', lAvv:'Rival', phAvv:'Nombre del equipo',
   lCat:'Equipo y categoría', lTipo:'Tipo de partido', lMaglia:'Número de camiseta',
   hMinuti:'MINUTOS JUGADOS', totCalc:'Total calculado:', totMinuti:'minutos.',
@@ -832,7 +855,7 @@ it:[
     ['T2','Dal pitturato o da fuori',
      'Il tiro da 2 è dal pitturato quando, al momento del tiro, il giocatore ha uno o entrambi i piedi dentro l\'area colorata sotto canestro o sulla sua linea. Le linee fanno parte dell\'area. In tutti gli altri casi è da fuori. Attenzione ai nomi: la FIBA chiama quest\'area «restricted area», la NBA la chiama «lane». Per la NBA la «restricted area» è il semicerchio vicino al canestro.'],
     ['T3','Tiro stoppato e tiro con fallo',
-     'Un tiro stoppato conta come tiro tentato e sbagliato. Un tiro su cui il giocatore subisce fallo non conta come tentato, salvo se entra: in quel caso segna il canestro, il fallo subito con tiri liberi e i liberi.'],
+     'Un tiro stoppato conta come tiro dal campo tentato e sbagliato. Un tiro su cui il giocatore subisce fallo non conta come tentato, salvo se entra: in quel caso segna il canestro, il fallo subito con tiri liberi e i liberi.'],
     ['T4','Tiri liberi',
      'Segna ogni tiro libero, segnato o sbagliato. Non si segna il libero sbagliato quando la ripetizione è dovuta a una violazione della difesa.'],
     ['T5','Rimbalzi',
@@ -858,9 +881,11 @@ it:[
   ]},
   {h:'GUIDA', v:[
     ['G0','Come leggere le statistiche',
-     'Le percentuali su più partite sono il totale dei segnati diviso il totale dei tentati. Le altre voci sono la media per partita, con il totale accanto. «Campione piccolo: dati poco indicativi» compare con meno di 3 partite, oppure quando i tentativi sono sotto la soglia: 4 liberi, 3 tiri da 2, 3 tiri da 3, 3 tiri per le voci sul totale dei tiri, 3 possessi. Una partita senza un dato è esclusa solo dalle statistiche che usano quel dato.'],
+     'Le statistiche di base mostrano per ogni voce la media per partita, il totale e il massimo in una partita, con la data. Le percentuali su più partite sono il totale dei segnati diviso il totale dei tentati. «Campione piccolo: dati poco indicativi» compare con meno di 3 partite, oppure quando i tentativi sono sotto la soglia: 4 liberi, 3 tiri da 2, 3 tiri da 3, 3 tiri dal campo per le voci sul totale dei tiri dal campo, 3 possessi, 3 rimbalzi. Una partita senza un dato è esclusa solo dalle statistiche che usano quel dato: accanto al valore compare su quante partite è calcolato. Nel Best vince il valore più alto, tranne per palle perse, falli commessi, stoppate subite, tiri sbagliati e TOV%, dove vince il più basso.'],
+    ['SB','Statistiche di base',
+     'Ogni voce registrata, con media per partita, totale e massimo. Sono i numeri fatti in campo; le altre statistiche partono da qui. I punti sono calcolati dai tiri segnati: 1 per ogni libero, 2 per ogni tiro da 2, 3 per ogni tiro da 3. I tiri totali sono i tiri dal campo più i tiri liberi.'],
     ['S1','% dal campo',
-     'Canestri segnati diviso tiri tentati, da 2 e da 3, esclusi i liberi. Stessa formula in FIBA e NBA (FG%).'],
+     'Canestri segnati diviso tiri dal campo tentati, da 2 e da 3, esclusi i liberi. Stessa formula in FIBA e NBA (FG%).'],
     ['S2','% da 2, dal pitturato e da fuori',
      'Tiri da 2 segnati diviso tentati, in totale e divisi per zona secondo la regola del pitturato (T2).'],
     ['S3','% da 3',
@@ -868,19 +893,19 @@ it:[
     ['S4','% ai liberi',
      'Liberi segnati diviso liberi tentati.'],
     ['S5','eFG%, percentuale effettiva',
-     'È la % dal campo che tiene conto del valore in più del tiro da 3: (canestri + 0,5 × tiri da 3 segnati) / tiri tentati. Formula del glossario NBA, uguale a quella di Basketball-Reference.'],
+     'È la % dal campo che tiene conto del valore in più del tiro da 3: (canestri + 0,5 × tiri da 3 segnati) / tiri dal campo tentati. Formula del glossario NBA, uguale a quella di Basketball-Reference.'],
     ['S6','TS%, tiro reale',
-     'Misura il rendimento al tiro compresi i liberi: punti / (2 × (tiri tentati + 0,44 × liberi tentati)). Il coefficiente 0,44 stima quanti liberi valgono un possesso ed è calcolato sul basket NBA. Formula del glossario NBA.'],
+     'Misura il rendimento al tiro compresi i liberi: punti / (2 × (tiri dal campo tentati + 0,44 × liberi tentati)). Il coefficiente 0,44 stima quanti liberi valgono un possesso ed è calcolato sul basket NBA. Formula del glossario NBA.'],
     ['S7','Quota di tiri da 3',
-     'Parte dei tiri tentati presi da 3: tiri da 3 tentati / tiri tentati.'],
+     'Parte dei tiri dal campo tentati presi da 3: tiri da 3 tentati / tiri dal campo tentati.'],
     ['S8','Quota di tiri dal pitturato',
-     'Parte dei tiri tentati presi dal pitturato: tiri da 2 dal pitturato / tiri tentati.'],
+     'Parte dei tiri dal campo tentati presi dal pitturato: tiri da 2 dal pitturato / tiri dal campo tentati.'],
     ['S9','Liberi per tiro',
-     'Quanti liberi il giocatore guadagna per ogni tiro tentato: liberi tentati / tiri tentati.'],
+     'Quanti liberi il giocatore guadagna per ogni tiro tentato: liberi tentati / tiri dal campo tentati.'],
     ['S10','Punti per tiro',
-     'Punti segnati, liberi compresi, per ogni tiro tentato: punti / tiri tentati.'],
+     'Punti segnati, liberi compresi, per ogni tiro tentato: punti / tiri dal campo tentati.'],
     ['S11','Possessi conclusi',
-     'Stima delle azioni chiuse dal giocatore con un tiro, con i liberi o con una palla persa: tiri tentati + 0,44 × liberi tentati + palle perse. Formula di Basketball-Reference.'],
+     'Stima delle azioni chiuse dal giocatore con un tiro, con i liberi o con una palla persa: tiri dal campo tentati + 0,44 × liberi tentati + palle perse. Formula di Basketball-Reference.'],
     ['S12','TOV%',
      'Percentuale dei possessi conclusi che finisce con una palla persa: 100 × palle perse / possessi conclusi. Il glossario NBA ne dà solo la definizione; la formula è di Basketball-Reference.'],
     ['S13','Assist / palle perse',
@@ -892,21 +917,35 @@ it:[
     ['S16','Efficienza FIBA/NBA (EFF)',
      'Punti + rimbalzi + assist + recuperi + stoppate, meno tiri sbagliati, liberi sbagliati e palle perse. È la formula raccomandata dal manuale statistico FIBA e coincide con l\'EFF usata nella NBA. Rispetto al PIR non conta falli e stoppate subite.'],
     ['S17','Game Score',
-     'Indice di John Hollinger che pesa ogni voce: punti + 0,4 × canestri − 0,7 × tiri tentati − 0,4 × liberi sbagliati + 0,7 × rimbalzi offensivi + 0,3 × difensivi + recuperi + 0,7 × assist + 0,7 × stoppate − 0,4 × falli − palle perse. Formula di Basketball-Reference.'],
+     'Indice di John Hollinger che pesa ogni voce: punti + 0,4 × canestri − 0,7 × tiri dal campo tentati − 0,4 × liberi sbagliati + 0,7 × rimbalzi offensivi + 0,3 × difensivi + recuperi + 0,7 × assist + 0,7 × stoppate − 0,4 × falli − palle perse. Formula di Basketball-Reference.'],
     ['S18','Doppie doppie e triple doppie',
      'Partite con almeno 10 in due voci (doppia doppia) o in tre voci (tripla doppia) tra punti, rimbalzi, assist, recuperi e stoppate.'],
     ['S19','Per 36′ (NBA) e per 40′ (FIBA)',
-     'Le voci riportate a un tempo fisso: totale / minuti giocati × 36 oppure × 40. Il 36 è la convenzione delle statistiche NBA (Basketball-Reference); il 40 è la durata di una gara FIBA (4 × 10′; nella NBA 4 × 12′). Si calcola solo sulle partite con i minuti.'],
+     'Le voci riportate a un tempo fisso: totale / minuti giocati × 36 oppure × 40. Il 36 è la convenzione delle statistiche NBA (Basketball-Reference); il 40 è la durata di una gara FIBA (4 × 10′; nella NBA 4 × 12′). Si calcola solo sulle partite con i minuti di tutti i periodi inseriti. Nel Best conta solo una partita con almeno 10 minuti giocati. Sono un approfondimento: i valori fatti in campo sono nelle statistiche di base.'],
     ['S20','Quota dei punti di squadra',
      'Parte dei punti della squadra segnata dal giocatore. Solo partite con il punteggio.'],
     ['S21','Nelle vittorie e nelle sconfitte',
-     'Punti, Valutazione e % dal campo separati tra vittorie e sconfitte.'],
+     'Punti, quota dei punti di squadra, Valutazione, % dal campo e la media di ogni voce, separati tra vittorie e sconfitte. Solo partite con i punteggi dei periodi.'],
     ['S22','Scarto medio',
      'Media della differenza tra punti della squadra e degli avversari.'],
     ['S23','Miglior periodo',
      'Il periodo con la media di punti più alta. Solo partite registrate con il periodo delle azioni (T14).'],
     ['S24','Prima e seconda metà',
-     'Confronto tra i primi e gli ultimi periodi, supplementari esclusi.']
+     'Confronto tra i primi e gli ultimi periodi, supplementari esclusi.'],
+    ['S25','Rimbalzi e quota di offensivi',
+     'Rimbalzi offensivi, difensivi e totali. La quota di offensivi è rimbalzi offensivi / rimbalzi totali. Non è l\'ORB% della NBA, che richiede i rimbalzi di squadra e avversari.'],
+    ['S26','Tiri sbagliati',
+     'Tiri tentati meno tiri segnati, per ogni tipo di tiro.'],
+    ['S27','Punti per tipo di tiro',
+     'Punti segnati dai liberi, da 2 dal pitturato, da 2 da fuori e da 3, ciascuno con la sua quota sui punti totali.'],
+    ['S28','Quota di falli subiti con tiri liberi',
+     'Falli subiti con tiri liberi / falli subiti totali.'],
+    ['S29','Quota di tiri stoppati',
+     'Stoppate subite / tiri dal campo tentati.'],
+    ['S30','Palle recuperate / palle perse',
+     'Recuperi diviso palle perse.'],
+    ['S31','Assist ratio',
+     'Assist ogni 100 possessi conclusi dal giocatore: 100 × assist / (tiri dal campo tentati + 0,44 × liberi tentati + assist + palle perse). Indice di John Hollinger (ESPN).']
   ]},
   {h:'USO DELL\'APP', v:[
     ['U1','Live',
@@ -916,7 +955,7 @@ it:[
     ['U3','Archivio',
      'Contiene le partite salvate per stagione e in carriera, il confronto tra stagioni, il dettaglio di ogni partita con le sue statistiche e le immagini da condividere. Da qui una partita si carica per modificarla.'],
     ['U4','STATS',
-     'Contiene le statistiche di qualunque selezione di partite: viste pronte o filtri personalizzati, sette gruppi di statistiche, grafici, migliore partita e confronto tra due selezioni. La «?» accanto a una voce apre la sua spiegazione.'],
+     'Contiene le statistiche di qualunque selezione di partite: viste pronte o filtri personalizzati, otto gruppi di statistiche, grafici, migliore partita e confronto tra due selezioni. La «?» accanto a una voce apre la sua spiegazione.'],
     ['U5','Opzioni',
      'Contiene l\'azzeramento della partita in corso, backup, importazione, CSV, stagione, lingua e le informazioni sull\'app.'],
     ['U6','Backup',
@@ -937,7 +976,7 @@ en:[
     ['T2','In the paint or outside',
      'A 2-point shot is in the paint when, at the moment of the shot, the player has one or both feet inside the painted area under the basket or on its line. The lines are part of the area. In all other cases it is outside. Mind the names: FIBA calls this area the «restricted area», the NBA calls it the «lane». For the NBA, the «restricted area» is the semicircle near the basket.'],
     ['T3','Blocked shots and fouled shots',
-     'A blocked shot counts as an attempted and missed shot. A shot on which the player is fouled does not count as attempted unless it goes in: in that case record the basket, the foul drawn with free throws and the free throws.'],
+     'A blocked shot counts as an attempted and missed field goal. A shot on which the player is fouled does not count as attempted unless it goes in: in that case record the basket, the foul drawn with free throws and the free throws.'],
     ['T4','Free throws',
      'Record every free throw, made or missed. Do not record a missed free throw that is retaken because of a defensive violation.'],
     ['T5','Rebounds',
@@ -963,9 +1002,11 @@ en:[
   ]},
   {h:'GUIDE', v:[
     ['G0','How to read the stats',
-     'Percentages over several games are total made divided by total attempted. The other items are the average per game, with the total next to it. «Small sample: data not very indicative» appears with fewer than 3 games, or when attempts are below the threshold: 4 free throws, 3 two-point shots, 3 three-point shots, 3 shots for items based on total shots, 3 possessions. A game missing a piece of data is excluded only from the stats that use it.'],
+     'The basic stats show for each item the average per game, the total and the maximum in a single game, with its date. Percentages over several games are total made divided by total attempted. «Small sample: data not very indicative» appears with fewer than 3 games, or when attempts are below the threshold: 4 free throws, 3 two-point shots, 3 three-point shots, 3 field goals for items based on total field goals, 3 possessions, 3 rebounds. A game missing a piece of data is excluded only from the stats that use it: next to the value you see how many games it is calculated on. In Best the highest value wins, except for turnovers, fouls committed, blocks received, missed shots and TOV%, where the lowest wins.'],
+    ['SB','Basic stats',
+     'Every recorded item, with average per game, total and maximum. These are the numbers achieved on the court; the other stats start from here. Points are calculated from shots made: 1 for each free throw, 2 for each 2-pointer, 3 for each 3-pointer. Total shots are field goals plus free throws.'],
     ['S1','FG%',
-     'Field goals made divided by shots attempted, 2- and 3-point, free throws excluded. Same formula in FIBA and the NBA (FG%).'],
+     'Field goals made divided by field goals attempted, 2- and 3-point, free throws excluded. Same formula in FIBA and the NBA (FG%).'],
     ['S2','2P%, in the paint and outside the paint',
      '2-point shots made divided by attempted, in total and split by area according to the paint rule (T2).'],
     ['S3','3P%',
@@ -973,19 +1014,19 @@ en:[
     ['S4','FT%',
      'Free throws made divided by free throws attempted.'],
     ['S5','eFG%, effective FG%',
-     'FG% adjusted for the extra value of the 3-point shot: (field goals made + 0.5 × 3-pointers made) / shots attempted. NBA glossary formula, the same as Basketball-Reference.'],
+     'FG% adjusted for the extra value of the 3-point shot: (field goals made + 0.5 × 3-pointers made) / field goals attempted. NBA glossary formula, the same as Basketball-Reference.'],
     ['S6','TS%, true shooting',
-     'Shooting efficiency including free throws: points / (2 × (shots attempted + 0.44 × free throws attempted)). The 0.44 coefficient estimates how many free throws make up a possession and is calibrated on NBA basketball. NBA glossary formula.'],
+     'Shooting efficiency including free throws: points / (2 × (field goals attempted + 0.44 × free throws attempted)). The 0.44 coefficient estimates how many free throws make up a possession and is calibrated on NBA basketball. NBA glossary formula.'],
     ['S7','3-point attempt share',
-     'Share of shots attempted from 3: 3-point attempts / shots attempted.'],
+     'Share of field goals attempted from 3: 3-point attempts / field goals attempted.'],
     ['S8','Paint attempt share',
-     'Share of shots attempted in the paint: 2-point attempts in the paint / shots attempted.'],
+     'Share of field goals attempted in the paint: 2-point attempts in the paint / field goals attempted.'],
     ['S9','Free throws per shot',
-     'How many free throws the player earns per shot attempted: free throws attempted / shots attempted.'],
+     'How many free throws the player earns per shot attempted: free throws attempted / field goals attempted.'],
     ['S10','Points per shot',
-     'Points scored, free throws included, per shot attempted: points / shots attempted.'],
+     'Points scored, free throws included, per shot attempted: points / field goals attempted.'],
     ['S11','Possessions used',
-     'Estimate of the plays the player ends with a shot, free throws or a turnover: shots attempted + 0.44 × free throws attempted + turnovers. Basketball-Reference formula.'],
+     'Estimate of the plays the player ends with a shot, free throws or a turnover: field goals attempted + 0.44 × free throws attempted + turnovers. Basketball-Reference formula.'],
     ['S12','TOV%',
      'Percentage of possessions used that end in a turnover: 100 × turnovers / possessions used. The NBA glossary gives only the definition; the formula is from Basketball-Reference.'],
     ['S13','Assist-to-turnover ratio',
@@ -997,21 +1038,35 @@ en:[
     ['S16','FIBA/NBA efficiency (EFF)',
      'Points + rebounds + assists + steals + blocks, minus missed shots, missed free throws and turnovers. It is the formula recommended by the FIBA Statisticians\' Manual and matches the EFF used in the NBA. Unlike PIR, it does not count fouls and blocks received.'],
     ['S17','Game Score',
-     'John Hollinger\'s rating, which weighs each item: points + 0.4 × field goals made − 0.7 × shots attempted − 0.4 × missed free throws + 0.7 × offensive rebounds + 0.3 × defensive rebounds + steals + 0.7 × assists + 0.7 × blocks − 0.4 × fouls − turnovers. Basketball-Reference formula.'],
+     'John Hollinger\'s rating, which weighs each item: points + 0.4 × field goals made − 0.7 × field goals attempted − 0.4 × missed free throws + 0.7 × offensive rebounds + 0.3 × defensive rebounds + steals + 0.7 × assists + 0.7 × blocks − 0.4 × fouls − turnovers. Basketball-Reference formula.'],
     ['S18','Double-doubles and triple-doubles',
      'Games with at least 10 in two items (double-double) or in three items (triple-double) among points, rebounds, assists, steals and blocks.'],
     ['S19','Per 36 min (NBA) and per 40 min (FIBA)',
-     'Items scaled to a fixed time: total / minutes played × 36 or × 40. 36 is the convention of NBA stats (Basketball-Reference); 40 is the length of a FIBA game (4 × 10 min; in the NBA 4 × 12 min). Calculated only on games with minutes.'],
+     'Items scaled to a fixed time: total / minutes played × 36 or × 40. 36 is the convention of NBA stats (Basketball-Reference); 40 is the length of a FIBA game (4 × 10 min; in the NBA 4 × 12 min). Calculated only on games with the minutes of every period entered. In Best only a game with at least 10 minutes played counts. They are a deeper look: the values achieved on the court are in the basic stats.'],
     ['S20','Share of team points',
      'Share of the team\'s points scored by the player. Only games with the score.'],
     ['S21','In wins and in losses',
-     'Points, Efficiency and FG% split between wins and losses.'],
+     'Points, share of team points, Efficiency, FG% and the average of every item, split between wins and losses. Only games with the period scores.'],
     ['S22','Average margin',
      'Average difference between the team\'s points and the opponents\' points.'],
     ['S23','Best period',
      'The period with the highest average points. Only games recorded with the period of each action (T14).'],
     ['S24','First half and second half',
-     'Comparison between the first and the last periods, overtimes excluded.']
+     'Comparison between the first and the last periods, overtimes excluded.'],
+    ['S25','Rebounds and offensive share',
+     'Offensive, defensive and total rebounds. The offensive share is offensive rebounds / total rebounds. It is not the NBA\'s ORB%, which requires team and opponent rebounds.'],
+    ['S26','Missed shots',
+     'Shots attempted minus shots made, for each shot type.'],
+    ['S27','Points by shot type',
+     'Points scored from free throws, from 2 in the paint, from 2 outside and from 3, each with its share of total points.'],
+    ['S28','Share of fouls drawn with free throws',
+     'Fouls drawn with free throws / total fouls drawn.'],
+    ['S29','Share of shots blocked',
+     'Blocks received / field goals attempted.'],
+    ['S30','Steals / turnovers',
+     'Steals divided by turnovers.'],
+    ['S31','Assist ratio',
+     'Assists per 100 possessions used by the player: 100 × assists / (field goals attempted + 0.44 × free throws attempted + assists + turnovers). John Hollinger\'s rating (ESPN).']
   ]},
   {h:'USING THE APP', v:[
     ['U1','Live',
@@ -1021,7 +1076,7 @@ en:[
     ['U3','Archive',
      'Holds the saved games by season and for the career, the comparison between seasons, the detail of each game with its stats, and the images to share. From here a game can be loaded to edit it.'],
     ['U4','STATS',
-     'Holds the stats of any selection of games: ready-made views or custom filters, seven groups of stats, charts, best game and comparison between two selections. The «?» next to an item opens its explanation.'],
+     'Holds the stats of any selection of games: ready-made views or custom filters, eight groups of stats, charts, best game and comparison between two selections. The «?» next to an item opens its explanation.'],
     ['U5','Settings',
      'Holds the reset of the current game, backup, import, CSV, season, language and information about the app.'],
     ['U6','Backup',
@@ -1042,7 +1097,7 @@ es:[
     ['T2','Desde la zona o fuera de la zona',
      'El tiro de 2 es desde la zona cuando, en el momento del tiro, el jugador tiene uno o los dos pies dentro del área pintada bajo la canasta o sobre su línea. Las líneas forman parte del área. En todos los demás casos es fuera de la zona. Atención a los nombres: la FIBA llama a esta área «restricted area», la NBA la llama «lane». Para la NBA, la «restricted area» es el semicírculo cerca de la canasta.'],
     ['T3','Tiro taponado y tiro con falta',
-     'Un tiro taponado cuenta como tiro intentado y fallado. Un tiro en el que el jugador recibe falta no cuenta como intentado, salvo si entra: en ese caso registra la canasta, la falta recibida con tiros libres y los tiros libres.'],
+     'Un tiro taponado cuenta como tiro de campo intentado y fallado. Un tiro en el que el jugador recibe falta no cuenta como intentado, salvo si entra: en ese caso registra la canasta, la falta recibida con tiros libres y los tiros libres.'],
     ['T4','Tiros libres',
      'Registra cada tiro libre, anotado o fallado. No se registra el libre fallado cuando se repite por una violación de la defensa.'],
     ['T5','Rebotes',
@@ -1068,9 +1123,11 @@ es:[
   ]},
   {h:'GUÍA', v:[
     ['G0','Cómo leer las estadísticas',
-     'Los porcentajes sobre varios partidos son el total de anotados dividido entre el total de intentados. Las demás estadísticas son la media por partido, con el total al lado. «Muestra pequeña: datos poco indicativos» aparece con menos de 3 partidos, o cuando los intentos están por debajo del umbral: 4 libres, 3 tiros de 2, 3 tiros de 3, 3 tiros para las estadísticas sobre el total de tiros, 3 posesiones. Un partido sin un dato se excluye solo de las estadísticas que usan ese dato.'],
+     'Las estadísticas básicas muestran para cada estadística la media por partido, el total y el máximo en un partido, con la fecha. Los porcentajes sobre varios partidos son el total de anotados dividido entre el total de intentados. «Muestra pequeña: datos poco indicativos» aparece con menos de 3 partidos, o cuando los intentos están por debajo del umbral: 4 libres, 3 tiros de 2, 3 tiros de 3, 3 tiros de campo para las estadísticas sobre el total de tiros de campo, 3 posesiones, 3 rebotes. Un partido sin un dato se excluye solo de las estadísticas que usan ese dato: junto al valor aparece sobre cuántos partidos está calculado. En el Best gana el valor más alto, salvo en balones perdidos, faltas cometidas, tapones recibidos, tiros fallados y TOV%, donde gana el más bajo.'],
+    ['SB','Estadísticas básicas',
+     'Cada estadística registrada, con media por partido, total y máximo. Son los números conseguidos en la cancha; las demás estadísticas parten de aquí. Los puntos se calculan a partir de los tiros anotados: 1 por cada tiro libre, 2 por cada tiro de 2, 3 por cada tiro de 3. Los tiros totales son los tiros de campo más los tiros libres.'],
     ['S1','% de campo',
-     'Canastas anotadas divididas entre tiros intentados, de 2 y de 3, sin los libres. Misma fórmula en la FIBA y en la NBA (FG%).'],
+     'Canastas anotadas divididas entre tiros de campo intentados, de 2 y de 3, sin los libres. Misma fórmula en la FIBA y en la NBA (FG%).'],
     ['S2','% de 2, desde la zona y fuera de la zona',
      'Tiros de 2 anotados divididos entre intentados, en total y por zona según la regla de la zona (T2).'],
     ['S3','% de 3',
@@ -1078,19 +1135,19 @@ es:[
     ['S4','% de tiros libres',
      'Libres anotados divididos entre libres intentados.'],
     ['S5','eFG%, porcentaje efectivo',
-     'Es el % de campo que tiene en cuenta el valor extra del tiro de 3: (canastas + 0,5 × triples anotados) / tiros intentados. Fórmula del glosario de la NBA, igual a la de Basketball-Reference.'],
+     'Es el % de campo que tiene en cuenta el valor extra del tiro de 3: (canastas + 0,5 × triples anotados) / tiros de campo intentados. Fórmula del glosario de la NBA, igual a la de Basketball-Reference.'],
     ['S6','TS%, tiro verdadero',
-     'Mide el rendimiento en el tiro incluidos los libres: puntos / (2 × (tiros intentados + 0,44 × libres intentados)). El coeficiente 0,44 estima cuántos libres equivalen a una posesión y está calculado sobre el baloncesto NBA. Fórmula del glosario de la NBA.'],
+     'Mide el rendimiento en el tiro incluidos los libres: puntos / (2 × (tiros de campo intentados + 0,44 × libres intentados)). El coeficiente 0,44 estima cuántos libres equivalen a una posesión y está calculado sobre el baloncesto NBA. Fórmula del glosario de la NBA.'],
     ['S7','Proporción de tiros de 3',
-     'Parte de los tiros intentados desde 3: triples intentados / tiros intentados.'],
+     'Parte de los tiros de campo intentados desde 3: triples intentados / tiros de campo intentados.'],
     ['S8','Proporción de tiros desde la zona',
-     'Parte de los tiros intentados desde la zona: tiros de 2 desde la zona / tiros intentados.'],
+     'Parte de los tiros de campo intentados desde la zona: tiros de 2 desde la zona / tiros de campo intentados.'],
     ['S9','Tiros libres por tiro',
-     'Cuántos libres gana el jugador por cada tiro intentado: libres intentados / tiros intentados.'],
+     'Cuántos libres gana el jugador por cada tiro intentado: libres intentados / tiros de campo intentados.'],
     ['S10','Puntos por tiro',
-     'Puntos anotados, libres incluidos, por cada tiro intentado: puntos / tiros intentados.'],
+     'Puntos anotados, libres incluidos, por cada tiro intentado: puntos / tiros de campo intentados.'],
     ['S11','Posesiones usadas',
-     'Estimación de las jugadas que el jugador termina con un tiro, con libres o con una pérdida: tiros intentados + 0,44 × libres intentados + balones perdidos. Fórmula de Basketball-Reference.'],
+     'Estimación de las jugadas que el jugador termina con un tiro, con libres o con una pérdida: tiros de campo intentados + 0,44 × libres intentados + balones perdidos. Fórmula de Basketball-Reference.'],
     ['S12','TOV%',
      'Porcentaje de las posesiones usadas que termina en pérdida: 100 × balones perdidos / posesiones usadas. El glosario de la NBA da solo la definición; la fórmula es de Basketball-Reference.'],
     ['S13','Asistencias / pérdidas',
@@ -1102,21 +1159,35 @@ es:[
     ['S16','Eficiencia FIBA/NBA (EFF)',
      'Puntos + rebotes + asistencias + robos + tapones, menos tiros fallados, libres fallados y balones perdidos. Es la fórmula recomendada por el manual estadístico de la FIBA y coincide con la EFF que se usa en la NBA. A diferencia del PIR, no cuenta las faltas ni los tapones recibidos.'],
     ['S17','Game Score',
-     'Índice de John Hollinger que pondera cada estadística: puntos + 0,4 × canastas − 0,7 × tiros intentados − 0,4 × libres fallados + 0,7 × rebotes ofensivos + 0,3 × defensivos + robos + 0,7 × asistencias + 0,7 × tapones − 0,4 × faltas − balones perdidos. Fórmula de Basketball-Reference.'],
+     'Índice de John Hollinger que pondera cada estadística: puntos + 0,4 × canastas − 0,7 × tiros de campo intentados − 0,4 × libres fallados + 0,7 × rebotes ofensivos + 0,3 × defensivos + robos + 0,7 × asistencias + 0,7 × tapones − 0,4 × faltas − balones perdidos. Fórmula de Basketball-Reference.'],
     ['S18','Dobles-dobles y triples-dobles',
      'Partidos con al menos 10 en dos estadísticas (doble-doble) o en tres (triple-doble) entre puntos, rebotes, asistencias, robos y tapones.'],
     ['S19','Por 36 min (NBA) y por 40 min (FIBA)',
-     'Las estadísticas llevadas a un tiempo fijo: total / minutos jugados × 36 o × 40. El 36 es la convención de las estadísticas NBA (Basketball-Reference); el 40 es la duración de un partido FIBA (4 × 10 min; en la NBA 4 × 12 min). Se calcula solo sobre los partidos con minutos.'],
+     'Las estadísticas llevadas a un tiempo fijo: total / minutos jugados × 36 o × 40. El 36 es la convención de las estadísticas NBA (Basketball-Reference); el 40 es la duración de un partido FIBA (4 × 10 min; en la NBA 4 × 12 min). Se calcula solo sobre los partidos con los minutos de todos los periodos introducidos. En el Best solo cuenta un partido con al menos 10 minutos jugados. Son un análisis complementario: los valores conseguidos en la cancha están en las estadísticas básicas.'],
     ['S20','Porcentaje de puntos del equipo',
      'Parte de los puntos del equipo anotada por el jugador. Solo partidos con el marcador.'],
     ['S21','En victorias y en derrotas',
-     'Puntos, Valoración y % de campo separados entre victorias y derrotas.'],
+     'Puntos, porcentaje de puntos del equipo, Valoración, % de campo y la media de cada estadística, separados entre victorias y derrotas. Solo partidos con los marcadores de los periodos.'],
     ['S22','Diferencia media',
      'Media de la diferencia entre los puntos del equipo y los del rival.'],
     ['S23','Mejor periodo',
      'El periodo con la media de puntos más alta. Solo partidos registrados con el periodo de las acciones (T14).'],
     ['S24','Primera y segunda mitad',
-     'Comparación entre los primeros y los últimos periodos, sin las prórrogas.']
+     'Comparación entre los primeros y los últimos periodos, sin las prórrogas.'],
+    ['S25','Rebotes y proporción de ofensivos',
+     'Rebotes ofensivos, defensivos y totales. La proporción de ofensivos es rebotes ofensivos / rebotes totales. No es el ORB% de la NBA, que requiere los rebotes del equipo y del rival.'],
+    ['S26','Tiros fallados',
+     'Tiros intentados menos tiros anotados, para cada tipo de tiro.'],
+    ['S27','Puntos por tipo de tiro',
+     'Puntos anotados de tiros libres, de 2 desde la zona, de 2 fuera de la zona y de 3, cada uno con su proporción sobre los puntos totales.'],
+    ['S28','Proporción de faltas recibidas con tiros libres',
+     'Faltas recibidas con tiros libres / faltas recibidas totales.'],
+    ['S29','Proporción de tiros taponados',
+     'Tapones recibidos / tiros de campo intentados.'],
+    ['S30','Recuperados / perdidos',
+     'Balones recuperados divididos entre balones perdidos.'],
+    ['S31','Assist ratio',
+     'Asistencias por cada 100 posesiones usadas por el jugador: 100 × asistencias / (tiros de campo intentados + 0,44 × libres intentados + asistencias + balones perdidos). Índice de John Hollinger (ESPN).']
   ]},
   {h:'USO DE LA APP', v:[
     ['U1','En vivo',
@@ -1126,7 +1197,7 @@ es:[
     ['U3','Archivo',
      'Contiene los partidos guardados por temporada y en la carrera, la comparación entre temporadas, el detalle de cada partido con sus estadísticas y las imágenes para compartir. Desde aquí un partido se carga para modificarlo.'],
     ['U4','STATS',
-     'Contiene las estadísticas de cualquier selección de partidos: vistas listas o filtros personalizados, siete grupos de estadísticas, gráficos, mejor partido y comparación entre dos selecciones. La «?» junto a una estadística abre su explicación.'],
+     'Contiene las estadísticas de cualquier selección de partidos: vistas listas o filtros personalizados, ocho grupos de estadísticas, gráficos, mejor partido y comparación entre dos selecciones. La «?» junto a una estadística abre su explicación.'],
     ['U5','Ajustes',
      'Contiene el reinicio del partido en curso, copia de seguridad, importación, CSV, temporada, idioma y la información de la app.'],
     ['U6','Copia de seguridad',
@@ -1148,7 +1219,7 @@ function t(k){
 /* alias per le funzioni in cui t e' una variabile locale */
 var tx=t;
 /* riga delle partite e dei tiri tentati e partite escluse, con il singolare */
-function riepTxt(n,a){ return (n===1?t('sPart1'):t('sPartN',n))+' · '+(a===1?t('sTiri1'):t('sTiriN',a)); }
+function riepTxt(n,a,tt){ return (n===1?t('sPart1'):t('sPartN',n))+' · '+(a===1?t('sTiri1'):t('sTiriN',a))+' · '+(tt===1?t('sTotT1'):t('sTotTN',tt)); }
 function esclTxt(n){ return n===1?t('sEscl1'):t('sEscl',n); }
 function tipoTxt(x){ var v=t('tipo_'+x); return v==null?x:v; }
 /* risultato salvato "V 50-40": si traduce solo la lettera dell'esito ("=" per il pareggio) */
@@ -1324,7 +1395,7 @@ function scoreOf(s){
 function norm(g){
   var o = {
     id: g.id || ((g.data||'')+'|'+(g.avversario||'')+'|'+(g.categoria||'')),
-    data:g.data||'', avversario:g.avversario||'', categoria:g.categoria||'',
+    data:g.data||'', avversario:String(g.avversario||'').trim(), categoria:g.categoria||'',
     tipoGara:g.tipoGara||'Campionato', maglia:g.maglia||'',
     topMatch:!!g.topMatch,
     stagione:g.stagione||seasonOf(g.data),
@@ -1963,7 +2034,7 @@ function doSave(){
   }
   if(!state.id){
     var doppia=archive.some(function(x){
-      return x.data===state.data && x.avversario===state.avversario && x.categoria===state.categoria;
+      return x.data===state.data && x.avversario===String(state.avversario||'').trim() && x.categoria===state.categoria;
     });
     if(doppia && !confirm(t('cfDoppia'))){ toast(t('tNonSalvata')); return; }
     state.id=nuovoId(); saveState();
@@ -2170,16 +2241,16 @@ function setLang(k){
 }
 
 function aggregate(list){
-  var a={g:list.length,min:0,pt:0,rimO:0,rimD:0,ast:0,pp:0,pr:0,stopD:0,stopS:0,ndN:0,
+  var a={g:list.length,min:0,minN:0,minK:0,p2sF:0,p2tF:0,pt:0,rimO:0,rimD:0,ast:0,pp:0,pr:0,stopD:0,stopS:0,ndN:0,
          fs:0,fsT:0,fsTN:0,fc:0,p2s:0,p2t:0,p2sP:0,p2tP:0,pitN:0,p3s:0,p3t:0,tls:0,tlt:0,dd:0,td:0,val:0,
          diffSum:0,diffN:0};
   list.forEach(function(g){
-    a.min+=g.minuti; a.pt+=g.pt; a.rimO+=g.rimO; a.rimD+=g.rimD; a.ast+=g.ast;
+    a.min+=g.minuti; if(minOk(g)){ a.minN++; a.minK+=g.minuti; } a.pt+=g.pt; a.rimO+=g.rimO; a.rimD+=g.rimD; a.ast+=g.ast;
     a.pp+=g.pp; a.pr+=g.pr; a.stopD+=g.stopDate;
     a.stopS+=g.stopSubite; if(g.ndStop) a.ndN++;
     a.fs+=g.fs; if(g.fsTiri!=null){ a.fsT+=g.fsTiri; a.fsTN++; }
     a.fc+=g.fc; a.p2s+=g.p2s; a.p2t+=g.p2t;
-    if(g.p2tPit!=null){ a.p2sP+=g.p2sPit; a.p2tP+=g.p2tPit; a.pitN++; }
+    if(g.p2tPit!=null){ a.p2sP+=g.p2sPit; a.p2tP+=g.p2tPit; a.pitN++; a.p2sF+=g.p2s-g.p2sPit; a.p2tF+=g.p2t-g.p2tPit; }
     a.p3s+=g.p3s; a.p3t+=g.p3t; a.tls+=g.tls; a.tlt+=g.tlt;
     if(ddOf(g)) a.dd++;
     if(tdOf(g)) a.td++;
@@ -2193,14 +2264,15 @@ function statTable(a){
   function row(k,v){ var r=el('tr'); r.appendChild(el('td','k',k)); r.appendChild(el('td',null,v)); t.appendChild(r); }
   var h=el('tr'); h.appendChild(el('th',null,tx('stSu',g))); h.appendChild(el('th',null,tx('stMedia')));
   t.appendChild(h);
-  row(tx('stMinuti'),fmin(avg(a.min,g)));
+  /* minuti: solo le partite con i minuti di tutti i periodi; la base si indica se e' piu' piccola */
+  row(tx('stMinuti'),a.minN?fmin(avg(a.minK,a.minN))+(a.minN<g?'  '+tx('stSuN',a.minN):''):'—');
   row(tx('stPunti'),avg(a.pt,g));
   row(tx('stVal'),avg(a.val,g));
   row(tx('stRimb'),avg(a.rimO+a.rimD,g)+'  '+tx('stOff',avg(a.rimO,g)));
   row(tx('stAst'),avg(a.ast,g));
   row(tx('stPr'),avg(a.pr,g));
   row(tx('stPp'),avg(a.pp,g));
-  row(tx('stFs'),avg(a.fs,g)+(a.fsTN?'  '+tx('stConTL',avg(a.fsT,a.fsTN)):''));
+  row(tx('stFs'),avg(a.fs,g)+(a.fsTN?'  '+tx('stConTL',avg(a.fsT,a.fsTN))+(a.fsTN<g?' '+tx('stSuN',a.fsTN):''):''));
   row(tx('stFc'),avg(a.fc,g));
   row(tx('stStopD'),avg(a.stopD,g));
   row(tx('stStopS'),avg(a.stopS,g)+(a.ndN?'  *':''));
@@ -2212,7 +2284,7 @@ function statTable(a){
   row(tx('st2p'),a.p2s+'/'+a.p2t+'  '+fpct(a.p2s,a.p2t));
   if(a.pitN){
     row(tx('stPit'),a.p2sP+'/'+a.p2tP+'  '+fpct(a.p2sP,a.p2tP));
-    row(tx('stFuo'),(a.p2s-a.p2sP)+'/'+(a.p2t-a.p2tP)+'  '+fpct(a.p2s-a.p2sP,a.p2t-a.p2tP));
+    row(tx('stFuo'),a.p2sF+'/'+a.p2tF+'  '+fpct(a.p2sF,a.p2tF));
   }
   row(tx('st3p'),a.p3s+'/'+a.p3t+'  '+fpct(a.p3s,a.p3t));
   row(tx('stTl'),a.tls+'/'+a.tlt+'  '+fpct(a.tls,a.tlt));
@@ -2260,9 +2332,10 @@ function renderArchivio(){
   var list=arcCareer ? archive.slice() : archive.filter(function(g){return g.stagione===arcSeason;});
   if(arcTop) list=list.filter(function(g){return g.topMatch;});
   var wins=0,loss=0,drw=0;
+  /* bilancio: solo le partite con i punteggi dei periodi, come nella scheda STATS */
   list.forEach(function(g){
-    var r=g.risultatoTesto||'';
-    if(/^V/.test(r)) wins++; else if(/^P/.test(r)) loss++; else if(/^=/.test(r)) drw++;
+    var sc=scoreOf(g); if(sc.vuoto) return;
+    if(sc.esito==='V') wins++; else if(sc.esito==='P') loss++; else drw++;
   });
 
   b.appendChild(el('h2',null,arcCareer?t('aTotCarr'):t('aTotStag')));
@@ -2339,7 +2412,7 @@ function compareBox(ss){
     t.appendChild(r);
   }
   line(tx('cPartite'),function(a){return a.g;});
-  line(tx('cMinuti'),function(a){return fmin(avg(a.min,a.g));});
+  line(tx('cMinuti'),function(a){return a.minN?fmin(avg(a.minK,a.minN)):'—';});
   line(tx('cPunti'),function(a){return avg(a.pt,a.g);});
   line(tx('cVal'),function(a){return avg(a.val,a.g);});
   line(tx('cRimb'),function(a){return avg(a.rimO+a.rimD,a.g);});
@@ -2350,7 +2423,7 @@ function compareBox(ss){
   line(tx('cFs'),function(a){return avg(a.fs,a.g);});
   line(tx('c2p'),function(a){return fpct(a.p2s,a.p2t);});
   line(tx('cPit'),function(a){return a.pitN?fpct(a.p2sP,a.p2tP):tx('cNd');});
-  line(tx('cFuo'),function(a){return a.pitN?fpct(a.p2s-a.p2sP,a.p2t-a.p2tP):tx('cNd');});
+  line(tx('cFuo'),function(a){return a.pitN?fpct(a.p2sF,a.p2tF):tx('cNd');});
   line(tx('c3p'),function(a){return fpct(a.p3s,a.p3t);});
   line(tx('cTl'),function(a){return fpct(a.tls,a.tlt);});
   line(tx('cDD'),function(a){return a.dd;});
@@ -2507,17 +2580,18 @@ function precedenti(g,arc){
   return arc.filter(function(x){ return x.stagione===g.stagione && x.data<g.data; });
 }
 /* confronto con la stagione: media delle partite precedenti valide (tiri: segnati totali / tentati totali
-   delle partite sopra la soglia, come nell'Archivio); migliore = strettamente sopra a ognuna,
+   di tutte le partite precedenti, come nell'Archivio); migliore = strettamente sopra a ognuna,
    con almeno 3 partite precedenti (per i tiri: almeno 3 sopra la soglia) */
 function confrontoVoce(g,k,prev){
   var v=valoreVoce(g,k); if(v==null) return null;
   var tiro=(k==='tl'||k==='t2'||k==='t3'), vals=[],i,x,m=null,s=0,ts=0,tt=0;
   for(i=0;i<prev.length;i++){
+    if(tiro){ ts+=tiriVoce(prev[i],k)[0]; tt+=tiriVoce(prev[i],k)[1]; }
     x=valoreVoce(prev[i],k); if(x==null) continue;
     vals.push(x); s+=x;
-    if(tiro){ ts+=tiriVoce(prev[i],k)[0]; tt+=tiriVoce(prev[i],k)[1]; }
   }
-  if(vals.length) m=tiro ? ts/tt : s/vals.length;
+  /* tiri: totale della stagione su tutte le partite precedenti */
+  if(tiro) m=tt>0 ? ts/tt : null; else if(vals.length) m=s/vals.length;
   var best=prev.length>=3 && vals.length>=3 && vals.every(function(y){ return v>y; });
   return {v:v, media:m, best:best};
 }
@@ -2792,12 +2866,9 @@ function showImg(g,fmt,voce){
    Ogni statistica ha un identificativo stabile (id). Una partita si esclude solo dalle statistiche che usano il dato
    mancante: ok(g) falso; manca(g), se presente, separa il dato mancante dalla voce non applicabile (periodo assente, formato) */
 var ST_VISTE=['corso','carr','ult5','pers'], ST_VTXT={corso:'sCorso',carr:'sCarriera',ult5:'sUlt5',pers:'sPers'};
-var ST_GRUPPI=['G1','G2','G3','G4','G5','G6','G7'];
+var ST_GRUPPI=['GB','G1','G2','G3','G4','G5','G6','G7'];
 var ST_COL=['#E8701A','#F3E9D2','#4a9eff','#34c759','#d8a23a','#ff3b30'];
-/* voci di G4 (chiave, testo, migliore il valore piu' basso) e di G6 */
-var VOCI_G4=[['pt','gPunti',0],['rim','gRimb',0],['ast','gAst',0],['pr','c_pr',0],['pp','c_pp',1],['stopD','c_stopD',0],['fc','c_fc',1],['val','gVal',0]];
-var VOCI_G6=[['pt','gPunti'],['rim','gRimb'],['ast','gAst'],['val','gVal']];
-var stSel=null, stAperti={G1:true}, stBest='S1', cmpA=null, cmpB=null;
+var stSel=null, stAperti={GB:true}, stBest='B.pt', cmpA=null, cmpB=null;
 
 function selNuova(v){ return {v:v,f:{stag:[],eti:[],tipo:[],top:false,diff:[],avv:[],dal:'',al:'',ultN:null}}; }
 /* selezione ripulita: vista nota, filtri del tipo atteso */
@@ -2861,8 +2932,53 @@ function gmscG(g){
   return g.pt+0.4*fgmG(g)-0.7*fgaG(g)-0.4*(g.tlt-g.tls)+0.7*g.rimO+0.3*g.rimD+g.pr+0.7*g.ast+0.7*g.stopDate-0.4*g.fc-g.pp;
 }
 function scoreG(g){ var s=scoreOf(g); return s.vuoto?null:s; }
-function vocePart(g,k){
-  return {pt:g.pt,rim:g.rimO+g.rimD,ast:g.ast,pr:g.pr,pp:g.pp,stopD:g.stopDate,fc:g.fc,val:valOf(g)}[k];
+/* minuti noti: tutti i periodi inseriti (0:00 compreso); partite senza minuti per periodo: totale maggiore di zero */
+function minOk(g){
+  var q=secQ(g), i;
+  if(q.length){ for(i=0;i<q.length;i++) if(q[i]==null) return false; return true; }
+  return g.minuti>0;
+}
+/* voci contate: chiave, testo, migliore il valore piu' basso (segno nella Valutazione) */
+var VOCI_C=[['pt','gPunti',0],['val','gVal',0],['min','stMinuti',0],['rimO','c_rimO',0],['rimD','c_rimD',0],['rim','gRimb',0],
+  ['ast','c_ast',0],['pr','c_pr',0],['pp','c_pp',1],['stopD','c_stopD',0],['stopS','c_stopS',1],['fc','c_fc',1],
+  ['fsT','c_fsTiri',0],['fsN','c_fsNo',0],['fs','stFs',0]];
+/* tiri: chiave e testo; segnati (S), tentati (A), sbagliati (X: solo liberi, da 2, da 3, dal campo, con il testo proprio) */
+var VOCI_T=[['tl','gTl'],['t2','imgT2'],['t2p','imgT2','sh_pit'],['t2f','imgT2','sh_fuo'],['t3','imgT3'],['fg','bFg'],['tot','bTot']];
+var VOCI_X={tl:'xTl',t2:'xT2',t3:'xT3',fg:'xFg'};
+/* righe delle statistiche di base, in ordine */
+var BASE_RIGHE=['pt','val','min','tl','t2','t2p','t2f','t3','fg','tot','rimO','rimD','rim','rimQ','ast','pr','pp','stopD','stopS','fc','fsT','fsN','fs'];
+function voceTiro(k){ var i; for(i=0;i<VOCI_T.length;i++) if(VOCI_T[i][0]===k) return VOCI_T[i]; return null; }
+function voceC(k){ var i; for(i=0;i<VOCI_C.length;i++) if(VOCI_C[i][0]===k) return VOCI_C[i]; return null; }
+function nomeTiro(k){ var x=voceTiro(k); return t(x[1])+(x[2]?' '+t(x[2]):''); }
+function nomeVoce(k){ var x=voceC(k); return x ? t(x[1]) : (k==='rimQ' ? t('s25q') : nomeTiro(k)); }
+/* valore di una voce in una partita dell'archivio (chiavi contate e tiri con S/A/X) */
+function vG(g,k){
+  switch(k){
+    case 'pt': return g.pt; case 'val': return valOf(g); case 'min': return g.minuti;
+    case 'rimO': return g.rimO; case 'rimD': return g.rimD; case 'rim': return g.rimO+g.rimD;
+    case 'ast': return g.ast; case 'pr': return g.pr; case 'pp': return g.pp;
+    case 'stopD': return g.stopDate; case 'stopS': return g.stopSubite; case 'fc': return g.fc;
+    case 'fsT': return g.fsTiri; case 'fsN': return g.fs-g.fsTiri; case 'fs': return g.fs;
+  }
+  var s, a, m=/^(.*)([SAX])$/.exec(k);
+  switch(m[1]){
+    case 'tl': s=g.tls; a=g.tlt; break;
+    case 't2': s=g.p2s; a=g.p2t; break;
+    case 't2p': s=g.p2sPit; a=g.p2tPit; break;
+    case 't2f': s=g.p2s-g.p2sPit; a=g.p2t-g.p2tPit; break;
+    case 't3': s=g.p3s; a=g.p3t; break;
+    case 'fg': s=fgmG(g); a=fgaG(g); break;
+    default: s=fgmG(g)+g.tls; a=fgaG(g)+g.tlt;
+  }
+  return m[2]==='S'?s:(m[2]==='A'?a:a-s);
+}
+/* dato presente per la voce */
+function okV(g,k){
+  if(k==='val' || k==='stopS') return !g.ndStop;
+  if(k==='min') return minOk(g);
+  if(k==='fsT' || k==='fsN') return g.fsTiri!=null;
+  if(/^t2[pf]/.test(k)) return g.p2tPit!=null;
+  return true;
 }
 /* totali dell'archivio per chiave dei conteggi per periodo */
 function totAz(g){
@@ -2880,11 +2996,19 @@ function azValide(g){
   }
   return true;
 }
-/* voci di un periodo dai suoi conteggi; valutazione null con stoppate subite non rilevate */
+/* voci per periodo e per meta': contate (senza minuti) e tiri dei conteggi */
+var VOCI_P=['pt','val','rimO','rimD','rim','ast','pr','pp','stopD','stopS','fc','fsT','fsN','fs',
+  'tlS','tlA','t2S','t2A','t2pS','t2pA','t2fS','t2fA','t3S','t3A','fgS','fgA','totS','totA'];
+/* voci di un periodo dai suoi conteggi; valutazione e stoppate subite null se le stoppate subite non sono rilevate */
 function vociPer(a,nd){
   var pt=2*(a.p2PitS+a.p2FuoS)+3*a.p3S+a.tlS;
-  return {pt:pt, rim:a.rimO+a.rimD, ast:a.ast,
+  var o={pt:pt, rimO:a.rimO, rimD:a.rimD, rim:a.rimO+a.rimD, ast:a.ast, pr:a.pr, pp:a.pp, stopD:a.stopD,
+    stopS:nd?null:a.stopS, fc:a.fc, fsT:a.fsTiri, fsN:a.fsNo, fs:a.fsTiri+a.fsNo,
+    tlS:a.tlS, tlA:a.tlS+a.tlX, t2pS:a.p2PitS, t2pA:a.p2PitS+a.p2PitX, t2fS:a.p2FuoS, t2fA:a.p2FuoS+a.p2FuoX,
+    t3S:a.p3S, t3A:a.p3S+a.p3X,
     val:nd?null:pt-a.tlX-a.p2PitX-a.p2FuoX-a.p3X+a.pr-a.pp+a.rimO+a.rimD+a.ast-a.fc+a.fsTiri+a.fsNo+a.stopD-a.stopS};
+  o.t2S=o.t2pS+o.t2fS; o.t2A=o.t2pA+o.t2fA; o.fgS=o.t2S+o.t3S; o.fgA=o.t2A+o.t3A; o.totS=o.fgS+o.tlS; o.totA=o.fgA+o.tlA;
+  return o;
 }
 /* periodi della partita per chiave (Q1, T1, O1 = primo supplementare); null se i conteggi per periodo non sono validi */
 function periodiG(g){
@@ -2895,10 +3019,11 @@ function periodiG(g){
 }
 /* meta' h (1 o 2): con 4 periodi 1-2 / 3-4, con 2 periodi 1 / 2, supplementari esclusi; altri formati: null */
 function metaG(g,h){
-  var p=periodiG(g), f=fmtOk(g.formato), b=f?f.periodi:4, o={pt:0,rim:0,ast:0,val:g.ndStop?null:0}, ks;
+  var p=periodiG(g), f=fmtOk(g.formato), b=f?f.periodi:4, o={}, ks;
   if(!p || (b!==4 && b!==2)) return null;
+  VOCI_P.forEach(function(v){ o[v]=0; });
   ks=b===4 ? (h===1?['Q1','Q2']:['Q3','Q4']) : (h===1?['T1']:['T2']);
-  ks.forEach(function(k){ var x=p[k]; if(!x) return; o.pt+=x.pt; o.rim+=x.rim; o.ast+=x.ast; if(o.val!=null) o.val+=x.val; });
+  ks.forEach(function(k){ var x=p[k]; if(!x) return; VOCI_P.forEach(function(v){ if(o[v]!=null) o[v]=x[v]==null?null:o[v]+x[v]; }); });
   return o;
 }
 /* chiavi dei periodi presenti, in ordine: quarti, tempi, supplementari */
@@ -2909,9 +3034,9 @@ function chiaviPer(list){
 }
 
 /* catalogo. tipo: r = rapporto dei totali (x100: percentuale; fr: con segnati/tentati), c = media per partita con il
-   totale (nt: senza totale), k = numero di partite, m = per 36' e per 40' sui minuti. sog: tentativi minimi (avviso del
-   campione piccolo, Migliore partita); basso: migliore il valore piu' basso; det: con dettaglio; best: nel menu di G7;
-   tiri: i tentativi della statistica sono tiri */
+   totale (nt: senza totale; mm: minuti; totInt: totale arrotondato all'intero), k = numero di partite, m = per 36' e per 40' sui minuti. sog: tentativi minimi
+   (avviso del campione piccolo, Migliore partita); basso: migliore il valore piu' basso; det: con dettaglio; best: nel
+   menu di G7; tiri: i tentativi della statistica sono tiri dal campo */
 function catalogo(){
   var L=[], M={}, SF={q:fgaG,min:3};
   function add(o){ if(o.det==null) o.det=true; L.push(o); M[o.id]=o; }
@@ -2919,6 +3044,19 @@ function catalogo(){
   function pit(g){ return g.p2tPit!=null; }
   function tx_(k){ return function(){ return t(k); }; }
   function campo(k){ return function(g){ return g[k]; }; }
+  function rim(g){ return g.rimO+g.rimD; }
+  /* statistiche di base: voci contate e tiri (segnati, tentati) */
+  VOCI_C.forEach(function(x){
+    add({id:'B.'+x[0],gr:'GB',nm:tx_(x[1]),tipo:'c',mm:x[0]==='min'?1:0,best:1,basso:x[2],
+      ok:function(g){ return okV(g,x[0]); },v:function(g){ return vG(g,x[0]); }});
+  });
+  add({id:'B.rimQ',gr:'GB',nm:tx_('s25q'),tipo:'r',x100:1,fr:1,best:1,ok:si,num:campo('rimO'),den:rim,sog:{q:rim,min:3}});
+  VOCI_T.forEach(function(x){
+    ['S','A'].forEach(function(z){
+      add({id:'B.'+x[0]+z,gr:'GB',nm:function(){ return t(z==='S'?'sfS':'sfA',nomeTiro(x[0])); },tipo:'c',best:1,
+        ok:function(g){ return okV(g,x[0]); },v:function(g){ return vG(g,x[0]+z); }});
+    });
+  });
   add({id:'S1',gr:'G1',nm:tx_('s1'),tipo:'r',x100:1,fr:1,tiri:1,best:1,ok:si,num:fgmG,den:fgaG,sog:SF});
   add({id:'S2',gr:'G1',nm:tx_('s2'),tipo:'r',x100:1,fr:1,tiri:1,best:1,ok:si,num:campo('p2s'),den:campo('p2t'),
     sog:{q:campo('p2t'),min:SOGLIE.t2}});
@@ -2938,36 +3076,66 @@ function catalogo(){
   add({id:'S8',gr:'G1',nm:tx_('s8'),tipo:'r',x100:1,fr:1,tiri:1,best:1,ok:pit,num:campo('p2tPit'),den:fgaG,sog:SF});
   add({id:'S9',gr:'G1',nm:tx_('s9'),tipo:'r',tiri:1,best:1,ok:si,num:campo('tlt'),den:fgaG,sog:SF});
   add({id:'S10',gr:'G1',nm:tx_('s10'),tipo:'r',tiri:1,best:1,ok:si,num:campo('pt'),den:fgaG,sog:SF});
-  add({id:'S11',gr:'G2',nm:tx_('s11'),tipo:'c',best:1,ok:si,v:possG});
+  /* S26: tiri sbagliati */
+  ['tl','t2','t3','fg'].forEach(function(k){
+    add({id:'B.'+k+'X',gr:'G1',nm:tx_(VOCI_X[k]),tipo:'c',best:1,basso:1,ok:si,v:function(g){ return vG(g,k+'X'); }});
+  });
+  /* S27: punti per tipo di tiro e quota sui punti */
+  [['tl','ptTl',function(g){ return g.tls; },si],['t2p','ptT2p',function(g){ return 2*g.p2sPit; },pit],
+   ['t2f','ptT2f',function(g){ return 2*(g.p2s-g.p2sPit); },pit],['t3','ptT3',function(g){ return 3*g.p3s; },si]].forEach(function(x){
+    add({id:'P.'+x[0],gr:'G1',nm:tx_(x[1]),tipo:'c',best:1,ok:x[3],v:x[2]});
+    add({id:'PQ.'+x[0],gr:'G1',nm:function(){ return t(x[1])+' · '+t('sQpt'); },rn:tx_('sQpt'),sub:1,tipo:'r',x100:1,fr:1,best:1,
+      ok:x[3],num:x[2],den:campo('pt')});
+  });
+  add({id:'S29',gr:'G1',nm:tx_('s29'),tipo:'r',x100:1,fr:1,tiri:1,best:1,basso:1,ok:function(g){ return !g.ndStop; },
+    num:campo('stopSubite'),den:fgaG,sog:SF});
+  add({id:'S11',gr:'G2',nm:tx_('s11'),tipo:'c',totInt:1,best:1,ok:si,v:possG});
   add({id:'S12',gr:'G2',nm:tx_('s12'),tipo:'r',x100:1,best:1,basso:1,ok:si,num:campo('pp'),den:possG,sog:{q:possG,min:3}});
   add({id:'S13',gr:'G2',nm:tx_('s13'),tipo:'r',best:1,ok:si,num:campo('ast'),den:campo('pp')});
+  add({id:'S30',gr:'G2',nm:tx_('s30'),tipo:'r',best:1,ok:si,num:campo('pr'),den:campo('pp')});
+  add({id:'S31',gr:'G2',nm:tx_('s31'),tipo:'r',x100:1,best:1,ok:si,num:campo('ast'),
+    den:function(g){ return fgaG(g)+0.44*g.tlt+g.ast+g.pp; },sog:{q:possG,min:3}});
+  add({id:'S28',gr:'G2',nm:tx_('s28'),tipo:'r',x100:1,fr:1,best:1,ok:function(g){ return g.fsTiri!=null; },
+    num:campo('fsTiri'),den:campo('fs')});
   add({id:'S15',gr:'G3',nm:tx_('s15'),tipo:'c',best:1,ok:function(g){ return !g.ndStop; },v:valOf});
   add({id:'S16',gr:'G3',nm:tx_('s16'),tipo:'c',best:1,ok:si,v:effG});
   add({id:'S17',gr:'G3',nm:tx_('s17'),tipo:'c',best:1,ok:si,v:gmscG});
   add({id:'S18a',gr:'G3',nm:tx_('s18a'),tipo:'k',det:false,ok:si,v:function(g){ return ddOf(g)?1:0; }});
   if(FUNZIONI.triplaDoppia) add({id:'S18b',gr:'G3',nm:tx_('s18b'),tipo:'k',det:false,ok:si,v:function(g){ return tdOf(g)?1:0; }});
-  VOCI_G4.forEach(function(x){
+  /* G4: tutte le voci per 36' e per 40', sulle partite con i minuti di tutti i periodi */
+  VOCI_C.forEach(function(x){
+    if(x[0]==='min') return;
     add({id:'S19.'+x[0],gr:'G4',nm:tx_(x[1]),reg:function(){ return t('s19a')+' · '+t('s19b'); },tipo:'m',best:1,basso:x[2],
-      ok:function(g){ return g.minuti>0 && (x[0]!=='val' || !g.ndStop); },v:function(g){ return vocePart(g,x[0]); }});
+      ok:function(g){ return minOk(g) && g.minuti>0 && okV(g,x[0]); },v:function(g){ return vG(g,x[0]); }});
+  });
+  VOCI_T.forEach(function(x){
+    ['S','A'].forEach(function(z){
+      add({id:'S19.'+x[0]+z,gr:'G4',nm:function(){ return t(z==='S'?'sfS':'sfA',nomeTiro(x[0])); },
+        reg:function(){ return t('s19a')+' · '+t('s19b'); },tipo:'m',best:1,
+        ok:function(g){ return minOk(g) && g.minuti>0 && okV(g,x[0]); },v:function(g){ return vG(g,x[0]+z); }});
+    });
   });
   add({id:'S20',gr:'G5',nm:tx_('s20'),tipo:'r',x100:1,fr:1,best:1,ok:function(g){ return !!scoreG(g); },
     num:campo('pt'),den:function(g){ return scoreG(g).noi; }});
   add({id:'S22',gr:'G5',nm:tx_('s22'),tipo:'c',nt:1,segno:1,best:1,ok:function(g){ return !!scoreG(g); },
     v:function(g){ var s=scoreG(g); return s.noi-s.avv; }});
+  /* G6: ogni voce per periodo e per meta'; nel menu di G7 solo le voci contate e i tiri dal campo, liberi, da 2 e da 3 */
+  function nomeP(v){ var m=/^(.*)([SA])$/.exec(v); return m && voceTiro(m[1]) ? t(m[2]==='S'?'sfS':'sfA',nomeTiro(m[1])) : nomeVoce(v); }
+  function inMenu(v){ return !/^(t2p|t2f|tot)[SA]$/.test(v); }
+  function manca(v){ return function(g){ return !azValide(g) || ((v==='val' || v==='stopS') && g.ndStop); }; }
   chiaviPer(archive).forEach(function(k){
-    VOCI_G6.forEach(function(x){
-      add({id:'G6.'+k+'.'+x[0],gr:'G6',nm:function(){ return etiChiave(k)+' · '+t(x[1]); },tipo:'c',nt:1,best:1,
-        ok:function(g){ var p=periodiG(g); return !!(p && p[k] && p[k][x[0]]!=null); },
-        manca:function(g){ return !azValide(g) || (x[0]==='val' && g.ndStop); },
-        v:function(g){ return periodiG(g)[k][x[0]]; }});
+    VOCI_P.forEach(function(v){
+      add({id:'G6.'+k+'.'+v,gr:'G6',nm:function(){ return etiChiave(k)+' · '+nomeP(v); },tipo:'c',nt:1,best:inMenu(v)?1:0,
+        basso:/^(pp|stopS|fc)$/.test(v)?1:0,
+        ok:function(g){ var p=periodiG(g); return !!(p && p[k] && p[k][v]!=null); },manca:manca(v),
+        v:function(g){ return periodiG(g)[k][v]; }});
     });
   });
   [1,2].forEach(function(h){
-    VOCI_G6.forEach(function(x){
-      add({id:'S24.'+h+'.'+x[0],gr:'G6',nm:function(){ return t(h===1?'s24a':'s24b')+' · '+t(x[1]); },tipo:'c',nt:1,
-        ok:function(g){ var m=metaG(g,h); return !!(m && m[x[0]]!=null); },
-        manca:function(g){ return !azValide(g) || (x[0]==='val' && g.ndStop); },
-        v:function(g){ return metaG(g,h)[x[0]]; }});
+    VOCI_P.forEach(function(v){
+      add({id:'S24.'+h+'.'+v,gr:'G6',nm:function(){ return t(h===1?'s24a':'s24b')+' · '+nomeP(v); },tipo:'c',nt:1,
+        ok:function(g){ var m=metaG(g,h); return !!(m && m[v]!=null); },manca:manca(v),
+        v:function(g){ return metaG(g,h)[v]; }});
     });
   });
   return {L:L,M:M};
@@ -2975,10 +3143,10 @@ function catalogo(){
 function escluso(st,g){ return !st.ok(g) && (st.manca ? st.manca(g) : true); }
 /* valore della statistica su un elenco di partite */
 function calc(st,list){
-  var r={n:0,ex:0,num:0,den:0,tot:0,min:0,att:0,fga:0,v:null,v40:null};
+  var r={n:0,ex:0,num:0,den:0,tot:0,min:0,att:0,fga:0,tt:0,v:null,v40:null};
   list.forEach(function(g){
     if(!st.ok(g)){ if(escluso(st,g)) r.ex++; return; }
-    r.n++; r.fga+=fgaG(g);
+    r.n++; r.fga+=fgaG(g); r.tt+=fgaG(g)+g.tlt;
     if(st.sog) r.att+=st.sog.q(g);
     if(st.tipo==='r'){ r.num+=st.num(g); r.den+=st.den(g); }
     else { r.tot+=st.v(g); if(st.tipo==='m') r.min+=g.minuti; }
@@ -2999,7 +3167,9 @@ function valGara(st,g){
 }
 function fmtNum(x){ return String(Math.round(x*100)/100); }
 function fmt1(x){ return (Math.round(x*10)/10).toFixed(1); }
-/* testo del valore: v principale, tot accanto (solo per le voci che si contano) */
+/* totale: intero senza decimali, altrimenti un decimale */
+function fmtTot(x){ var r=Math.round(x*10)/10; return String(r); }
+/* testo del valore: v principale, tot accanto (solo per le voci che si contano; k: il conteggio va nel totale) */
 function fmtVal(st,r){
   if(r.v==null) return {v:'—',tot:null};
   if(st.tipo==='r'){
@@ -3007,22 +3177,36 @@ function fmtVal(st,r){
     return {v:(st.fr?fmtNum(r.num)+'/'+fmtNum(r.den)+'  ':'')+fmt1(r.v)+'%',tot:null};
   }
   if(st.tipo==='m') return {v:fmt1(r.v)+' · '+fmt1(r.v40),tot:null};
-  if(st.tipo==='k') return {v:String(r.v),tot:null};
-  return {v:(st.segno && r.v>0?'+':'')+fmtNum(r.v),tot:st.nt?null:fmtNum(r.tot)};
+  if(st.tipo==='k') return {v:'',tot:String(r.v)};
+  if(st.mm) return {v:fmin(r.v),tot:fmin(r.tot)};
+  return {v:(st.segno && r.v>0?'+':'')+fmtNum(r.v),tot:st.nt?null:(st.totInt?String(Math.round(r.tot)):fmtTot(r.tot))};
 }
 /* valore breve per assi e barre */
-function fmtBreve(st,v){ return v==null?'—':(st.tipo==='r'&&st.x100 ? fmt1(v)+'%' : fmtNum(v)); }
-/* migliore partita: valore piu' alto (piu' basso per le voci "basso"), con i pari merito; con tentativi sotto soglia esclusa */
+function fmtBreve(st,v){ return v==null?'—':(st.tipo==='r'&&st.x100 ? fmt1(v)+'%' : (st.mm ? fmin(v) : fmtNum(v))); }
+/* migliore partita: valore piu' alto (piu' basso per le voci "basso"), con i pari merito; esclusa con tentativi sotto
+   soglia e, per 36' e per 40', con meno di 10 minuti giocati */
+var BEST_MIN36=10;
 function migliore(st,list){
   var b=null, gg=[];
   list.forEach(function(g){
     var v=valGara(st,g);
-    if(v==null || (st.sog && st.sog.q(g)<st.sog.min)) return;
+    if(v==null || (st.sog && st.sog.q(g)<st.sog.min) || (st.tipo==='m' && g.minuti<BEST_MIN36)) return;
     if(b===null || (st.basso ? v<b-1e-9 : v>b+1e-9)){ b=v; gg=[g]; }
     else if(Math.abs(v-b)<=1e-9) gg.push(g);
   });
   return {v:b,gare:gg};
 }
+/* massimo in una partita: il valore piu' alto, sempre, con le partite che lo raggiungono */
+function massimo(st,list){
+  var b=null, gg=[];
+  list.forEach(function(g){
+    var v=valGara(st,g); if(v==null) return;
+    if(b===null || v>b+1e-9){ b=v; gg=[g]; } else if(Math.abs(v-b)<=1e-9) gg.push(g);
+  });
+  return {v:b,gare:gg};
+}
+/* partite in cui la statistica e' calcolata, se sono meno della selezione */
+function suTxt(n,tot){ return n>0 && n<tot ? (n===1?t('sSu1'):t('sSuN',n)) : ''; }
 
 /* contenuto astratto di un gruppo: disegnato nella scheda (domVoci) e nell'immagine (disegnaStats).
    o.single: finestra di una partita, senza totali; o.best: statistica scelta in G7 */
@@ -3032,19 +3216,80 @@ function modello(G,list,C,o){
   function riga(id){
     var st=C.M[id]; if(!st) return;
     segna(st);
-    var r=calc(st,list), fv=fmtVal(st,r);
-    it.push({k:'riga',st:st,l:(st.rn||st.nm)(),v:fv.v,tot:o.single?null:fv.tot,reg:st.reg?st.reg():'',w:r.n>0 && r.small,sub:!!st.sub});
+    var r=calc(st,list), fv=fmtVal(st,r), su=suTxt(r.n,list.length);
+    it.push({k:'riga',st:st,l:(st.rn||st.nm)(),v:fv.v,tot:o.single?null:fv.tot,reg:st.reg?st.reg():'',su:su,
+      w:r.n>0 && r.small && r.v!=null,sub:!!st.sub});
   }
-  if(G==='G1') ['S1','S2','S2a','S2b','S3','S4','S5','S6','S7','S8','S9','S10'].forEach(riga);
-  else if(G==='G2'){ if(!o.single) it.push({k:'mt'}); ['S11','S12','S13'].forEach(riga); it.push(torta(list,es)); }
+  if(G==='GB') it.push(tabBase(list,C,es,o));
+  else if(G==='G1'){
+    ['S1','S2','S2a','S2b','S3','S4','S5','S6','S7','S8','S9','S10','B.tlX','B.t2X','B.t3X','B.fgX'].forEach(riga);
+    ['tl','t2p','t2f','t3'].forEach(function(k){ riga('P.'+k); riga('PQ.'+k); });
+    riga('S29');
+  }
+  else if(G==='G2'){ if(!o.single) it.push({k:'mt'}); ['S11','S12','S13','S30','S31','S28'].forEach(riga); it.push(torta(list,es)); }
   else if(G==='G3'){ if(!o.single) it.push({k:'mt'}); ['S15','S16','S17','S18a','S18b'].forEach(riga); }
-  else if(G==='G4') C.L.forEach(function(st){ if(st.gr==='G4') riga(st.id); });
-  else if(G==='G5'){ riga('S20'); vittSconf(list,es).forEach(function(x){ it.push(x); }); riga('S22'); }
+  else if(G==='G4') it.push(tab36(list,C,es));
+  else if(G==='G5'){ riga('S20'); it.push(vittSconf(list,C,es)); riga('S22'); }
   else if(G==='G6') perPeriodo(list,C,es).forEach(function(x){ it.push(x); });
   else if(G==='G7'){ var sb=C.M[o.best]||C.M.S1; segna(sb); it.push({k:'best',st:sb,res:migliore(sb,list)}); }
   var ne=Object.keys(es).length;
   if(ne) it.push({k:'nota',s:esclTxt(ne)});
   return it;
+}
+/* righe delle tabelle: voce contata (media; con t: anche totale) o tiro (media segnati/tentati; totale con %) */
+function cellaMedia(C,list,k,es){
+  var tiro=!!voceTiro(k);
+  if(k==='rimQ'){ var q=C.M['B.rimQ'], rq=calc(q,list); if(es) list.forEach(function(g){ if(escluso(q,g)) es[g.id]=1; });
+    return {s:rq.v==null?'—':fmt1(rq.v)+'%',st:q,n:rq.n,w:rq.n>0 && rq.small}; }
+  if(!tiro){
+    var st=C.M['B.'+k], r=calc(st,list);
+    if(es) list.forEach(function(g){ if(escluso(st,g)) es[g.id]=1; });
+    return {s:r.v==null?'—':(st.mm?fmin(r.v):fmtNum(r.v)),tot:r.v==null?'—':(st.mm?fmin(r.tot):fmtTot(r.tot)),st:st,n:r.n};
+  }
+  var sS=C.M['B.'+k+'S'], sA=C.M['B.'+k+'A'], a=calc(sS,list), b=calc(sA,list);
+  if(es) list.forEach(function(g){ if(escluso(sS,g)) es[g.id]=1; });
+  if(a.v==null) return {s:'—',tot:'—',st:sS,n:0};
+  return {s:fmtNum(a.v)+'/'+fmtNum(b.v),tot:a.tot+'/'+b.tot,pct:b.tot>0?fmt1(a.tot/b.tot*100)+'%':'—',st:sS,n:a.n};
+}
+/* data della partita del massimo, o numero di partite a pari merito */
+function quando(res){ return !res.gare.length ? '' : (res.gare.length===1 ? itDate(res.gare[0].data) : t('sPartN',res.gare.length)); }
+/* statistiche di base: Media | Totale | Massimo */
+/* scheda della guida di ogni riga delle statistiche di base: regola di raccolta del Tutorial o formula della Guida */
+var GUIDA_BASE={pt:'SB',val:'S15',min:'T12',tl:'T4',t2:'T1',t2p:'T2',t2f:'T2',t3:'T1',fg:'S1',tot:'SB',
+  rimO:'S25',rimD:'S25',rim:'S25',rimQ:'S25',ast:'T6',pr:'T8',pp:'T7',stopD:'T9',stopS:'T9',fc:'T10',fsT:'T11',fsN:'T11',fs:'T11'};
+function tabBase(list,C,es,o){
+  var rows=[];
+  BASE_RIGHE.forEach(function(k){
+    var c=cellaMedia(C,list,k,es), tiro=!!voceTiro(k), mx, ms='—', md='', gq=GUIDA_BASE[k]||'SB';
+    if(k==='rimQ') mx=null;
+    else {
+      mx=massimo(c.st,list);
+      if(mx.v!=null){
+        ms=c.st.mm?fmin(mx.v):fmtNum(mx.v);
+        if(tiro && mx.gare.length===1) ms+='/'+vG(mx.gare[0],k+'A');
+        md=quando(mx);
+      }
+    }
+    var cel=[{s:c.s,sub:c.pct||'',st:c.st,w:c.w}];
+    if(!o.single) cel.push({s:k==='rimQ'?'':c.tot,st:c.st});
+    if(!o.single) cel.push({s:k==='rimQ'?'':ms,sub:md,st:c.st});
+    rows.push({l:nomeVoce(k),su:[suTxt(c.n,list.length),c.w?t('sPiccolo'):''].filter(Boolean).join(' · '),g:gq,c:cel});
+  });
+  return {k:'tab',g:'SB',hdr:o.single?['',t('stMedia')]:['',t('sMedia'),t('sTot'),t('sMax')],rows:rows};
+}
+/* G4: voce | per 36' | per 40' */
+function tab36(list,C,es){
+  var rows=[];
+  BASE_RIGHE.forEach(function(k){
+    if(k==='min' || k==='rimQ') return;
+    var tiro=!!voceTiro(k), a=C.M['S19.'+(tiro?k+'S':k)], b=tiro?C.M['S19.'+k+'A']:null, ra=calc(a,list), rb=b?calc(b,list):null;
+    list.forEach(function(g){ if(escluso(a,g)) es[g.id]=1; });
+    function f(r,c40){ var v=c40?r.v40:r.v; return v==null?'—':fmt1(v); }
+    var pc=tiro && ra.v!=null && rb.v>0 ? fmt1(ra.v/rb.v*100)+'%' : '';
+    rows.push({l:nomeVoce(k),su:suTxt(ra.n,list.length),c:[
+      {s:tiro?(ra.v==null?'—':f(ra)+'/'+f(rb)):f(ra),sub:pc,st:a},{s:tiro?(ra.v==null?'—':f(ra,1)+'/'+f(rb,1)):f(ra,1),sub:pc,st:a}]});
+  });
+  return {k:'tab',g:'S19',hdr:['',t('s19a'),t('s19b')],rows:rows};
 }
 /* S14: tiri da 2 dal pitturato e fuori, tiri da 3, falli subiti con tiri liberi, assist, palle perse */
 function torta(list,es){
@@ -3057,28 +3302,42 @@ function torta(list,es){
   v.forEach(function(x){ tot+=x; });
   return {k:'torta',l:t('s14'),tot:tot,dati:v.map(function(x,i){ return {l:nomi[i],v:x,p:tot?fpct(x,tot):'—',c:ST_COL[i]}; })};
 }
-/* S21: partite, punti, valutazione e % dal campo nelle vittorie e nelle sconfitte (pareggi esclusi) */
-function vittSconf(list,es){
-  return [['V','s21a'],['P','s21b']].map(function(x){
-    var pt=0, val=0, nv=0, m=0, a=0, gg=list.filter(function(g){
-      var s=scoreG(g); if(!s){ es[g.id]=1; return false; }
-      return s.esito===x[0];
-    });
-    gg.forEach(function(g){
-      pt+=g.pt; m+=fgmG(g); a+=fgaG(g);
-      if(g.ndStop) es[g.id]=1; else { val+=valOf(g); nv++; }
-    });
-    return {k:'riga',g:'S21',l:t(x[1]),v:'',extra:t('cPartite')+' '+gg.length+(gg.length?' · '+t('gPunti')+' '+fmtNum(pt/gg.length)+' · '+
-      t('gVal')+' '+(nv?fmtNum(val/nv):'—')+' · '+t('s1')+' '+fpct(m,a):'')};
+/* S21: nelle vittorie e nelle sconfitte (pareggi esclusi): partite, quota dei punti di squadra, % dal campo, media di ogni voce */
+function vittSconf(list,C,es){
+  var lv=[], lp=[];
+  list.forEach(function(g){ var s=scoreG(g); if(!s){ es[g.id]=1; return; } if(s.esito==='V') lv.push(g); else if(s.esito==='P') lp.push(g); });
+  function col(f){ return [f(lv),f(lp)]; }
+  function cel(st,l){ var r=calc(st,l), fv=fmtVal(st,r); return {s:st.tipo==='r' ? (r.v==null?'—':fmt1(r.v)+'%') : fv.v}; }
+  var rows=[{l:t('cPartite'),c:col(function(l){ return {s:String(l.length)}; })},
+    {l:t('s20'),c:col(function(l){ return cel(C.M.S20,l); })},
+    {l:t('s1'),c:col(function(l){ return cel(C.M.S1,l); })}];
+  BASE_RIGHE.forEach(function(k){
+    rows.push({l:nomeVoce(k),c:col(function(l){ var c=cellaMedia(C,l,k,null); return {s:c.s,sub:c.pct||''}; })});
   });
+  return {k:'tab',g:'S21',hdr:['',t('s21a'),t('s21b')],rows:rows};
 }
-/* G6: tabella per periodo, S23, S24 */
+/* G6: tabella per periodo (righe le voci, colonne i periodi), S23, S24 */
 function perPeriodo(list,C,es){
-  var it=[], ks=chiaviPer(list), hdr=['',t('gPunti'),t('gRimb'),t('gAst'),t('gVal')], b=null, bk=[];
-  list.forEach(function(g){ if(!azValide(g) || g.ndStop) es[g.id]=1; });
-  function celle(pre){ return VOCI_G6.map(function(x){ var st=C.M[pre+x[0]]; return {s:st?fmtVal(st,calc(st,list)).v:'—',st:st}; }); }
+  var it=[], ks=chiaviPer(list), b=null, bk=[];
+  list.forEach(function(g){ if(!azValide(g)) es[g.id]=1; });
   if(!ks.length){ it.push({k:'riga',g:'S23',l:t('s23'),v:'—'}); return it; }
-  it.push({k:'tab',g:'S23',hdr:hdr,rows:ks.map(function(k){ return {l:etiChiave(k),c:celle('G6.'+k+'.')}; })});
+  function cella(pre,v){
+    var st=C.M[pre+v], r=st?calc(st,list):{v:null};
+    return {s:r.v==null?'—':fmtNum(r.v),st:st,v:r.v};
+  }
+  function righe(pres){
+    var rows=[];
+    VOCI_P.forEach(function(v){
+      var m=/^(.*)S$/.exec(v);
+      if(/A$/.test(v)) return;
+      if(m && voceTiro(m[1])){
+        rows.push({l:nomeTiro(m[1]),c:pres.map(function(p){ var a=cella(p,m[1]+'S'), c=cella(p,m[1]+'A');
+          return {s:a.v==null?'—':a.s+'/'+c.s,sub:a.v!=null && c.v>0?fmt1(a.v/c.v*100)+'%':'',st:a.st}; })});
+      } else rows.push({l:nomeVoce(v),c:pres.map(function(p){ return cella(p,v); })});
+    });
+    return rows;
+  }
+  it.push({k:'tab',g:'S23',hdr:[''].concat(ks.map(etiChiave)),rows:righe(ks.map(function(k){ return 'G6.'+k+'.'; }))});
   ks.forEach(function(k){
     var st=C.M['G6.'+k+'.pt'], r=st?calc(st,list):{v:null};
     if(r.v==null) return;
@@ -3086,7 +3345,7 @@ function perPeriodo(list,C,es){
   });
   it.push({k:'riga',g:'S23',l:t('s23'),v:b==null?'—':bk.map(etiChiave).join(', ')+' · '+fmtNum(b)});
   if(calc(C.M['S24.1.pt'],list).n)
-    it.push({k:'tab',g:'S24',hdr:hdr,rows:[{l:t('s24a'),c:celle('S24.1.')},{l:t('s24b'),c:celle('S24.2.')}]});
+    it.push({k:'tab',g:'S24',hdr:['',t('s24a'),t('s24b')],rows:righe(['S24.1.','S24.2.'])});
   return it;
 }
 
@@ -3100,6 +3359,7 @@ function domVoci(it,o){
       var d=el('div','str'+(x.sub?' sub':'')), a=el('div','stn'), v=el('div','stv');
       var nb=el('b',null,x.l); addQ(nb,x.g||(x.st?guidaCod(x.st.id):null)); a.appendChild(nb);
       if(x.reg) a.appendChild(el('span',null,x.reg));
+      if(x.su) a.appendChild(el('span',null,x.su));
       if(x.extra) a.appendChild(el('span',null,x.extra));
       v.appendChild(el('b',null,x.v)); if(x.tot!=null) v.appendChild(el('span',null,x.tot));
       d.appendChild(a); d.appendChild(v); box.appendChild(d);
@@ -3112,10 +3372,14 @@ function domVoci(it,o){
       var tb=el('table','sttab'), hr=el('tr');
       x.hdr.forEach(function(h){ hr.appendChild(el('th',null,h)); }); addQ(hr.firstChild,x.g); tb.appendChild(hr);
       x.rows.forEach(function(r){
-        var tr=el('tr'); tr.appendChild(el('td','k',r.l));
+        var tr=el('tr'), tk=el('td','k',r.l);
+        if(r.g) addQ(tk,r.g);
+        if(r.su) tk.appendChild(el('span',null,r.su));
+        tr.appendChild(tk);
         r.c.forEach(function(c){
           var td=el('td',null,c.s);
-          if(o.tap && c.st && c.s!=='—'){ td.className='tap'; td.onclick=function(){ showDetail(c.st); }; }
+          if(c.sub) td.appendChild(el('span',null,c.sub));
+          if(o.tap && c.st && c.st.det && c.s && c.s!=='—'){ td.className='tap'; td.onclick=function(){ showDetail(c.st); }; }
           tr.appendChild(td);
         });
         tb.appendChild(tr);
@@ -3125,10 +3389,13 @@ function domVoci(it,o){
     if(x.k==='best'){
       var f=el('div','fld'), sel=el('select');
       f.appendChild(el('label',null,t('lImgDato')));
+      var ogs={};
       o.C.L.forEach(function(st){
         if(!st.best || (st.gr==='G6' && !calc(st,o.list).n)) return;
-        var op=el('option',null,st.nm()); op.value=st.id; sel.appendChild(op);
+        if(!ogs[st.gr]){ ogs[st.gr]=document.createElement('optgroup'); ogs[st.gr].label=t('g'+st.gr.slice(1)); }
+        var op=el('option',null,st.nm()); op.value=st.id; ogs[st.gr].appendChild(op);
       });
+      ST_GRUPPI.forEach(function(G){ if(ogs[G]) sel.appendChild(ogs[G]); });
       sel.value=x.st.id;
       sel.onchange=function(){ stBest=this.value; renderStats(); };
       f.appendChild(sel); box.appendChild(f);
@@ -3177,7 +3444,9 @@ function bestDom(st,res){
     o.appendChild(el('b',null,g.avversario));
     o.appendChild(el('span',null,g.categoria+' · '+tipoTxt(g.tipoGara)+(g.risultatoTesto?' · '+resTxt(g.risultatoTesto):'')));
     d.appendChild(o);
-    s.appendChild(el('b',null,fmtVal(st,calc(st,[g])).v)); d.appendChild(s);
+    s.appendChild(el('b',null,fmtVal(st,calc(st,[g])).v));
+    if(st.tipo==='m') s.appendChild(el('span',null,fmtNum(st.v(g))+' · '+fmin(g.minuti)));
+    d.appendChild(s);
     d.onclick=function(){ apriPartita(g); };
     w.appendChild(d);
   });
@@ -3187,9 +3456,9 @@ function bestDom(st,res){
 function apriPartita(g){ arcSeason=g.stagione; arcCareer=false; arcCompare=false; go('archivio'); showGame(g); }
 function apriStagione(s){ arcSeason=s; arcCareer=false; arcCompare=false; closeModal(); go('archivio'); }
 function riepilogo(list){
-  var d=el('div','box'), a=0;
-  list.forEach(function(g){ a+=fgaG(g); });
-  var ri=el('div','stri',riepTxt(list.length,a)); addQ(ri,'G0'); d.appendChild(ri);
+  var d=el('div','box'), a=0, tt=0;
+  list.forEach(function(g){ a+=fgaG(g); tt+=fgaG(g)+g.tlt; });
+  var ri=el('div','stri',riepTxt(list.length,a,tt)); addQ(ri,'G0'); d.appendChild(ri);
   if(list.length && list.length<3) d.appendChild(el('div','warn',t('sPiccolo')));
   return d;
 }
@@ -3253,7 +3522,7 @@ function renderStats(){
   b.appendChild(riepilogo(list));
   if(!list.length){ b.appendChild(el('div','hint',t('sVuota'))); b.scrollTop=y; return; }
   var C=catalogo();
-  if(!C.M[stBest]) stBest='S1';
+  if(!C.M[stBest]) stBest='B.pt';
   ST_GRUPPI.forEach(function(G){
     var ap=!!stAperti[G], h=el('h2','stg',(ap?'▾ ':'▸ ')+t('g'+G.slice(1)));
     h.onclick=function(){ stAperti[G]=!ap; renderStats(); };
@@ -3321,8 +3590,8 @@ function showDetail(st){
   s.appendChild(el('div','hint',descSel(stSel)));
   s.appendChild(el('div','stbig',fv.v+(fv.tot!=null?' · '+fv.tot:'')));
   if(fv.tot!=null) s.appendChild(el('div','hint',t('sMedia')+' · '+t('sTot')));
-  s.appendChild(el('div','hint',riepTxt(r.n,st.tiri?r.att:r.fga)));
-  if(r.n && (r.n<3 || r.small)) s.appendChild(el('div','warn',t('sPiccolo')));
+  s.appendChild(el('div','hint',riepTxt(r.n,r.fga,r.tt)));
+  if(r.n && r.v!=null && (r.n<3 || r.small)) s.appendChild(el('div','warn',t('sPiccolo')));
   if(r.ex) s.appendChild(el('div','hint',esclTxt(r.ex)));
   s.appendChild(d ? grafSvg(st,d) : el('div','hint','—'));
   s.appendChild(bestDom(st,res));
@@ -3333,7 +3602,7 @@ function showDetail(st){
   bi.onclick=function(){
     var bl=[{k:'titolo',s:st.nm()}];
     if(st.reg) bl.push({k:'nota',s:st.reg()});
-    bl.push({k:'riga',l:riepTxt(r.n,st.tiri?r.att:r.fga),v:fv.v+(fv.tot!=null?' · '+fv.tot:'')});
+    bl.push({k:'riga',l:riepTxt(r.n,r.fga,r.tt),v:[fv.v,fv.tot].filter(function(z){ return z!=null && z!==''; }).join(' · ')});
     if(d) bl.push({k:'graf',st:st,d:d});
     bl=bl.concat(blocchiImg([{k:'best',st:st,res:res,solo:1}]));
     showImgStats(descSel(stSel),nomeImg({maglia:magliaComune(list)}),bl,'stats-'+st.id,function(){ showDetail(st); });
@@ -3371,8 +3640,8 @@ function showConfronto(st){
       f.appendChild(selettore(x[1],disegna));
       f.appendChild(el('div','hint',descSel(x[1])));
       f.appendChild(el('div','stbig',fv.v+(fv.tot!=null?' · '+fv.tot:'')));
-      f.appendChild(el('div','hint',riepTxt(r.n,st.tiri?r.att:r.fga)));
-      if(r.n && (r.n<3 || r.small)) f.appendChild(el('div','warn',t('sPiccolo')));
+      f.appendChild(el('div','hint',riepTxt(r.n,r.fga,r.tt)));
+      if(r.n && r.v!=null && (r.n<3 || r.small)) f.appendChild(el('div','warn',t('sPiccolo')));
       s.appendChild(f);
       return r;
     });
@@ -3404,25 +3673,29 @@ function blocchiImg(it){
   var out=[];
   it.forEach(function(x){
     if(x.k==='mt') out.push({k:'nota',s:t('sMedia')+' · '+t('sTot'),a:'right'});
-    else if(x.k==='riga') out.push({k:'riga',l:x.l,v:x.v+(x.tot!=null?' · '+x.tot:''),reg:x.reg,extra:x.extra,w:x.w,sub:x.sub});
+    else if(x.k==='riga') out.push({k:'riga',l:x.l,v:[x.v,x.tot].filter(function(z){ return z!=null && z!==''; }).join(' · '),
+      reg:[x.reg,x.su].filter(Boolean).join(' · '),extra:x.extra,w:x.w,sub:x.sub});
+    else if(x.k==='tab') out.push({k:'tab',hdr:x.hdr,rows:x.rows.map(function(r){ return {l:r.l,c:r.c.map(function(c){ return {s:c.s,sub:c.sub||''}; })}; })});
     else if(x.k==='best'){
       if(!x.solo) out.push({k:'nota',s:x.st.nm()});
       out.push({k:'nota',s:t('sBest')+(x.res.gare.length>1?' · '+t('sPari'):'')});
       if(!x.res.gare.length) out.push({k:'riga',l:'—',v:''});
       x.res.gare.slice().reverse().forEach(function(g){
-        out.push({k:'riga',l:itDate(g.data)+' · '+g.avversario,v:fmtVal(x.st,calc(x.st,[g])).v});
+        out.push({k:'riga',l:itDate(g.data)+' · '+g.avversario,v:fmtVal(x.st,calc(x.st,[g])).v+(x.st.tipo==='m'?' ('+fmtNum(x.st.v(g))+')':'')});
       });
     }
     else out.push(x);
   });
   return out;
 }
+/* riga di tabella: piu' alta se una cella ha la seconda riga (percentuale, data) */
+function altRiga(r){ return r.c.some(function(c){ return c.sub; }) ? 136 : 96; }
 function altBlocco(b){
   if(b.k==='titolo') return 140;
   if(b.k==='nota') return 76;
   if(b.k==='riga') return 112+(b.reg?56:0)+(b.extra?56:0)+(b.w?56:0);
   if(b.k==='torta') return 600+b.dati.length*84;
-  if(b.k==='tab') return 96+b.rows.length*96;
+  if(b.k==='tab') return 96+b.rows.reduce(function(h,r){ return h+altRiga(r); },0);
   if(b.k==='graf') return 680;
   return 0;
 }
@@ -3473,12 +3746,20 @@ function bloccoImg(c,b,y){
     return;
   }
   if(b.k==='tab'){
-    var xs=[460,640,820,1000];
-    b.hdr.forEach(function(h,j){ if(j) scrivi(c,h,xs[j-1],y+64,{f:F_TXT,w:600,size:40,c:IMG_CREMA,a:'right',max:170}); });
-    b.rows.forEach(function(rw,j){
-      yy=y+96+j*96+64;
-      scrivi(c,rw.l,80,yy,{f:F_TXT,w:600,size:52,c:IMG_CREMA,max:290});
-      rw.c.forEach(function(cl,k){ scrivi(c,cl.s,xs[k],yy,{f:F_TXT,w:600,size:56,c:'#FFFFFF',a:'right',max:170}); });
+    /* colonne allineate a destra; la larghezza dipende dal numero di colonne */
+    var nc=b.hdr.length-1, cw=Math.min(190,Math.floor(620/nc)), xs=[];
+    for(i=0;i<nc;i++) xs.push(1000-(nc-1-i)*cw);
+    var lw=1000-nc*cw-80-20;
+    b.hdr.forEach(function(h,j){ if(j) scrivi(c,h,xs[j-1],y+64,{f:F_TXT,w:600,size:40,c:IMG_CREMA,a:'right',max:cw-10}); });
+    yy=y+96;
+    b.rows.forEach(function(rw){
+      var y0=yy+64;
+      scrivi(c,rw.l,80,y0,{f:F_TXT,w:600,size:48,c:IMG_CREMA,max:lw});
+      rw.c.forEach(function(cl,k){
+        scrivi(c,cl.s,xs[k],y0,{f:F_TXT,w:600,size:nc>3?44:52,c:'#FFFFFF',a:'right',max:cw-10});
+        if(cl.sub) scrivi(c,cl.sub,xs[k],y0+42,{f:F_TXT,w:600,size:32,c:IMG_CREMA,a:'right',max:cw-10});
+      });
+      yy+=altRiga(rw);
     });
     return;
   }
@@ -3531,6 +3812,10 @@ function guidaVoce(c){
 function guidaCod(id){
   var m=/^(S\d+)[ab]?$/.exec(id);
   if(m) return m[1];
+  if(/^B\.rim/.test(id)) return 'S25';
+  if(/^B\..*X$/.test(id)) return 'S26';
+  if(/^B\./.test(id)) return 'SB';
+  if(/^PQ?\./.test(id)) return 'S27';
   if(/^S19\./.test(id)) return 'S19';
   if(/^G6\./.test(id)) return 'S23';
   if(/^S24\./.test(id)) return 'S24';
